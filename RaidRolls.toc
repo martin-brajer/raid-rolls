@@ -1,0 +1,10 @@
+## Interface: 40300
+## Title: Raid Rolls
+## Notes: List group member rolls.
+## Author: Martin Brajer
+## Version: 1.6
+## SavedVariablesPerCharacter: RaidRollsShown
+
+main.xml
+cli.lua
+colours.lua
