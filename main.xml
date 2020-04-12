@@ -1,0 +1,90 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+    ..\..\FrameXML\UI.xsd">
+  
+    <Script File="main.lua"/>
+    
+    <Frame name="RaidRolls_MainFrame"
+         parent="UIParent"
+         hidden="false"
+         enableMouse="true"
+         movable="true">
+    
+    <Size x="200" y="30"/>
+    <Anchors>
+        <Anchor point="TOPLEFT">
+            <Offset x="20" y="-90"/>
+        </Anchor>
+    </Anchors>
+    
+    <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background"
+        edgeFile="Interface\Tooltips\UI-Tooltip-Border"
+        tile="true">
+        <TileSize>
+            <AbsValue val="16"/>
+        </TileSize>
+        <EdgeSize>
+            <AbsValue val="16"/>
+        </EdgeSize>
+        <BackgroundInsets>
+            <AbsInset left="4" right="3" top="4" bottom="3"/>
+        </BackgroundInsets>
+        <Color r="0.2" g="0.2" b="0.2" a="0.7"/>
+    </Backdrop>
+    
+    <Frames>
+    </Frames>
+    
+    <Layers>
+        <Layer>
+            <FontString name="$parent_Player"
+                inherits="SystemFont_Small"
+                text="Player (Class)[subgroup]"
+                justifyV="TOP"
+                justifyH="RIGHT">
+
+                <Size x="0" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset x="5" y="-5"/>
+                    </Anchor>
+                </Anchors>
+                <Color r="1" g="1" b="0" a="1"/>
+            </FontString>
+        
+            <FontString name="$parent_Roll"
+                inherits="SystemFont_Small"
+                text="Roll"
+                justifyV="TOP"
+                justifyH="RIGHT">
+            
+                <Size x="0" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT"
+                        relativeTo="$parent_Player"
+                        relativePoint="TOPRIGHT">
+                        <Offset x="35" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Color r="1" g="1" b="0" a="1"/>
+            </FontString>
+        </Layer>
+    </Layers>
+
+
+    <Scripts>
+        <OnLoad>
+            RaidRolls_G.onload()
+        </OnLoad>
+<!-- Moved to RaidRolls_G.onload().
+        <OnMouseDown>
+            RaidRolls_MainFrame:StartMoving();
+        </OnMouseDown>
+-->
+        <OnMouseUp>
+            RaidRolls_MainFrame:StopMovingOrSizing();
+        </OnMouseUp>
+    </Scripts>
+
+    </Frame>
+</Ui>
