@@ -20,12 +20,12 @@ Copy `RaidRolls` folder into your client: `\World of Warcraft\Interface\AddOns`.
 ## Slash Commands
 
 Cmds start by `/raidrolls` or equivalently by `/rr`.
-* /rr List commands.
-* /rr show hide toggle GUI visibility.
-* /rr help Show all slash commands.
-* /rr reset Erase all rolls.
-* /rr resize Reset addon window width.
-* /rr resize <number> Extend the width to <number> percents of default.
-* /rr test Fill in artificial rolls.
+* `/rr` List commands.
+* `/rr show` `hide` `toggle` GUI visibility.
+* `/rr help` Show all slash commands.
+* `/rr reset` Erase all rolls.
+* `/rr resize` Reset addon window width.
+* `/rr resize <number>` Extend the width to <number> percents of default.
+* `/rr test` Fill in artificial rolls.
 
 Feel free to comment, share ideas or report bugs.
