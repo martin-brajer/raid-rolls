@@ -1,4 +1,4 @@
-# raid-rolls
+# Raid Rolls
 
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
