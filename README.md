@@ -28,7 +28,7 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 * `/rr resize <number>` Extend the width to <number> percents of default.
 * `/rr test` Fill in artificial rolls.
 
-# License
+## License
 
 Raid Rolls addon is licensed under the [MIT license](LICENSE).
 
