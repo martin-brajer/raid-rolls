@@ -95,7 +95,7 @@ end
 -- Try to find player by name in the raid group.
 -- Return nil if not found.
 local function name2raidIndex(target)
-    for i = 1, GetNumRaidMembers() do
+    for i = 1, GetNumGroupMembers() do
         local name = GetRaidRosterInfo(i)
         if (name == target) then
             return i
@@ -120,9 +120,9 @@ end
 function RaidRolls_G.groupType()
     local _groupType = nil
     
-    if (GetNumRaidMembers() > 0) then
+    if (IsInRaid()) then
         _groupType = "RAID"
-    elseif (GetNumPartyMembers() > 0) then
+    elseif (IsInGroup()) then
         _groupType = "PARTY"
     end
     
@@ -170,7 +170,7 @@ function RaidRolls_G.update(param)
     if (_groupType == nil and param == nil) then return end
     
     local lootWarning = false
-    if (IsRaidLeader() and GetLootMethod() ~= "master") then
+    if (UnitIsGroupLeader("player") and GetLootMethod() ~= "master") then
         lootWarning = true
     end
     
