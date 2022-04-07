@@ -295,9 +295,9 @@ ChatSystem_EventFrame:SetScript("OnEvent",
                 local name, roll, minRoll, maxRoll = msg:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
                 local minRoll = tonumber(minRoll)
                 local maxRoll = tonumber(maxRoll)
-
+                
                 if not(name and minRoll == 1 and maxRoll == 100) then return end
-                  
+                
                 if (RaidRolls_G.rollers[name] == nil) then
                     RaidRolls_G.rollers[name] = tonumber(roll)
                 else
@@ -331,11 +331,13 @@ ChatSystem_EventFrame:SetScript("OnEvent",
 -- Listen to the CHAT_MSG_EVENTS for passing.
 local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
+    function(self, event, msg, name, ...)
         
         if (RaidRolls_G.groupType() == nil) then return end
         
-        local msg, name = ...
+        -- If the player name contains a hyphen, return the text up to the hyphen.
+        name =  string.gmatch(name, "[^-]+")()
+        
         if (string.lower(msg) == "pass") then
             RaidRolls_G.rollers[name] = 0
             RaidRolls_G.update()

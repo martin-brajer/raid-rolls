@@ -38,8 +38,8 @@
         event = "PARTY_LEADER_CHANGED"
     ```
 
-- bug 3
-  - say "pass" in /raid adds a new "roller" with name `<name>MoPPTR`
+- msg event returns changed name (probably PTR database thing)
+  - say "pass" in /raid adds a new "roller" with name `<name>-MoPPTR`
   - ok in /say
   - correct zero roll
 
@@ -50,6 +50,10 @@
 - git
 - script to push to wow folder
 - master looter string and option
+- get rid of `...` symbol
+- `ChatSystem_EventFrame:SetScript("OnEvent",` to separate function
+  - all event functions and register events at one location in code
+- is separate self chat signalling necessary?
 
 ### Change_list
 
