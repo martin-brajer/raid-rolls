@@ -2,7 +2,7 @@
 ## Title: Raid Rolls
 ## Notes: List group member rolls.
 ## Author: Martin Brajer
-## Version: 1.6
+## Version: 2.0
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.xml
