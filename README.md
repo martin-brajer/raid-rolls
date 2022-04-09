@@ -30,8 +30,13 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
   * minimal accepted value is 100 (default width)
 * `/rr test` Fill in artificial rolls.
 
-## License
+## Licence & compliance
 
-Raid Rolls addon is licensed under the [MIT license](LICENSE).
+* Raid Rolls addon is licensed under the [MIT licence](LICENSE).
+* Icon `pair-of-dice.png` is sourced from
+  [iconspng.com](https://www.iconspng.com/image/7894/pair-of-dice)
+  under the following licence:
+    > Licencing! Pair of dice PNG icons - The pictures are free for personal and even for commercial use. You can modify, copy and distribute the vectors on Pair of dice in iconspng.com. All without asking for permission or setting a link to the source. So, attribution is not required.
+* Versioning follows [Semantic Versioning 2.0.0](https://semver.org/).
 
 Feel free to comment, share ideas or report bugs.
