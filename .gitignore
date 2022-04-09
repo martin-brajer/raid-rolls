@@ -1,8 +1,9 @@
 # Mine
-old/
+releases/
 img/pair-of-dice - original.jpg
 copy2wow.bat
 *.lnk
+TODO.md
 
 # Compiled Lua sources
 luac.out

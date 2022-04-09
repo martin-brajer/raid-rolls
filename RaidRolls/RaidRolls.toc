@@ -1,8 +1,8 @@
 ## Interface: 50400
 ## Title: Raid Rolls
-## Notes: List group member rolls.
+## Notes: List raid /rolls.
 ## Author: Martin Brajer
-## Version: 2.0.0
+## Version: 2.0.1
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.xml
