@@ -33,7 +33,7 @@
 
         <Layers>
             <Layer>
-                <FontString name="$parent_UnitHeader" inherits="SystemFont_Small" text="Player (Class)[subgroup]" justifyV="TOP" justifyH="RIGHT">
+                <FontString name="$parent_UnitHeader" inherits="SystemFont_Small" text="Player (class)[subgroup]" justifyV="TOP" justifyH="RIGHT">
 
                     <Size x="0" y="20"/>
                     <Anchors>
