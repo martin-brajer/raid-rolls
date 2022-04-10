@@ -1,13 +1,12 @@
 -- Global locals.
 RaidRolls_G = {}
 
-
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
 -- Was the main frame shown at the end of the last session?
 RaidRollsShown = true
 -- List of {L, R} each being a FontString.
-RaidRolls_G.FSPool = {}
+RaidRolls_G.rowPool = {}
 -- Was the player in group last time groupTypeChanged() was called?
 RaidRolls_G._wasInGroup = nil
 -- All the events (channels) searched for saying "pass".
@@ -22,129 +21,115 @@ local CHAT_MSG_EVENTS = {
     --~ "CHAT_MSG_BN_WHISPER",
     }
 
-
 -- OnLoad called by main.xml.
 function RaidRolls_G.onload(self)
     print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. " loaded. Type '/raidrolls help' for help.")
     
     RaidRolls_MainFrame:SetScript("OnMouseDown",
         function(self, event, ...)
-            if (event == "LeftButton") then
+            if event == "LeftButton" then
                 RaidRolls_MainFrame:StartMoving();
-            elseif (event == "RightButton") then
+            elseif event == "RightButton" then
                 RaidRolls_G.reset()
             end
         end)
     
-    local FS
-    FS = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
-    FS:SetHeight(20)
-    FS:SetPoint("TOPLEFT", "$parent_Player", "BOTTOMLEFT")
-    FS:SetText("Set |cFFFF0000MASTER LOOTER|r!!!")
-    FS:Hide()
+    local row = RaidRolls_MainFrame:CreateFontString(
+        "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
+    row:SetHeight(20)
+    row:SetPoint("TOPLEFT", "$parent_UnitInfoHeader", "BOTTOMLEFT")
+    row:SetText("Set |cFFFF0000MASTER LOOTER|r!!!")
+    row:Hide()
     
     hooksecurefunc('ChatEdit_ParseText', RaidRolls_G.ParseText);
     
     RaidRolls_G.groupTypeChanged()
-    
     RaidRolls_G.update()
-    
     RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
 end
-
 
 -- Look for the addon user's passing. Not possible by CHAT_MSG_EVENTS.
 function RaidRolls_G.ParseText(chatEntry, send)
      -- This function actually gets called every time the user hits a key. But the
      -- send flag will only be set when he hits return to send the message.
-     if (send == 1) then
+     if send == 1 then
         -- Player "pass" only in group.
-        if (RaidRolls_G.groupType() == nil) then return end
+        if RaidRolls_G.groupType() == nil then return end
         
         local msg = chatEntry:GetText(); -- Here's how you get the original text
-        if (string.lower(msg) == "pass") then
+        if string.lower(msg) == "pass" then
             RaidRolls_G.rollers[UnitName("player")] = 0
             RaidRolls_G.update()
         end
      end
 end
 
-
 -- Handle FontStrings needed for listing rolling players.
--- Try to use as few FSs as possible (recycle the old ones).
-local function getFS(i)
-    local f = RaidRolls_G.FSPool[i]
-    if not f then
-        f = {}
-        l = RaidRolls_MainFrame:CreateFontString("$parent_FSL" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
+-- Try to use as few rows as possible (recycle the old ones).
+-- Return i-th row (create if necessary).
+local function getRow(i)
+    local row = RaidRolls_G.rowPool[i]
+    if row then
+        row.L:Show()
+        row.R:Show()
+    else
+        row = {}
+        l = RaidRolls_MainFrame:CreateFontString("$parent_rowL" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         l:SetHeight(20)
-        r = RaidRolls_MainFrame:CreateFontString("$parent_FSR" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
+        r = RaidRolls_MainFrame:CreateFontString("$parent_rowR" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         r:SetHeight(20)
         
-        f = { L = l, R = r}
-        tinsert(RaidRolls_G.FSPool, f)
-    else
-        f.L:Show()
-        f.R:Show()
+        row = { L = l, R = r}
+        tinsert(RaidRolls_G.rowPool, row)
     end
-    return f
+    return row
 end
-
-
 
 -- Try to find player by name in the raid group.
 -- Return nil if not found.
 local function name2raidIndex(target)
     for i = 1, GetNumGroupMembers() do
-        local name = GetRaidRosterInfo(i)
-        if (name == target) then
+        local name = GetRaidRosterInfo(i)  -- name, rank, subgroup, ...
+        if name == target then
             return i
         end
     end
-    
     return nil
 end
 
-
--- Find length of the given table.
-local function myLength(tab)
+-- Table length (sort of).
+local function table_count(t)
     local count = 0
-    for k,v in pairs(tab) do
-        count = count + 1
-    end
+    for _ in pairs(t) do count = count + 1 end
     return count
 end
 
-
 -- Find what kind of group player is in (nil if none).
 function RaidRolls_G.groupType()
-    local _groupType = nil
-    
-    if (IsInRaid()) then
-        _groupType = "RAID"
-    elseif (IsInGroup()) then
-        _groupType = "PARTY"
+    local groupType = nil
+    if IsInRaid() then
+        groupType = "RAID"
+    elseif IsInGroup() then
+        groupType = "PARTY"
     end
-    
-    return _groupType
+    return groupType
 end
-
 
 -- Was group joined/leaved since the last call?
 -- @return Group: joined (true), leaved(false), neither (nil).
 function RaidRolls_G.groupTypeChanged()
     local outcome = nil
-    local _groupType = RaidRolls_G.groupType()
+    local groupType = RaidRolls_G.groupType()
     
-    if (RaidRolls_G._wasInGroup ~= nil) then  -- Not init.
-        if (_groupType == nil) then  -- No group.
-            if (RaidRolls_G._wasInGroup) then
+    if RaidRolls_G._wasInGroup ~= nil then  -- Not init.
+        if groupType == nil then  -- No group.
+            if RaidRolls_G._wasInGroup then
                 outcome = true
             else
                 outcome = false
             end
         else  -- Group.
-            if (RaidRolls_G._wasInGroup) then
+            if RaidRolls_G._wasInGroup then
                 outcome = false
             else
                 outcome = true
@@ -153,7 +138,7 @@ function RaidRolls_G.groupTypeChanged()
     end
     
     -- New value. Init.
-    if (_groupType == nil) then
+    if groupType == nil then
         RaidRolls_G._wasInGroup = false
     else
         RaidRolls_G._wasInGroup = true
@@ -161,21 +146,23 @@ function RaidRolls_G.groupTypeChanged()
     return outcome
 end
 
-
 -- Main drawing function. No processing there.
 -- Any param (other than nil) make the function work even out of group.
 -- Used for rolls reset and testing.
 function RaidRolls_G.update(param)
-    local _groupType = RaidRolls_G.groupType()
-    if (_groupType == nil and param == nil) then return end
+    local groupType = RaidRolls_G.groupType()
+    if groupType == nil and param == nil then return end
+    if groupType == nil then
+        groupType = "UNKNOWN"
+    end
     
     local lootWarning = false
-    if (UnitIsGroupLeader("player") and GetLootMethod() ~= "master") then
+    if UnitIsGroupLeader("player") and GetLootMethod() ~= "master" then
         lootWarning = true
     end
     
     -- 30 = (5 + 15 + 10); 20 for every input plus one for ML warning.
-    RaidRolls_MainFrame:SetHeight(30 + 20 * (myLength(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
+    RaidRolls_MainFrame:SetHeight(30 + 20 * (table_count(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
     
     local sortedRollers = {}
     for k, v in pairs(RaidRolls_G.rollers) do
@@ -188,21 +175,23 @@ function RaidRolls_G.update(param)
         end)
     
     local i = 1
-    -- Default (i == 1).
-    local parentL = "$parent_Player"
-    local parentR = "$parent_Roll"
+    -- Default (i == 1). Here so it does not need to be rewritten or checked each cycle.
+    local parentL = "$parent_UnitInfoHeader"
+    local parentR = "$parent_RollHeader"
     for k, v in pairs(sortedRollers) do
         -- v.k = name; v.v = roll
         
+        -- defaults
         local Name, subgroup, class, fileName = v.k, "?", "unknown", "UNKNOWN"
-        if (_groupType == "RAID") then
+        
+        if groupType == "RAID" then
             local index = name2raidIndex(v.k)
-            if (index ~= nil) then
+            if index ~= nil then
                 Name, _, subgroup, _, class, fileName = GetRaidRosterInfo(index)
             end
-        
-        elseif (_groupType == "PARTY") then
-            if (UnitInParty(v.k)) then
+            
+        elseif groupType == "PARTY" then
+            if UnitInParty(v.k) then
                 Name = v.k
                 subgroup = "P"
                 class, fileName = UnitClass(v.k)
@@ -210,30 +199,32 @@ function RaidRolls_G.update(param)
         end
         
         local roll
-        if (v.v == 0) then
-            roll = "|cFF00ccffpass|r"
-        elseif (v.v > 0) then
+        if v.v == 0 then
+            roll = RaidRolls_G.textColours.PASS.."pass|r"
+            -- roll = "|cFF00ccffpass|r"
+        elseif v.v > 0 then
             roll = v.v
         else
             roll = "|cFFFF0000" .. math.abs(v.v) .. "|r"
         end
         
-        if (i > 1) then
-            parentL = "$parent_FSL" .. tostring(i - 1)
-            parentR = "$parent_FSR" .. tostring(i - 1)
+        if i > 1 then
+            parentL = "$parent_rowL" .. tostring(i - 1)
+            parentR = "$parent_rowR" .. tostring(i - 1)
         end
-        local FS = getFS(i)
-        FS.L:SetText(Name .. " (" .. RaidRolls_G.classColours[fileName] .. class .. "|r)[" .. RaidRolls_G.channelColours(_groupType) .. subgroup .. "|r]")
-        FS.R:SetText(roll)
-        FS.L:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
-        FS.R:SetPoint("TOPLEFT", parentR, "BOTTOMLEFT")
+        local row = getRow(i)
+        -- Explain the string!
+        row.L:SetText(Name .. " (" .. RaidRolls_G.classColours[fileName] .. class .. "|r)[" .. RaidRolls_G.channelColours[groupType] .. subgroup .. "|r]")
+        row.R:SetText(roll)
+        row.L:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
+        row.R:SetPoint("TOPLEFT", parentR, "BOTTOMLEFT")
         
         i = i + 1
     end
     
     
-    if (lootWarning) then
-        if (i > 1) then parentL = "$parent_FSL" .. tostring(i - 1) end
+    if lootWarning then
+        if i > 1 then parentL = "$parent_rowL" .. tostring(i - 1) end
         RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()
     else
@@ -241,11 +232,11 @@ function RaidRolls_G.update(param)
     end
     
     
-    local myLengthFSPool = myLength(RaidRolls_G.FSPool)
-    while (i <= myLengthFSPool) do
-        FS = getFS(i)
-        FS.L:Hide()
-        FS.R:Hide()
+    -- for i = 1, table_count(RaidRolls_G.rowPool) do
+    while i <= table_count(RaidRolls_G.rowPool) do -- Rest of rows.
+        row = getRow(i)
+        row.L:Hide()
+        row.R:Hide()
         i = i + 1
     end
 end
@@ -257,9 +248,9 @@ GroupJoin_EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event, ...)
         
-        if (RaidRolls_G.groupTypeChanged()) then  -- Join or leave party/raid.
+        if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
             
-            if (RaidRolls_G.groupType() == nil) then  -- Just left.
+            if RaidRolls_G.groupType() == nil then  -- Just left.
                 RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
             
             else  -- Just joined.
@@ -285,20 +276,20 @@ Loot_EventFrame:SetScript("OnEvent",
 local ChatSystem_EventFrame = CreateFrame("Frame")
 ChatSystem_EventFrame:SetScript("OnEvent",
     function(self, event, ...)
-        if (RaidRolls_G.groupType() == nil) then return end
+        if RaidRolls_G.groupType() == nil then return end
         
         local msg = select(1, ...)
         if msg then
             
             -- Roll message.
-            if (string.find(msg, "rolls") ~= nil) then
+            if string.find(msg, "rolls") ~= nil then
                 local name, roll, minRoll, maxRoll = msg:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
                 local minRoll = tonumber(minRoll)
                 local maxRoll = tonumber(maxRoll)
                 
                 if not(name and minRoll == 1 and maxRoll == 100) then return end
                 
-                if (RaidRolls_G.rollers[name] == nil) then
+                if RaidRolls_G.rollers[name] == nil then
                     RaidRolls_G.rollers[name] = tonumber(roll)
                 else
                     --~ rollers[name] = -math.max(math.abs(rollers[name]), roll)
@@ -306,14 +297,14 @@ ChatSystem_EventFrame:SetScript("OnEvent",
                 end
             
             -- Leave raid msg.
-            elseif (string.find(msg, "has left the raid group.") ~= nil) then
+            elseif string.find(msg, "has left the raid group.") ~= nil then
                 local name = msg:match("^(.+) has left the raid group.$")
                 if name then
                     RaidRolls_G.rollers[name] = nil
                 end
             
             -- Leave party msg.
-            elseif (string.find(msg, "leaves the party.") ~= nil) then
+            elseif string.find(msg, "leaves the party.") ~= nil then
                 local name = msg:match("^(.+) leaves the party.$")
                 if name then
                     RaidRolls_G.rollers[name] = nil
@@ -333,12 +324,13 @@ local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
     function(self, event, msg, name, ...)
         
-        if (RaidRolls_G.groupType() == nil) then return end
+        if RaidRolls_G.groupType() == nil then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
+        -- strsplit?
         name =  string.gmatch(name, "[^-]+")()
         
-        if (string.lower(msg) == "pass") then
+        if string.lower(msg) == "pass" then
             RaidRolls_G.rollers[name] = 0
             RaidRolls_G.update()
         end
@@ -351,7 +343,7 @@ local Load_EventFrame = CreateFrame("Frame")
 Load_EventFrame:RegisterEvent("ADDON_LOADED")
 Load_EventFrame:SetScript("OnEvent",
     function(self, event, ...)
-        if (event == "ADDON_LOADED" and ... == "RaidRolls") then
+        if event == "ADDON_LOADED" and ... == "RaidRolls" then
             
             if RaidRollsShown == nil then
                 -- This is the first time this addon
