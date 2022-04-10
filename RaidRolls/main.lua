@@ -38,7 +38,7 @@ function RaidRolls_G.onload(self)
         "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
     row:SetPoint("TOPLEFT", "$parent_UnitHeader", "BOTTOMLEFT")
-    row:SetText("Set |cFFFF0000MASTER LOOTER|r!!!")
+    row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
     hooksecurefunc('ChatEdit_ParseText', RaidRolls_G.ParseText);

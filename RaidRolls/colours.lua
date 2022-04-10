@@ -1,7 +1,9 @@
 -- System message colour for unknown.
 local SystemMessageColour = "|cFFFFFF00"
 
--- From https://wow.gamepedia.com/Class_colors.
+-- Colours from https://wow.gamepedia.com/Class_colors.
+-- Strings are the system representation of the character's class
+--     always in english, always fully capitalized. Usually called `fileName`.
 RaidRolls_G.classColours = {
     HUNTER = "|cFFABD473",
     WARLOCK = "|cFF8787ED",
@@ -22,4 +24,10 @@ RaidRolls_G.channelColours = {
     RAID = "|cFFFF7D00",
     PARTY = "|cFFAAA7FF",
     UNKNOWN = SystemMessageColour,
+}
+
+RaidRolls_G.textColours = {
+    PASS = "|cFF00ccff",
+    MULTIROLL = "|cFFFF0000",
+    MASTERLOOTER = "|cFFFF0000",
 }
