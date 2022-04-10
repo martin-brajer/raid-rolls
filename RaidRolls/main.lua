@@ -20,7 +20,9 @@ local CHAT_MSG_EVENTS = {
 
 -- OnLoad called by main.xml.
 function RaidRolls_G.onload(self)
-    print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. " loaded. Type '/raidrolls help' for help.")
+    local title = GetAddOnMetadata("RaidRolls", "Title")
+    local version = GetAddOnMetadata("RaidRolls", "Version")
+    print(title .. " v" .. version .. " loaded. Type '/raidrolls help' for help.")
     
     RaidRolls_MainFrame:SetScript("OnMouseDown",
         function(self, event)
@@ -29,12 +31,14 @@ function RaidRolls_G.onload(self)
             elseif event == "RightButton" then
                 RaidRolls_G.reset()
             end
-    end)
+        end
+    )
     
     RaidRolls_MainFrame:SetScript("OnMouseUp",
         function(self, event)
             RaidRolls_MainFrame:StopMovingOrSizing()
-    end)
+        end
+    )
     
     local row = RaidRolls_MainFrame:CreateFontString(
         "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
@@ -240,18 +244,15 @@ local GroupJoin_EventFrame = CreateFrame("Frame")
 GroupJoin_EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event)
-        
         if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
-            
             if RaidRolls_G.groupType() == nil then  -- Just left.
                 RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
-            
             else  -- Just joined.
                 RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
-            
             end
         end
-    end)
+    end
+)
 
 
 -- Invoke update after ML-relevant events are raised.
@@ -261,7 +262,8 @@ Loot_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 Loot_EventFrame:SetScript("OnEvent",
     function(self, event)
         RaidRolls_G.update()
-    end)
+    end
+)
 
 
 -- Listen to the system messages and catch some of them.
@@ -272,7 +274,6 @@ ChatSystem_EventFrame:SetScript("OnEvent",
         if RaidRolls_G.groupType() == nil then return end
         
         if msg then
-            
             -- Roll message.
             if string.find(msg, "rolls") ~= nil then
                 local name, roll, minRoll, maxRoll = msg:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
@@ -288,21 +289,18 @@ ChatSystem_EventFrame:SetScript("OnEvent",
                     -- Not max, but last. Minus to mark multiroll.
                     RaidRolls_G.rollers[name] = -roll
                 end
-            
             -- Leave raid msg.
             elseif string.find(msg, "has left the raid group.") ~= nil then
                 local name = msg:match("^(.+) has left the raid group.$")
                 if name then
                     RaidRolls_G.rollers[name] = nil
                 end
-            
             -- Leave party msg.
             elseif string.find(msg, "leaves the party.") ~= nil then
                 local name = msg:match("^(.+) leaves the party.$")
                 if name then
                     RaidRolls_G.rollers[name] = nil
                 end
-            
             else
                 return
             end
@@ -310,13 +308,13 @@ ChatSystem_EventFrame:SetScript("OnEvent",
             -- I.e. if any of the above was true.
             RaidRolls_G.update()
         end
-    end)
+    end
+)
 
 -- Listen to the CHAT_MSG_EVENTS for passing.
 local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
     function(self, event, msg, name)
-        
         if RaidRolls_G.groupType() == nil then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
@@ -327,16 +325,16 @@ ChatGroup_EventFrame:SetScript("OnEvent",
             RaidRolls_G.rollers[name] = 0
             RaidRolls_G.update()
         end
-    end)
-
+    end
+)
 
 -- On Load 2. Saved variables (RaidRollsShown) are loaded after OnLoad is run.
+-- The first time saved variables are accessible.
 local Load_EventFrame = CreateFrame("Frame")
 Load_EventFrame:RegisterEvent("ADDON_LOADED")
 Load_EventFrame:SetScript("OnEvent",
     function(self, event, addOnName)
         if addOnName  == "RaidRolls" then
-            
             if RaidRollsShown == nil then
                 -- This is the first time this addon is loaded. Initialize to true.
                 RaidRollsShown = true;
@@ -345,8 +343,8 @@ Load_EventFrame:SetScript("OnEvent",
             -- Load the saved stuff.
             RaidRolls_G.show(RaidRollsShown)
         end
-    end)
-
+    end
+)
 
 -- Register events.
 function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
@@ -355,7 +353,6 @@ function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
     end
     ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 end
-
 
 -- Unregister events.
 function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
