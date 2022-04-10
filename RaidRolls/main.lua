@@ -11,14 +11,11 @@ RaidRolls_G.rowPool = {}
 RaidRolls_G._wasInGroup = nil
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
-    "CHAT_MSG_BATTLEGROUND",
-    "CHAT_MSG_BATTLEGROUND_LEADER",
     "CHAT_MSG_PARTY_LEADER",
     "CHAT_MSG_PARTY",
     "CHAT_MSG_RAID_LEADER",
     "CHAT_MSG_RAID",
     "CHAT_MSG_WHISPER",
-    --~ "CHAT_MSG_BN_WHISPER",
     }
 
 -- OnLoad called by main.xml.
