@@ -138,21 +138,14 @@ function RaidRolls_G.groupTypeChanged()
     
     if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
         if groupType == nil then  -- No group.
-            if RaidRolls_G.wasInGroup then
-                outcome = true
-            else
-                outcome = false
-            end
+            outcome = RaidRolls_G.wasInGroup
         else  -- Group.
-            if RaidRolls_G.wasInGroup then
-                outcome = false
-            else
-                outcome = true
-            end
+            outcome = not RaidRolls_G.wasInGroup
         end
     end
     
     -- New value. Init.
+    RaidRolls_G.wasInGroup = groupType ~= nil
     if groupType == nil then
         RaidRolls_G.wasInGroup = false
     else
@@ -188,8 +181,6 @@ function RaidRolls_G.update(param)
     local row
     for _, roller in ipairs(sortedRollers) do
         local name = roller.name
-        local roll = roller.roll
-
         -- defaults; `class` is localized, `fileName` is a token
         local subgroup, class, fileName = "?", "unknown", "UNKNOWN"
         if groupType == "RAID" then
@@ -204,6 +195,10 @@ function RaidRolls_G.update(param)
             end
         end
         
+        class = RaidRolls_G.classColours[fileName] .. class .. "|r"
+        subgroup = RaidRolls_G.channelColours[groupType] .. subgroup .. "|r"
+        
+        local roll = roller.roll
         if roll == 0 then
             roll = RaidRolls_G.textColours.PASS .. "pass|r"
         elseif roll < 0 then
@@ -211,9 +206,7 @@ function RaidRolls_G.update(param)
         end
         
         row = getRow(i)
-        class = RaidRolls_G.classColours[fileName] .. class
-        subgroup = RaidRolls_G.channelColours[groupType] .. subgroup
-        row.unit:SetText(name .. " (" .. class .. "|r)[" .. subgroup .. "|r]")
+        row.unit:SetText(name .. " (" .. class .. ")[" .. subgroup .. "]")
         row.roll:SetText(roll)
 
         i = i + 1
@@ -275,17 +268,16 @@ ChatSystem_EventFrame:SetScript("OnEvent",
             -- Roll message.
             if string.find(msg, "rolls") ~= nil then
                 local name, roll, minRoll, maxRoll = msg:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
-                local minRoll = tonumber(minRoll)
-                local maxRoll = tonumber(maxRoll)
                 
-                if not(name and minRoll == 1 and maxRoll == 100) then return end
+                minRoll = tonumber(minRoll)
+                maxRoll = tonumber(maxRoll)
+                if (minRoll ~= 1 or maxRoll ~= 100) then return end
                 
                 if RaidRolls_G.rollers[name] == nil then
                     RaidRolls_G.rollers[name] = tonumber(roll)
                 else
-                    --~ rollers[name] = -math.max(math.abs(rollers[name]), roll)
                     -- Not max, but last. Minus to mark multiroll.
-                    RaidRolls_G.rollers[name] = -roll
+                    RaidRolls_G.rollers[name] = -tonumber(roll)
                 end
             -- Leave raid msg.
             elseif string.find(msg, "has left the raid group.") ~= nil then
@@ -316,8 +308,7 @@ ChatGroup_EventFrame:SetScript("OnEvent",
         if RaidRolls_G.groupType() == nil then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
-        -- strsplit?
-        name = string.gmatch(name, "[^-]+")()
+        name = string.split("-", name)
         
         if string.lower(msg) == "pass" then
             RaidRolls_G.rollers[name] = 0
