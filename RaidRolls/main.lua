@@ -23,7 +23,7 @@ function RaidRolls_G.onload(self)
     print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. " loaded. Type '/raidrolls help' for help.")
     
     RaidRolls_MainFrame:SetScript("OnMouseDown",
-        function(self, event, ...)
+        function(self, event)
             if event == "LeftButton" then
                 RaidRolls_MainFrame:StartMoving();
             elseif event == "RightButton" then
@@ -234,7 +234,7 @@ end
 local GroupJoin_EventFrame = CreateFrame("Frame")
 GroupJoin_EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 GroupJoin_EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
+    function(self, event)
         
         if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
             
@@ -254,7 +254,7 @@ local Loot_EventFrame = CreateFrame("Frame")
 Loot_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 Loot_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 Loot_EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
+    function(self, event)
         RaidRolls_G.update()
     end)
 
@@ -263,10 +263,9 @@ Loot_EventFrame:SetScript("OnEvent",
 -- Those being: rolling, leaving raid or party.
 local ChatSystem_EventFrame = CreateFrame("Frame")
 ChatSystem_EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
+    function(self, event, msg)
         if RaidRolls_G.groupType() == nil then return end
         
-        local msg = select(1, ...)
         if msg then
             
             -- Roll message.
@@ -311,7 +310,7 @@ ChatSystem_EventFrame:SetScript("OnEvent",
 -- Listen to the CHAT_MSG_EVENTS for passing.
 local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
-    function(self, event, msg, name, ...)
+    function(self, event, msg, name)
         
         if RaidRolls_G.groupType() == nil then return end
         
@@ -326,19 +325,19 @@ ChatGroup_EventFrame:SetScript("OnEvent",
     end)
 
 
--- On Load 2. Saved variables (RaidRollsShown)
--- are loaded after OnLoad is run.
+-- On Load 2. Saved variables (RaidRollsShown) are loaded after OnLoad is run.
 local Load_EventFrame = CreateFrame("Frame")
 Load_EventFrame:RegisterEvent("ADDON_LOADED")
 Load_EventFrame:SetScript("OnEvent",
-    function(self, event, ...)
-        if event == "ADDON_LOADED" and ... == "RaidRolls" then
+    function(self, event, addOnName)
+        if addOnName  == "RaidRolls" then
             
             if RaidRollsShown == nil then
-                -- This is the first time this addon
-                -- is loaded; initialize to true.
+                -- This is the first time this addon is loaded. Initialize to true.
                 RaidRollsShown = true;
             end
+            
+            -- Load the saved stuff.
             RaidRolls_G.show(RaidRollsShown)
         end
     end)
