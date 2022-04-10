@@ -69,8 +69,8 @@ function RaidRolls_G.resize(percentage)
     
     local offset = 200 * ((percentage / 100) - 1)  -- 200 == default frame width.
     RaidRolls_MainFrame:SetWidth(200 + offset)
-    -- `RaidRolls_MainFrame_UnitInfoHeader` stays where it is.
-    RaidRolls_MainFrame_RollHeader:SetPoint("TOPLEFT", "$parent_UnitInfoHeader", "TOPRIGHT", 35 + offset, 0)
+    -- `RaidRolls_MainFrame_UnitHeader` stays where it is.
+    RaidRolls_MainFrame_RollHeader:SetPoint("TOPLEFT", "$parent_UnitHeader", "TOPRIGHT", 35 + offset, 0)
 end
 
 -- Fill `rollers` by artificial values.

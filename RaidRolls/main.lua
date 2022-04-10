@@ -37,7 +37,7 @@ function RaidRolls_G.onload(self)
     local row = RaidRolls_MainFrame:CreateFontString(
         "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
-    row:SetPoint("TOPLEFT", "$parent_UnitInfoHeader", "BOTTOMLEFT")
+    row:SetPoint("TOPLEFT", "$parent_UnitHeader", "BOTTOMLEFT")
     row:SetText("Set |cFFFF0000MASTER LOOTER|r!!!")
     row:Hide()
     
@@ -73,9 +73,9 @@ local function getRow(i)
         row.L:Show()
         row.R:Show()
     else
-        l = RaidRolls_MainFrame:CreateFontString("$parent_rowL" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
+        l = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         l:SetHeight(20)
-        r = RaidRolls_MainFrame:CreateFontString("$parent_rowR" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
+        r = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         r:SetHeight(20)
         
         row = { L = l, R = r}
@@ -169,7 +169,7 @@ function RaidRolls_G.update(param)
     end)
     
     -- Default Frame (i == 1) is defined here so it does not need to be rewritten or checked each cycle.
-    local parentL = "$parent_UnitInfoHeader"
+    local parentL = "$parent_UnitHeader"
     local parentR = "$parent_RollHeader"
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
     for _, roller in ipairs(sortedRollers) do
@@ -197,8 +197,8 @@ function RaidRolls_G.update(param)
         end
         
         if i > 1 then
-            parentL = "$parent_rowL" .. tostring(i - 1)
-            parentR = "$parent_rowR" .. tostring(i - 1)
+            parentL = "$parent_UnitRow" .. tostring(i - 1)
+            parentR = "$parent_RollRow" .. tostring(i - 1)
         end
 
         local row = getRow(i)
@@ -215,7 +215,7 @@ function RaidRolls_G.update(param)
         
     if lootWarning then
         if i > 1 then
-            parentL = "$parent_rowL" .. tostring(i - 1)
+            parentL = "$parent_UnitRow" .. tostring(i - 1)
         end
         RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()

@@ -31,7 +31,7 @@
 
         <Layers>
             <Layer>
-                <FontString name="$parent_UnitInfoHeader" inherits="SystemFont_Small" text="Player (Class)[subgroup]" justifyV="TOP" justifyH="RIGHT">
+                <FontString name="$parent_UnitHeader" inherits="SystemFont_Small" text="Player (Class)[subgroup]" justifyV="TOP" justifyH="RIGHT">
 
                     <Size x="0" y="20"/>
                     <Anchors>
@@ -46,7 +46,7 @@
 
                     <Size x="0" y="20"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeTo="$parent_UnitInfoHeader" relativePoint="TOPRIGHT">
+                        <Anchor point="TOPLEFT" relativeTo="$parent_UnitHeader" relativePoint="TOPRIGHT">
                             <Offset x="35" y="0"/>
                         </Anchor>
                     </Anchors>
