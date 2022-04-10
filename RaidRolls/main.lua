@@ -8,7 +8,7 @@ RaidRollsShown = true
 -- List of {L, R} each being a FontString.
 RaidRolls_G.rowPool = {}
 -- Was the player in group last time groupTypeChanged() was called?
-RaidRolls_G._wasInGroup = nil
+RaidRolls_G.wasInGroup = nil
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
     "CHAT_MSG_PARTY_LEADER",
@@ -136,15 +136,15 @@ function RaidRolls_G.groupTypeChanged()
     local outcome = nil
     local groupType = RaidRolls_G.groupType()
     
-    if RaidRolls_G._wasInGroup ~= nil then  -- Not init.
+    if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
         if groupType == nil then  -- No group.
-            if RaidRolls_G._wasInGroup then
+            if RaidRolls_G.wasInGroup then
                 outcome = true
             else
                 outcome = false
             end
         else  -- Group.
-            if RaidRolls_G._wasInGroup then
+            if RaidRolls_G.wasInGroup then
                 outcome = false
             else
                 outcome = true
@@ -154,9 +154,9 @@ function RaidRolls_G.groupTypeChanged()
     
     -- New value. Init.
     if groupType == nil then
-        RaidRolls_G._wasInGroup = false
+        RaidRolls_G.wasInGroup = false
     else
-        RaidRolls_G._wasInGroup = true
+        RaidRolls_G.wasInGroup = true
     end
     return outcome
 end
@@ -185,9 +185,10 @@ function RaidRolls_G.update(param)
     end)
     
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
+    local row
     for _, roller in ipairs(sortedRollers) do
-        name = roller.name
-        roll = roller.roll
+        local name = roller.name
+        local roll = roller.roll
 
         -- defaults; `class` is localized, `fileName` is a token
         local subgroup, class, fileName = "?", "unknown", "UNKNOWN"
@@ -209,7 +210,7 @@ function RaidRolls_G.update(param)
             roll = RaidRolls_G.textColours.MULTIROLL .. math.abs(roll) .. "|r"
         end
         
-        local row = getRow(i)
+        row = getRow(i)
         class = RaidRolls_G.classColours[fileName] .. class
         subgroup = RaidRolls_G.channelColours[groupType] .. subgroup
         row.unit:SetText(name .. " (" .. class .. "|r)[" .. subgroup .. "|r]")
@@ -220,8 +221,7 @@ function RaidRolls_G.update(param)
     -- Here `i` is set to the line following the last one used.
         
     if lootWarning then
-        parentL = getRow(i - 1).unit
-        RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
+        RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", getRow(i - 1).unit, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()
     else
         RaidRolls_MainFrame_LOOT:Hide()
@@ -317,7 +317,7 @@ ChatGroup_EventFrame:SetScript("OnEvent",
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
         -- strsplit?
-        name =  string.gmatch(name, "[^-]+")()
+        name = string.gmatch(name, "[^-]+")()
         
         if string.lower(msg) == "pass" then
             RaidRolls_G.rollers[name] = 0
