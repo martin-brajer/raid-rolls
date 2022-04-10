@@ -73,7 +73,6 @@ local function getRow(i)
         row.L:Show()
         row.R:Show()
     else
-        row = {}
         l = RaidRolls_MainFrame:CreateFontString("$parent_rowL" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         l:SetHeight(20)
         r = RaidRolls_MainFrame:CreateFontString("$parent_rowR" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
@@ -85,12 +84,12 @@ local function getRow(i)
     return row
 end
 
--- Try to find player by name in the raid group.
+-- Try to find a player by their name in the raid group.
 -- Return nil if not found.
-local function name2raidIndex(target)
+local function name2raidIndex(target_name)
     for i = 1, GetNumGroupMembers() do
-        local name = GetRaidRosterInfo(i)  -- name, rank, subgroup, ...
-        if name == target then
+        local candidate_name = GetRaidRosterInfo(i)  -- name, rank, subgroup, ...
+        if candidate_name == target_name then
             return i
         end
     end
@@ -156,84 +155,76 @@ function RaidRolls_G.update(param)
         groupType = "UNKNOWN"
     end
     
-    local lootWarning = false
-    if UnitIsGroupLeader("player") and GetLootMethod() ~= "master" then
-        lootWarning = true
-    end
-    
-    -- 30 = (5 + 15 + 10); 20 for every input plus one for ML warning.
+    local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
+    -- 30 = (5 + 15 + 10); 20 for every input plus one for Master Looter warning.
     RaidRolls_MainFrame:SetHeight(30 + 20 * (table_count(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
     
+    -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
     local sortedRollers = {}
-    for k, v in pairs(RaidRolls_G.rollers) do
-        -- k = name; v = roll
-        table.insert(sortedRollers, { k = k, v = v })
+    for name, roll in pairs(RaidRolls_G.rollers) do
+        table.insert(sortedRollers, { name = name, roll = roll })
     end
-    table.sort(sortedRollers,
-        function(lhs, rhs)
-            return math.abs(lhs.v) > math.abs(rhs.v)
-        end)
+    table.sort(sortedRollers, function(lhs, rhs)
+        return math.abs(lhs.roll) > math.abs(rhs.roll)
+    end)
     
-    local i = 1
-    -- Default (i == 1). Here so it does not need to be rewritten or checked each cycle.
+    -- Default Frame (i == 1) is defined here so it does not need to be rewritten or checked each cycle.
     local parentL = "$parent_UnitInfoHeader"
     local parentR = "$parent_RollHeader"
-    for k, v in pairs(sortedRollers) do
-        -- v.k = name; v.v = roll
-        
-        -- defaults
-        local Name, subgroup, class, fileName = v.k, "?", "unknown", "UNKNOWN"
-        
+    local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
+    for _, roller in ipairs(sortedRollers) do
+        name = roller.name
+        roll = roller.roll
+
+        -- defaults; `class` is localized, `fileName` is a token
+        local subgroup, class, fileName = "?", "unknown", "UNKNOWN"
         if groupType == "RAID" then
-            local index = name2raidIndex(v.k)
+            local index = name2raidIndex(name)
             if index ~= nil then
-                Name, _, subgroup, _, class, fileName = GetRaidRosterInfo(index)
+                _, _, subgroup, _, class, fileName = GetRaidRosterInfo(index)
             end
-            
         elseif groupType == "PARTY" then
-            if UnitInParty(v.k) then
-                Name = v.k
+            if UnitInParty(name) then
                 subgroup = "P"
-                class, fileName = UnitClass(v.k)
+                class, fileName = UnitClass(name)
             end
         end
         
-        local roll
-        if v.v == 0 then
-            roll = RaidRolls_G.textColours.PASS.."pass|r"
-            -- roll = "|cFF00ccffpass|r"
-        elseif v.v > 0 then
-            roll = v.v
-        else
-            roll = "|cFFFF0000" .. math.abs(v.v) .. "|r"
+        if roll == 0 then
+            roll = RaidRolls_G.textColours.PASS .. "pass|r"
+        elseif roll < 0 then
+            roll = RaidRolls_G.textColours.MULTIROLL .. math.abs(roll) .. "|r"
         end
         
         if i > 1 then
             parentL = "$parent_rowL" .. tostring(i - 1)
             parentR = "$parent_rowR" .. tostring(i - 1)
         end
+
         local row = getRow(i)
-        -- Explain the string!
-        row.L:SetText(Name .. " (" .. RaidRolls_G.classColours[fileName] .. class .. "|r)[" .. RaidRolls_G.channelColours[groupType] .. subgroup .. "|r]")
+        class = RaidRolls_G.classColours[fileName] .. class
+        subgroup = RaidRolls_G.channelColours[groupType] .. subgroup
+        row.L:SetText(name .. " (" .. class .. "|r)[" .. subgroup .. "|r]")
         row.R:SetText(roll)
         row.L:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
         row.R:SetPoint("TOPLEFT", parentR, "BOTTOMLEFT")
         
         i = i + 1
     end
-    
-    
+    -- Here `i` is set to the line following the last one used.
+        
     if lootWarning then
-        if i > 1 then parentL = "$parent_rowL" .. tostring(i - 1) end
+        if i > 1 then
+            parentL = "$parent_rowL" .. tostring(i - 1)
+        end
         RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()
     else
         RaidRolls_MainFrame_LOOT:Hide()
     end
     
-    
-    -- for i = 1, table_count(RaidRolls_G.rowPool) do
-    while i <= table_count(RaidRolls_G.rowPool) do -- Rest of rows.
+    -- Iterate over the rest of rows.
+    while i <= table_count(RaidRolls_G.rowPool) do
         row = getRow(i)
         row.L:Hide()
         row.R:Hide()
@@ -293,6 +284,7 @@ ChatSystem_EventFrame:SetScript("OnEvent",
                     RaidRolls_G.rollers[name] = tonumber(roll)
                 else
                     --~ rollers[name] = -math.max(math.abs(rollers[name]), roll)
+                    -- Not max, but last. Minus to mark multiroll.
                     RaidRolls_G.rollers[name] = -roll
                 end
             
