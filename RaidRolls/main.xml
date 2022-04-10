@@ -61,14 +61,6 @@
             <OnLoad>
                 RaidRolls_G.onload()
             </OnLoad>
-            <!-- Moved to RaidRolls_G.onload().
-        <OnMouseDown>
-            RaidRolls_MainFrame:StartMoving();
-        </OnMouseDown>
--->
-            <OnMouseUp>
-                RaidRolls_MainFrame:StopMovingOrSizing();
-            </OnMouseUp>
         </Scripts>
 
     </Frame>

@@ -29,7 +29,12 @@ function RaidRolls_G.onload(self)
             elseif event == "RightButton" then
                 RaidRolls_G.reset()
             end
-        end)
+    end)
+    
+    RaidRolls_MainFrame:SetScript("OnMouseUp",
+        function(self, event)
+            RaidRolls_MainFrame:StopMovingOrSizing()
+    end)
     
     local row = RaidRolls_MainFrame:CreateFontString(
         "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
