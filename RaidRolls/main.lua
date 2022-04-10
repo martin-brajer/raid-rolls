@@ -40,9 +40,9 @@ function RaidRolls_G.onload(self)
         end
     )
     
-    local row = RaidRolls_MainFrame:CreateFontString(
-        "$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
+    local row = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
+    -- Function getRow(0).unit cannot be called in onload.
     row:SetPoint("TOPLEFT", "$parent_UnitHeader", "BOTTOMLEFT")
     row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
@@ -72,21 +72,31 @@ end
 
 -- Handle FontStrings needed for listing rolling players.
 -- Try to use as few rows as possible (recycle the old ones).
--- Return i-th row (create if necessary).
+-- Return i-th row (create if necessary). Zero gives headers.
 local function getRow(i)
+    if i == 0 then
+        return { unit = "$parent_UnitHeader", roll = "$parent_RollHeader"}
+    end
+
     local row = RaidRolls_G.rowPool[i]
     if row then
-        row.L:Show()
-        row.R:Show()
+        row.unit:Show()
+        row.roll:Show()
     else
-        l = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
-        l:SetHeight(20)
-        r = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
-        r:SetHeight(20)
+        local unit = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
+        local roll = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         
-        row = { L = l, R = r}
+        local parents = getRow(i - 1)
+        unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
+        roll:SetPoint("TOPLEFT", parents.roll, "BOTTOMLEFT")
+        
+        unit:SetHeight(20)
+        roll:SetHeight(20)
+
+        row = { unit = unit, roll = roll }
         tinsert(RaidRolls_G.rowPool, row)
     end
+
     return row
 end
 
@@ -174,9 +184,6 @@ function RaidRolls_G.update(param)
         return math.abs(lhs.roll) > math.abs(rhs.roll)
     end)
     
-    -- Default Frame (i == 1) is defined here so it does not need to be rewritten or checked each cycle.
-    local parentL = "$parent_UnitHeader"
-    local parentR = "$parent_RollHeader"
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
     for _, roller in ipairs(sortedRollers) do
         name = roller.name
@@ -202,27 +209,18 @@ function RaidRolls_G.update(param)
             roll = RaidRolls_G.textColours.MULTIROLL .. math.abs(roll) .. "|r"
         end
         
-        if i > 1 then
-            parentL = "$parent_UnitRow" .. tostring(i - 1)
-            parentR = "$parent_RollRow" .. tostring(i - 1)
-        end
-
         local row = getRow(i)
         class = RaidRolls_G.classColours[fileName] .. class
         subgroup = RaidRolls_G.channelColours[groupType] .. subgroup
-        row.L:SetText(name .. " (" .. class .. "|r)[" .. subgroup .. "|r]")
-        row.R:SetText(roll)
-        row.L:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
-        row.R:SetPoint("TOPLEFT", parentR, "BOTTOMLEFT")
-        
+        row.unit:SetText(name .. " (" .. class .. "|r)[" .. subgroup .. "|r]")
+        row.roll:SetText(roll)
+
         i = i + 1
     end
     -- Here `i` is set to the line following the last one used.
         
     if lootWarning then
-        if i > 1 then
-            parentL = "$parent_UnitRow" .. tostring(i - 1)
-        end
+        parentL = getRow(i - 1).unit
         RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", parentL, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()
     else
@@ -232,8 +230,8 @@ function RaidRolls_G.update(param)
     -- Iterate over the rest of rows.
     while i <= table_count(RaidRolls_G.rowPool) do
         row = getRow(i)
-        row.L:Hide()
-        row.R:Hide()
+        row.unit:Hide()
+        row.roll:Hide()
         i = i + 1
     end
 end
