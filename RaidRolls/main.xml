@@ -59,7 +59,7 @@
 
         <Scripts>
             <OnLoad>
-                RaidRolls_G.onload()
+                RaidRolls_G.onLoad()
             </OnLoad>
         </Scripts>
 

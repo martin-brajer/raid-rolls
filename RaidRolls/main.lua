@@ -19,7 +19,7 @@ local CHAT_MSG_EVENTS = {
     }
 
 -- OnLoad called by main.xml.
-function RaidRolls_G.onload(self)
+function RaidRolls_G.onLoad(self)
     local title = GetAddOnMetadata("RaidRolls", "Title")
     local version = GetAddOnMetadata("RaidRolls", "Version")
     print(title .. " v" .. version .. " loaded. Type '/raidrolls help' for help.")
@@ -42,32 +42,14 @@ function RaidRolls_G.onload(self)
     
     local row = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
-    -- Function getRow(0).unit cannot be called in onload.
+    -- Function getRow(0).unit cannot be called in onLoad.
     row:SetPoint("TOPLEFT", "$parent_UnitHeader", "BOTTOMLEFT")
     row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
-    hooksecurefunc('ChatEdit_ParseText', RaidRolls_G.ParseText);
-    
-    RaidRolls_G.groupTypeChanged()
+    RaidRolls_G.groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
     RaidRolls_G.update()
     RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
-end
-
--- Look for the addon user's passing. Not possible by CHAT_MSG_EVENTS.
-function RaidRolls_G.ParseText(chatEntry, send)
-     -- This function actually gets called every time the user hits a key. But the
-     -- send flag will only be set when he hits return to send the message.
-     if send == 1 then
-        -- Player "pass" only in group.
-        if RaidRolls_G.groupType() == "NOGROUP" then return end
-        
-        local msg = chatEntry:GetText(); -- Here's how you get the original text
-        if string.lower(msg) == "pass" then
-            RaidRolls_G.rollers[UnitName("player")] = 0
-            RaidRolls_G.update()
-        end
-     end
 end
 
 -- Handle FontStrings needed for listing rolling players.
@@ -113,46 +95,20 @@ local function name2raidIndex(target_name)
 end
 
 -- Table length (sort of).
-local function table_count(t)
+local function tableCount(t)
     local count = 0
     for _ in pairs(t) do count = count + 1 end
     return count
 end
 
--- Find what kind of group player is in (nil if none).
+-- Find what kind of group player is in.
 function RaidRolls_G.groupType()
-    local groupType = "NOGROUP"
     if IsInRaid() then
-        groupType = "RAID"
+        return "RAID"
     elseif IsInGroup() then
-        groupType = "PARTY"
+        return "PARTY"
     end
-    return groupType
-end
-
--- Was group joined/leaved since the last call?
--- @return Group: joined (true), leaved(false), neither (nil).
-function RaidRolls_G.groupTypeChanged()
-    local outcome = nil
-    local groupType = RaidRolls_G.groupType()
-    
-    if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
-        if groupType == "NOGROUP" then
-            outcome = RaidRolls_G.wasInGroup
-        else
-            outcome = not RaidRolls_G.wasInGroup
-        end
-    end
-    
-    -- New value. Init.
-    -- init in onload?
-    RaidRolls_G.wasInGroup = groupType ~= "NOGROUP"
-    if groupType == "NOGROUP" then
-        RaidRolls_G.wasInGroup = false
-    else
-        RaidRolls_G.wasInGroup = true
-    end
-    return outcome
+    return "NOGROUP"
 end
 
 -- Main drawing function. No processing there.
@@ -164,7 +120,7 @@ function RaidRolls_G.update(param)
     
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
     -- 30 = (5 + 15 + 10); 20 for every input plus one for Master Looter warning.
-    RaidRolls_MainFrame:SetHeight(30 + 20 * (table_count(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
+    RaidRolls_MainFrame:SetHeight(30 + 20 * (tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
     
     -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
     local sortedRollers = {}
@@ -219,7 +175,7 @@ function RaidRolls_G.update(param)
     end
     
     -- Iterate over the rest of rows.
-    while i <= table_count(RaidRolls_G.rowPool) do
+    while i <= tableCount(RaidRolls_G.rowPool) do
         row = getRow(i)
         row.unit:Hide()
         row.roll:Hide()
@@ -227,10 +183,62 @@ function RaidRolls_G.update(param)
     end
 end
 
+-- On Load 2. Saved variables (RaidRollsShown) are loaded after OnLoad is run.
+-- The first time saved variables are accessible (not while onLoad is run).
+local Load_EventFrame = CreateFrame("Frame")
+Load_EventFrame:RegisterEvent("ADDON_LOADED")
+Load_EventFrame:SetScript("OnEvent",
+    function(self, event, addOnName)
+        if addOnName  == "RaidRolls" then
+            -- Initialize on the first loading.
+            if RaidRollsShown == nil then
+                RaidRollsShown = true;
+            end
+            
+            -- Load the saved stuff.
+            RaidRolls_G.show(RaidRollsShown)
+        end
+    end
+)
+
+-- Invoke update after Master Looter relevant events are raised.
+local Loot_EventFrame = CreateFrame("Frame")
+Loot_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+Loot_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+Loot_EventFrame:SetScript("OnEvent",
+    function(self, event)
+        RaidRolls_G.update()
+    end
+)
+
+-- Was group joined/leaved since the last call?
+-- @return Group: joined (true), leaved(false), neither (nil).
+function RaidRolls_G.groupTypeChanged()
+    local outcome = nil
+    local groupType = RaidRolls_G.groupType()
+    
+    if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
+        if groupType == "NOGROUP" then
+            outcome = RaidRolls_G.wasInGroup
+        else
+            outcome = not RaidRolls_G.wasInGroup
+        end
+    end
+    
+    -- New value. Init.
+    -- init in onLoad?
+    RaidRolls_G.wasInGroup = groupType ~= "NOGROUP"
+    if groupType == "NOGROUP" then
+        RaidRolls_G.wasInGroup = false
+    else
+        RaidRolls_G.wasInGroup = true
+    end
+    return outcome
+end
 
 -- Register / unregister events when joining / leaving a group.
 local GroupJoin_EventFrame = CreateFrame("Frame")
-GroupJoin_EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
+GroupJoin_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event)
         if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
@@ -243,17 +251,39 @@ GroupJoin_EventFrame:SetScript("OnEvent",
     end
 )
 
+-- Register events.
+function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
+    for _, event in ipairs(CHAT_MSG_EVENTS) do
+        ChatGroup_EventFrame:RegisterEvent(event)
+    end
+    ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+end
 
--- Invoke update after ML-relevant events are raised.
-local Loot_EventFrame = CreateFrame("Frame")
-Loot_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-Loot_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-Loot_EventFrame:SetScript("OnEvent",
-    function(self, event)
-        RaidRolls_G.update()
+-- Unregister events.
+function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
+    for _, event in ipairs(CHAT_MSG_EVENTS) do
+        ChatGroup_EventFrame:UnregisterEvent(event)
+    end
+    ChatSystem_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+end
+
+-- Listen to the CHAT_MSG_EVENTS for passing.
+local ChatGroup_EventFrame = CreateFrame("Frame")
+ChatGroup_EventFrame:SetScript("OnEvent",
+    function(self, event, msg, name)
+        if RaidRolls_G.groupType() == "NOGROUP" then return end
+        
+        -- If the player name contains a hyphen, return the text up to the hyphen.
+        name = string.split("-", name)
+
+        print(msg)
+        
+        if string.lower(msg) == "pass" then
+            RaidRolls_G.rollers[name] = 0
+            RaidRolls_G.update()
+        end
     end
 )
-
 
 -- Listen to the system messages and catch some of them.
 -- Those being: rolling, leaving raid or party.
@@ -298,53 +328,3 @@ ChatSystem_EventFrame:SetScript("OnEvent",
         end
     end
 )
-
--- Listen to the CHAT_MSG_EVENTS for passing.
-local ChatGroup_EventFrame = CreateFrame("Frame")
-ChatGroup_EventFrame:SetScript("OnEvent",
-    function(self, event, msg, name)
-        if RaidRolls_G.groupType() == "NOGROUP" then return end
-        
-        -- If the player name contains a hyphen, return the text up to the hyphen.
-        name = string.split("-", name)
-        
-        if string.lower(msg) == "pass" then
-            RaidRolls_G.rollers[name] = 0
-            RaidRolls_G.update()
-        end
-    end
-)
-
--- On Load 2. Saved variables (RaidRollsShown) are loaded after OnLoad is run.
--- The first time saved variables are accessible.
-local Load_EventFrame = CreateFrame("Frame")
-Load_EventFrame:RegisterEvent("ADDON_LOADED")
-Load_EventFrame:SetScript("OnEvent",
-    function(self, event, addOnName)
-        if addOnName  == "RaidRolls" then
-            if RaidRollsShown == nil then
-                -- This is the first time this addon is loaded. Initialize to true.
-                RaidRollsShown = true;
-            end
-            
-            -- Load the saved stuff.
-            RaidRolls_G.show(RaidRollsShown)
-        end
-    end
-)
-
--- Register events.
-function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
-    for i, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:RegisterEvent(event)
-    end
-    ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
-end
-
--- Unregister events.
-function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
-    for i, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:UnregisterEvent(event)
-    end
-    ChatSystem_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
-end
