@@ -23,7 +23,7 @@ RaidRolls_G.classColours = {
 RaidRolls_G.channelColours = {
     RAID = "|cFFFF7D00",
     PARTY = "|cFFAAA7FF",
-    UNKNOWN = SystemMessageColour,
+    NOGROUP = SystemMessageColour,
 }
 
 RaidRolls_G.textColours = {

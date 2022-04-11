@@ -60,7 +60,7 @@ function RaidRolls_G.ParseText(chatEntry, send)
      -- send flag will only be set when he hits return to send the message.
      if send == 1 then
         -- Player "pass" only in group.
-        if RaidRolls_G.groupType() == nil then return end
+        if RaidRolls_G.groupType() == "NOGROUP" then return end
         
         local msg = chatEntry:GetText(); -- Here's how you get the original text
         if string.lower(msg) == "pass" then
@@ -75,7 +75,7 @@ end
 -- Return i-th row (create if necessary). Zero gives headers.
 local function getRow(i)
     if i == 0 then
-        return { unit = "$parent_UnitHeader", roll = "$parent_RollHeader"}
+        return { unit = "$parent_UnitHeader", roll = "$parent_RollHeader" }
     end
 
     local row = RaidRolls_G.rowPool[i]
@@ -121,7 +121,7 @@ end
 
 -- Find what kind of group player is in (nil if none).
 function RaidRolls_G.groupType()
-    local groupType = nil
+    local groupType = "NOGROUP"
     if IsInRaid() then
         groupType = "RAID"
     elseif IsInGroup() then
@@ -137,16 +137,17 @@ function RaidRolls_G.groupTypeChanged()
     local groupType = RaidRolls_G.groupType()
     
     if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
-        if groupType == nil then  -- No group.
+        if groupType == "NOGROUP" then
             outcome = RaidRolls_G.wasInGroup
-        else  -- Group.
+        else
             outcome = not RaidRolls_G.wasInGroup
         end
     end
     
     -- New value. Init.
-    RaidRolls_G.wasInGroup = groupType ~= nil
-    if groupType == nil then
+    -- init in onload?
+    RaidRolls_G.wasInGroup = groupType ~= "NOGROUP"
+    if groupType == "NOGROUP" then
         RaidRolls_G.wasInGroup = false
     else
         RaidRolls_G.wasInGroup = true
@@ -159,10 +160,7 @@ end
 -- Used for rolls reset and testing.
 function RaidRolls_G.update(param)
     local groupType = RaidRolls_G.groupType()
-    if groupType == nil and param == nil then return end
-    if groupType == nil then
-        groupType = "UNKNOWN"
-    end
+    if groupType == "NOGROUP" and param == nil then return end
     
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
     -- 30 = (5 + 15 + 10); 20 for every input plus one for Master Looter warning.
@@ -236,7 +234,7 @@ GroupJoin_EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event)
         if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
-            if RaidRolls_G.groupType() == nil then  -- Just left.
+            if RaidRolls_G.groupType() == "NOGROUP" then  -- Just left.
                 RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
             else  -- Just joined.
                 RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
@@ -262,7 +260,7 @@ Loot_EventFrame:SetScript("OnEvent",
 local ChatSystem_EventFrame = CreateFrame("Frame")
 ChatSystem_EventFrame:SetScript("OnEvent",
     function(self, event, msg)
-        if RaidRolls_G.groupType() == nil then return end
+        if RaidRolls_G.groupType() == "NOGROUP" then return end
         
         if msg then
             -- Roll message.
@@ -305,7 +303,7 @@ ChatSystem_EventFrame:SetScript("OnEvent",
 local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
     function(self, event, msg, name)
-        if RaidRolls_G.groupType() == nil then return end
+        if RaidRolls_G.groupType() == "NOGROUP" then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
         name = string.split("-", name)
