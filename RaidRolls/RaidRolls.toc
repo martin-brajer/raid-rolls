@@ -6,4 +6,4 @@
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.xml
-# colours.lua, cli.lua and main.lua loaded in main.xml
+# Other *.lua files are loaded in main.xml.
