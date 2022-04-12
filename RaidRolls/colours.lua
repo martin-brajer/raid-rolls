@@ -2,8 +2,8 @@
 local SystemMessageColour = "|cFFFFFF00"
 
 -- Colours from https://wow.gamepedia.com/Class_colors.
--- Strings are the system representation of the character's class
---     always in english, always fully capitalized. Usually called `fileName`.
+-- Keys are the system representation of the character's class:
+-- always in english, always fully capitalized, usually called `fileName`.
 RaidRolls_G.classColours = {
     HUNTER = "|cFFABD473",
     WARLOCK = "|cFF8787ED",

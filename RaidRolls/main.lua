@@ -47,15 +47,15 @@ function RaidRolls_G.onLoad(self)
     row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
-    RaidRolls_G.groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
+    groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
     RaidRolls_G.update()
-    -- if RaidRolls_G.groupType() ~= "NOGROUP" then
+    -- if groupType() ~= "NOGROUP" then
     -- end
-    RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
+    ChatGroup_EventFrame_RegisterEvents()
 end
 
 -- Handle FontStrings needed for listing rolling players.
--- Try to use as few rows as possible (recycle the old ones).
+-- Uses as few rows as possible (recycles the old ones).
 -- Return i-th row (create if necessary). Zero gives headers.
 local function getRow(i)
     if i == 0 then
@@ -84,18 +84,6 @@ local function getRow(i)
     return row
 end
 
--- Try to find a player by their name in the raid group.
--- Return nil if not found.
-local function name2raidIndex(target_name)
-    for i = 1, GetNumGroupMembers() do
-        local candidate_name = GetRaidRosterInfo(i)  -- name, rank, subgroup, ...
-        if candidate_name == target_name then
-            return i
-        end
-    end
-    return nil
-end
-
 -- Table length (sort of).
 local function tableCount(t)
     local count = 0
@@ -104,7 +92,7 @@ local function tableCount(t)
 end
 
 -- Find what kind of group the player (addon user) is in.
-function RaidRolls_G.groupType()
+local function groupType()
     if IsInRaid() then
         return "RAID"
     elseif IsInGroup() then  -- Any group type but raid == party.
@@ -113,11 +101,39 @@ function RaidRolls_G.groupType()
     return "NOGROUP"
 end
 
+-- If player not found, return default values. E.g. when the player has already left the group.
+local function getGroupMemberInfo(name, groupType)
+    -- defaults
+    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", "NOGROUP"
+    
+    if groupType == "RAID" then
+        local _name, _subgroup, _class, _fileName  -- Candidates.
+        for i = 1, GetNumGroupMembers() do
+            _name, _, _subgroup_, _, _class, _fileName = GetRaidRosterInfo(i)
+            if _name == name then
+                subgroup, class, fileName = _subgroup, _class, _fileName
+                groupTypeUnit = groupType
+                break
+                -- If not break, name stays and others get default values.
+            end
+        end
+    elseif groupType == "PARTY" then
+        if UnitInParty(name) then
+            subgroup = "P"
+            class, fileName = UnitClass(name)
+            groupTypeUnit = groupType
+        end
+    end
+    
+    -- `class` is localized, `fileName` is a token.
+    return name, subgroup, class, fileName, groupTypeUnit
+end
+
 -- Main drawing function. No processing there.
 -- Any param (other than nil) make the function work even out of group.
 -- Used for rolls reset and testing.
 function RaidRolls_G.update(param)
-    local groupType = RaidRolls_G.groupType()
+    local groupType = groupType()
     if groupType == "NOGROUP" and param == nil then return end
     
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
@@ -136,23 +152,10 @@ function RaidRolls_G.update(param)
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
     local row
     for _, roller in ipairs(sortedRollers) do
-        local name = roller.name
-        -- defaults; `class` is localized, `fileName` is a token
-        local subgroup, class, fileName = "?", "unknown", "UNKNOWN"
-        if groupType == "RAID" then
-            local index = name2raidIndex(name)
-            if index ~= nil then
-                _, _, subgroup, _, class, fileName = GetRaidRosterInfo(index)
-            end
-        elseif groupType == "PARTY" then
-            if UnitInParty(name) then
-                subgroup = "P"
-                class, fileName = UnitClass(name)
-            end
-        end
+        name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
         
         class = RaidRolls_G.classColours[fileName] .. class .. "|r"
-        subgroup = RaidRolls_G.channelColours[groupType] .. subgroup .. "|r"
+        subgroup = RaidRolls_G.channelColours[groupTypeUnit] .. subgroup .. "|r"
         
         local roll = roller.roll
         if roll == 0 then
@@ -176,7 +179,7 @@ function RaidRolls_G.update(param)
         RaidRolls_MainFrame_LOOT:Hide()
     end
     
-    -- Iterate over the rest of rows.
+    -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning
     while i <= tableCount(RaidRolls_G.rowPool) do
         row = getRow(i)
         row.unit:Hide()
@@ -215,7 +218,7 @@ Loot_EventFrame:SetScript("OnEvent",
 
 -- Was group joined/leaved since the last call?
 -- @return Group: joined (true), leaved(false), neither (nil).
-function RaidRolls_G.groupTypeChanged()
+local function groupTypeChanged()
     local outcome = nil
     
     if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
@@ -242,11 +245,11 @@ local GroupJoin_EventFrame = CreateFrame("Frame")
 GroupJoin_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event)
-        if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
-            if not IsInGroup() then  -- Just left.
-                RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
-            else  -- Just joined.
-                RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
+        if groupTypeChanged() then  -- Join or leave party/raid.
+            if IsInGroup() then  -- Just joined.
+                ChatGroup_EventFrame_RegisterEvents()
+            else  -- Just left.
+                ChatGroup_EventFrame_UnregisterEvents()
             end
         end
     end
@@ -292,15 +295,15 @@ function(self, event, msg)
                 -- Leave raid msg.
             elseif string.find(msg, "has left the raid group.") ~= nil then
                 local name = msg:match("^(.+) has left the raid group.$")
-                if name then
-                    RaidRolls_G.rollers[name] = nil
-                end
+                -- if name then
+                --     RaidRolls_G.rollers[name] = nil
+                -- end
                 -- Leave party msg.
             elseif string.find(msg, "leaves the party.") ~= nil then
                 local name = msg:match("^(.+) leaves the party.$")
-                if name then
-                    RaidRolls_G.rollers[name] = nil
-                end
+                -- if name then
+                --     RaidRolls_G.rollers[name] = nil
+                -- end
             else
                 return
             end
@@ -313,7 +316,7 @@ function(self, event, msg)
 
 -- Register events.
 -- Must be defined after EventFrames are defined (otherwise onLoad call will try to access global variants).
-function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
+local function ChatGroup_EventFrame_RegisterEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         ChatGroup_EventFrame:RegisterEvent(event)
     end
@@ -321,7 +324,7 @@ function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
 end
 
 -- Unregister events.
-function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
+local function ChatGroup_EventFrame_UnregisterEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         ChatGroup_EventFrame:UnregisterEvent(event)
     end
