@@ -49,6 +49,8 @@ function RaidRolls_G.onLoad(self)
     
     RaidRolls_G.groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
     RaidRolls_G.update()
+    -- if RaidRolls_G.groupType() ~= "NOGROUP" then
+    -- end
     RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
 end
 
@@ -101,11 +103,11 @@ local function tableCount(t)
     return count
 end
 
--- Find what kind of group player is in.
+-- Find what kind of group the player (addon user) is in.
 function RaidRolls_G.groupType()
     if IsInRaid() then
         return "RAID"
-    elseif IsInGroup() then
+    elseif IsInGroup() then  -- Any group type but raid == party.
         return "PARTY"
     end
     return "NOGROUP"
@@ -215,10 +217,9 @@ Loot_EventFrame:SetScript("OnEvent",
 -- @return Group: joined (true), leaved(false), neither (nil).
 function RaidRolls_G.groupTypeChanged()
     local outcome = nil
-    local groupType = RaidRolls_G.groupType()
     
     if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
-        if groupType == "NOGROUP" then
+        if not IsInGroup() then
             outcome = RaidRolls_G.wasInGroup
         else
             outcome = not RaidRolls_G.wasInGroup
@@ -227,8 +228,8 @@ function RaidRolls_G.groupTypeChanged()
     
     -- New value. Init.
     -- init in onLoad?
-    RaidRolls_G.wasInGroup = groupType ~= "NOGROUP"
-    if groupType == "NOGROUP" then
+    RaidRolls_G.wasInGroup = IsInGroup()
+    if not IsInGroup() then
         RaidRolls_G.wasInGroup = false
     else
         RaidRolls_G.wasInGroup = true
@@ -242,7 +243,7 @@ GroupJoin_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupJoin_EventFrame:SetScript("OnEvent",
     function(self, event)
         if RaidRolls_G.groupTypeChanged() then  -- Join or leave party/raid.
-            if RaidRolls_G.groupType() == "NOGROUP" then  -- Just left.
+            if not IsInGroup() then  -- Just left.
                 RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
             else  -- Just joined.
                 RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
@@ -251,32 +252,14 @@ GroupJoin_EventFrame:SetScript("OnEvent",
     end
 )
 
--- Register events.
-function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
-    for _, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:RegisterEvent(event)
-    end
-    ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
-end
-
--- Unregister events.
-function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
-    for _, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:UnregisterEvent(event)
-    end
-    ChatSystem_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
-end
-
--- Listen to the CHAT_MSG_EVENTS for passing.
+-- Listen to CHAT_MSG_EVENTS for passing.
 local ChatGroup_EventFrame = CreateFrame("Frame")
 ChatGroup_EventFrame:SetScript("OnEvent",
-    function(self, event, msg, name)
-        if RaidRolls_G.groupType() == "NOGROUP" then return end
+function(self, event, msg, name)
+        if not IsInGroup() then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
         name = string.split("-", name)
-
-        print(msg)
         
         if string.lower(msg) == "pass" then
             RaidRolls_G.rollers[name] = 0
@@ -285,12 +268,11 @@ ChatGroup_EventFrame:SetScript("OnEvent",
     end
 )
 
--- Listen to the system messages and catch some of them.
--- Those being: rolling, leaving raid or party.
+-- Listen to CHAT_MSG_SYSTEM and catch rolling, leaving raid or party.
 local ChatSystem_EventFrame = CreateFrame("Frame")
 ChatSystem_EventFrame:SetScript("OnEvent",
-    function(self, event, msg)
-        if RaidRolls_G.groupType() == "NOGROUP" then return end
+function(self, event, msg)
+        if not IsInGroup() then return end
         
         if msg then
             -- Roll message.
@@ -307,13 +289,13 @@ ChatSystem_EventFrame:SetScript("OnEvent",
                     -- Not max, but last. Minus to mark multiroll.
                     RaidRolls_G.rollers[name] = -tonumber(roll)
                 end
-            -- Leave raid msg.
+                -- Leave raid msg.
             elseif string.find(msg, "has left the raid group.") ~= nil then
                 local name = msg:match("^(.+) has left the raid group.$")
                 if name then
                     RaidRolls_G.rollers[name] = nil
                 end
-            -- Leave party msg.
+                -- Leave party msg.
             elseif string.find(msg, "leaves the party.") ~= nil then
                 local name = msg:match("^(.+) leaves the party.$")
                 if name then
@@ -328,3 +310,20 @@ ChatSystem_EventFrame:SetScript("OnEvent",
         end
     end
 )
+
+-- Register events.
+-- Must be defined after EventFrames are defined (otherwise onLoad call will try to access global variants).
+function RaidRolls_G.ChatGroup_EventFrame_RegisterEvents()
+    for _, event in ipairs(CHAT_MSG_EVENTS) do
+        ChatGroup_EventFrame:RegisterEvent(event)
+    end
+    ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+end
+
+-- Unregister events.
+function RaidRolls_G.ChatGroup_EventFrame_UnregisterEvents()
+    for _, event in ipairs(CHAT_MSG_EVENTS) do
+        ChatGroup_EventFrame:UnregisterEvent(event)
+    end
+    ChatSystem_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+end
