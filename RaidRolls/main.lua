@@ -7,7 +7,7 @@ RaidRolls_G.rollers = {}
 RaidRollsShown = true
 -- List of {L, R} each being a FontString.
 RaidRolls_G.rowPool = {}
--- Was the player in group last time RaidRolls_G.groupTypeChanged() was called?
+-- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
@@ -46,41 +46,23 @@ MasterLooter_EventFrame:SetScript("OnEvent",
     end
 )
 
--- Was group joined/leaved since the last call?
--- @return Group: joined (true), leaved(false), neither (nil).
-function RaidRolls_G.groupTypeChanged()
-    local outcome = nil
-
-    if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
-        if not IsInGroup() then
-            outcome = RaidRolls_G.wasInGroup
-        else
-            outcome = not RaidRolls_G.wasInGroup
-        end
-    end
-    
-    -- New value. Init.
-    -- init in onLoad?
-    RaidRolls_G.wasInGroup = IsInGroup()
-    if not IsInGroup() then
-        RaidRolls_G.wasInGroup = false
-    else
-        RaidRolls_G.wasInGroup = true
-    end
-    return outcome
-end
-
 -- Register / unregister events when the addon user joins or leaves a group.
 local GroupUpdate_EventFrame = CreateFrame("Frame", "GroupUpdate_EventFrame")
 GroupUpdate_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupUpdate_EventFrame:SetScript("OnEvent",
     function(self, event)
+        -- local groupStatusChanged = IsInGroup() ~= RaidRolls_G.wasInGroup  -- XOR
+        -- RaidRolls_G.wasInGroup = IsInGroup()
+        -- -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
+        -- if groupStatusChanged then
+        
         -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
-        if RaidRolls_G.groupTypeChanged() then
+        if IsInGroup() ~= RaidRolls_G.wasInGroup then  -- Group status changed.
+            RaidRolls_G.wasInGroup = IsInGroup()
             if IsInGroup() then  -- Just joined.
-                RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
+                RaidRolls_G.RegisterChatEvents()
             else  -- Just left.
-                RaidRolls_G.GroupChannels_EventFrame_UnregisterEvents()
+                RaidRolls_G.UnregisterChatEvents()
             end
         -- Other changes like other ppl joining or leaving.
         elseif IsInGroup() then
@@ -152,11 +134,11 @@ function RaidRolls_G.onLoad(self)
     row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
-    RaidRolls_G.groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
+    RaidRolls_G.wasInGroup = IsInGroup()
     RaidRolls_G.update()
     -- if groupType() ~= "NOGROUP" then
     -- end
-    RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
+    RaidRolls_G.RegisterChatEvents()
 end
 
 -- Handle FontStrings needed for listing rolling players.
@@ -295,7 +277,7 @@ end
 
 -- Register events.
 -- Must be defined after EventFrames are defined (otherwise onLoad call will try to access global variants).
-function RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
+function RaidRolls_G.RegisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         GroupChannels_EventFrame:RegisterEvent(event)
     end
@@ -303,7 +285,7 @@ function RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
 end
 
 -- Unregister events.
-function RaidRolls_G.GroupChannels_EventFrame_UnregisterEvents()
+function RaidRolls_G.UnregisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         GroupChannels_EventFrame:UnregisterEvent(event)
     end
