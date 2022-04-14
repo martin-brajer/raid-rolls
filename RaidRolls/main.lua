@@ -7,7 +7,7 @@ RaidRolls_G.rollers = {}
 RaidRollsShown = true
 -- List of {L, R} each being a FontString.
 RaidRolls_G.rowPool = {}
--- Was the player in group last time groupTypeChanged() was called?
+-- Was the player in group last time RaidRolls_G.groupTypeChanged() was called?
 RaidRolls_G.wasInGroup = nil
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
@@ -16,7 +16,7 @@ local CHAT_MSG_EVENTS = {
     "CHAT_MSG_RAID_LEADER",
     "CHAT_MSG_RAID",
     "CHAT_MSG_WHISPER",
-    }
+}
 
 -- OnLoad called by main.xml.
 function RaidRolls_G.onLoad(self)
@@ -42,22 +42,21 @@ function RaidRolls_G.onLoad(self)
     
     local row = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
-    -- Function getRow(0).unit cannot be called in onLoad.
-    row:SetPoint("TOPLEFT", "$parent_UnitHeader", "BOTTOMLEFT")
+    row:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
     row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
-    groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
+    RaidRolls_G.groupTypeChanged()  -- initialize RaidRolls_G.wasInGroup
     RaidRolls_G.update()
     -- if groupType() ~= "NOGROUP" then
     -- end
-    ChatGroup_EventFrame_RegisterEvents()
+    RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
 end
 
 -- Handle FontStrings needed for listing rolling players.
 -- Uses as few rows as possible (recycles the old ones).
 -- Return i-th row (create if necessary). Zero gives headers.
-local function getRow(i)
+function RaidRolls_G.getRow(i)
     if i == 0 then
         return { unit = "$parent_UnitHeader", roll = "$parent_RollHeader" }
     end
@@ -70,7 +69,7 @@ local function getRow(i)
         local unit = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         local roll = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "RaidRolls_MainFrame", "GameTooltipText")
         
-        local parents = getRow(i - 1)
+        local parents = RaidRolls_G.getRow(i - 1)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
         roll:SetPoint("TOPLEFT", parents.roll, "BOTTOMLEFT")
         
@@ -109,7 +108,7 @@ local function getGroupMemberInfo(name, groupType)
     if groupType == "RAID" then
         local _name, _subgroup, _class, _fileName  -- Candidates.
         for i = 1, GetNumGroupMembers() do
-            _name, _, _subgroup_, _, _class, _fileName = GetRaidRosterInfo(i)
+            _name, _, _subgroup, _, _class, _fileName = GetRaidRosterInfo(i)
             if _name == name then
                 subgroup, class, fileName = _subgroup, _class, _fileName
                 groupTypeUnit = groupType
@@ -129,14 +128,14 @@ local function getGroupMemberInfo(name, groupType)
     return name, subgroup, class, fileName, groupTypeUnit
 end
 
--- Main drawing function. No processing there.
--- Any param (other than nil) make the function work even out of group.
+-- Main drawing function.
+-- Any param (other than nil) make the function work even out of group. IS IT A PROBLEM?
 -- Used for rolls reset and testing.
 function RaidRolls_G.update(param)
     local groupType = groupType()
-    if groupType == "NOGROUP" and param == nil then return end
-    
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
+    -- if groupType == "NOGROUP" and param == nil then return end
+    
     -- 30 = (5 + 15 + 10); 20 for every input plus one for Master Looter warning.
     RaidRolls_MainFrame:SetHeight(30 + 20 * (tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
     
@@ -164,7 +163,7 @@ function RaidRolls_G.update(param)
             roll = RaidRolls_G.textColours.MULTIROLL .. math.abs(roll) .. "|r"
         end
         
-        row = getRow(i)
+        row = RaidRolls_G.getRow(i)
         row.unit:SetText(name .. " (" .. class .. ")[" .. subgroup .. "]")
         row.roll:SetText(roll)
 
@@ -173,7 +172,7 @@ function RaidRolls_G.update(param)
     -- Here `i` is set to the line following the last one used.
         
     if lootWarning then
-        RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", getRow(i - 1).unit, "BOTTOMLEFT")
+        RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
         RaidRolls_MainFrame_LOOT:Show()
     else
         RaidRolls_MainFrame_LOOT:Hide()
@@ -181,18 +180,18 @@ function RaidRolls_G.update(param)
     
     -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning
     while i <= tableCount(RaidRolls_G.rowPool) do
-        row = getRow(i)
+        row = RaidRolls_G.getRow(i)
         row.unit:Hide()
         row.roll:Hide()
         i = i + 1
     end
 end
 
--- On Load 2. Saved variables (RaidRollsShown) are loaded after OnLoad is run.
--- The first time saved variables are accessible (not while onLoad is run).
-local Load_EventFrame = CreateFrame("Frame")
-Load_EventFrame:RegisterEvent("ADDON_LOADED")
-Load_EventFrame:SetScript("OnEvent",
+-- Saved variables (RaidRollsShown) are loaded here.
+-- The first time saved variables are accessible (they are not while onLoad is run).
+local LoadSavedVariables_EventFrame = CreateFrame("Frame", "LoadSavedVariables_EventFrame")
+LoadSavedVariables_EventFrame:RegisterEvent("ADDON_LOADED")
+LoadSavedVariables_EventFrame:SetScript("OnEvent",
     function(self, event, addOnName)
         if addOnName  == "RaidRolls" then
             -- Initialize on the first loading.
@@ -207,10 +206,10 @@ Load_EventFrame:SetScript("OnEvent",
 )
 
 -- Invoke update after Master Looter relevant events are raised.
-local Loot_EventFrame = CreateFrame("Frame")
-Loot_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-Loot_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-Loot_EventFrame:SetScript("OnEvent",
+local MasterLooter_EventFrame = CreateFrame("Frame", "MasterLooter_EventFrame")
+MasterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+MasterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+MasterLooter_EventFrame:SetScript("OnEvent",
     function(self, event)
         RaidRolls_G.update()
     end
@@ -218,9 +217,9 @@ Loot_EventFrame:SetScript("OnEvent",
 
 -- Was group joined/leaved since the last call?
 -- @return Group: joined (true), leaved(false), neither (nil).
-local function groupTypeChanged()
+function RaidRolls_G.groupTypeChanged()
     local outcome = nil
-    
+
     if RaidRolls_G.wasInGroup ~= nil then  -- Not init.
         if not IsInGroup() then
             outcome = RaidRolls_G.wasInGroup
@@ -240,31 +239,35 @@ local function groupTypeChanged()
     return outcome
 end
 
--- Register / unregister events when joining / leaving a group.
-local GroupJoin_EventFrame = CreateFrame("Frame")
-GroupJoin_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-GroupJoin_EventFrame:SetScript("OnEvent",
+-- Register / unregister events when the addon user joins or leaves a group.
+local GroupUpdate_EventFrame = CreateFrame("Frame", "GroupUpdate_EventFrame")
+GroupUpdate_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+GroupUpdate_EventFrame:SetScript("OnEvent",
     function(self, event)
-        if groupTypeChanged() then  -- Join or leave party/raid.
+        -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
+        if RaidRolls_G.groupTypeChanged() then
             if IsInGroup() then  -- Just joined.
-                ChatGroup_EventFrame_RegisterEvents()
+                RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
             else  -- Just left.
-                ChatGroup_EventFrame_UnregisterEvents()
+                RaidRolls_G.GroupChannels_EventFrame_UnregisterEvents()
             end
+        -- Other changes like other ppl joining or leaving.
+        else
+            RaidRolls_G.update()
         end
     end
 )
 
 -- Listen to CHAT_MSG_EVENTS for passing.
-local ChatGroup_EventFrame = CreateFrame("Frame")
-ChatGroup_EventFrame:SetScript("OnEvent",
-function(self, event, msg, name)
-        if not IsInGroup() then return end
+local GroupChannels_EventFrame = CreateFrame("Frame", "GroupChannels_EventFrame")
+GroupChannels_EventFrame:SetScript("OnEvent",
+    function(self, event, text, name)
+        -- if not IsInGroup() then return end
         
         -- If the player name contains a hyphen, return the text up to the hyphen.
         name = string.split("-", name)
         
-        if string.lower(msg) == "pass" then
+        if string.lower(text) == "pass" then
             RaidRolls_G.rollers[name] = 0
             RaidRolls_G.update()
         end
@@ -272,43 +275,23 @@ function(self, event, msg, name)
 )
 
 -- Listen to CHAT_MSG_SYSTEM and catch rolling, leaving raid or party.
-local ChatSystem_EventFrame = CreateFrame("Frame")
-ChatSystem_EventFrame:SetScript("OnEvent",
-function(self, event, msg)
-        if not IsInGroup() then return end
+local SystemMsg_EventFrame = CreateFrame("Frame", "SystemMsg_EventFrame")
+SystemMsg_EventFrame:SetScript("OnEvent",
+    function(self, event, text)
+        -- if not IsInGroup() then return end
         
-        if msg then
-            -- Roll message.
-            if string.find(msg, "rolls") ~= nil then
-                local name, roll, minRoll, maxRoll = msg:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
-                
-                minRoll = tonumber(minRoll)
-                maxRoll = tonumber(maxRoll)
-                if (minRoll ~= 1 or maxRoll ~= 100) then return end
-                
-                if RaidRolls_G.rollers[name] == nil then
-                    RaidRolls_G.rollers[name] = tonumber(roll)
-                else
-                    -- Not max, but last. Minus to mark multiroll.
-                    RaidRolls_G.rollers[name] = -tonumber(roll)
-                end
-                -- Leave raid msg.
-            elseif string.find(msg, "has left the raid group.") ~= nil then
-                local name = msg:match("^(.+) has left the raid group.$")
-                -- if name then
-                --     RaidRolls_G.rollers[name] = nil
-                -- end
-                -- Leave party msg.
-            elseif string.find(msg, "leaves the party.") ~= nil then
-                local name = msg:match("^(.+) leaves the party.$")
-                -- if name then
-                --     RaidRolls_G.rollers[name] = nil
-                -- end
-            else
-                return
-            end
+        if string.find(text, "rolls") ~= nil then
+            local name, roll, minRoll, maxRoll = text:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
             
-            -- I.e. if any of the above was true.
+            minRoll = tonumber(minRoll)
+            maxRoll = tonumber(maxRoll)
+            if (minRoll ~= 1 or maxRoll ~= 100) then return end
+            
+            if RaidRolls_G.rollers[name] == nil then
+                RaidRolls_G.rollers[name] = tonumber(roll)
+            else
+                RaidRolls_G.rollers[name] = -tonumber(roll)  -- Minus to mark multiroll.
+            end
             RaidRolls_G.update()
         end
     end
@@ -316,17 +299,17 @@ function(self, event, msg)
 
 -- Register events.
 -- Must be defined after EventFrames are defined (otherwise onLoad call will try to access global variants).
-local function ChatGroup_EventFrame_RegisterEvents()
+function RaidRolls_G.GroupChannels_EventFrame_RegisterEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:RegisterEvent(event)
+        GroupChannels_EventFrame:RegisterEvent(event)
     end
-    ChatSystem_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+    SystemMsg_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 end
 
 -- Unregister events.
-local function ChatGroup_EventFrame_UnregisterEvents()
+function RaidRolls_G.GroupChannels_EventFrame_UnregisterEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
-        ChatGroup_EventFrame:UnregisterEvent(event)
+        GroupChannels_EventFrame:UnregisterEvent(event)
     end
-    ChatSystem_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+    SystemMsg_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
 end
