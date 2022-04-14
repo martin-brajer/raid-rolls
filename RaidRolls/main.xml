@@ -3,7 +3,6 @@
     ..\..\FrameXML\UI.xsd">
 
     <Script File="main.lua"/>
-    <Script File="colours.lua"/>
     <Script File="cli.lua"/>
 
     <Frame name="RaidRolls_MainFrame" parent="UIParent" hidden="false" enableMouse="true" movable="true">

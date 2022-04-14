@@ -1,14 +1,27 @@
 -- Global locals.
 RaidRolls_G = {}
+-- Saved variables
+RaidRollsShown = true  -- Was the main frame shown at the end of the last session?
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
--- Was the main frame shown at the end of the last session?
-RaidRollsShown = true
--- List of {L, R} each being a FontString.
+-- Collection of {unit, roll} to be used to show data rows.
 RaidRolls_G.rowPool = {}
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
+-- All colours used..
+RaidRolls_G.colours = {
+    -- Group type
+    RAID = "FFFF7D00",
+    PARTY = "FFAAA7FF",
+    NOGROUP = "FFFFFF00",  -- System message colour
+    -- GUI
+    PASS = "FF00ccff",
+    MULTIROLL = "FFFF0000",
+    MASTERLOOTER = "FFFF0000",
+    -- Misc.
+    UNKNOWN = "FFFFFF00",  -- System message colour
+}
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
     "CHAT_MSG_PARTY_LEADER",
@@ -25,7 +38,7 @@ LoadSavedVariables_EventFrame:RegisterEvent("ADDON_LOADED")
 LoadSavedVariables_EventFrame:SetScript("OnEvent",
     function(self, event, addOnName)
         if addOnName  == "RaidRolls" then
-            -- Initialize on the first loading.
+            -- Initialize when first loaded.
             if RaidRollsShown == nil then
                 RaidRollsShown = true;
             end
@@ -51,11 +64,6 @@ local GroupUpdate_EventFrame = CreateFrame("Frame", "GroupUpdate_EventFrame")
 GroupUpdate_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupUpdate_EventFrame:SetScript("OnEvent",
     function(self, event)
-        -- local groupStatusChanged = IsInGroup() ~= RaidRolls_G.wasInGroup  -- XOR
-        -- RaidRolls_G.wasInGroup = IsInGroup()
-        -- -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
-        -- if groupStatusChanged then
-        
         -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
         if IsInGroup() ~= RaidRolls_G.wasInGroup then  -- Group status changed.
             RaidRolls_G.wasInGroup = IsInGroup()
@@ -131,14 +139,14 @@ function RaidRolls_G.onLoad(self)
     local row = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
     row:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
-    row:SetText("Set " .. RaidRolls_G.textColours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
+    row:SetText("Set |c" .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     row:Hide()
     
     RaidRolls_G.wasInGroup = IsInGroup()
+    if IsInGroup() then
+        RaidRolls_G.RegisterChatEvents()
+    end
     RaidRolls_G.update()
-    -- if groupType() ~= "NOGROUP" then
-    -- end
-    RaidRolls_G.RegisterChatEvents()
 end
 
 -- Handle FontStrings needed for listing rolling players.
@@ -219,10 +227,9 @@ end
 -- Main drawing function.
 -- Any param (other than nil) make the function work even out of group. IS IT A PROBLEM?
 -- Used for rolls reset and testing.
-function RaidRolls_G.update(param)
+function RaidRolls_G.update()
     local groupType = groupType()
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
-    -- if groupType == "NOGROUP" and param == nil then return end
     
     -- 30 = (5 + 15 + 10); 20 for every input plus one for Master Looter warning.
     RaidRolls_MainFrame:SetHeight(30 + 20 * (tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)))
@@ -239,16 +246,22 @@ function RaidRolls_G.update(param)
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
     local row
     for _, roller in ipairs(sortedRollers) do
-        name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
+        local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
         
-        class = RaidRolls_G.classColours[fileName] .. class .. "|r"
-        subgroup = RaidRolls_G.channelColours[groupTypeUnit] .. subgroup .. "|r"
+        local classColour = RAID_CLASS_COLORS[fileName]
+        if classColour == nil then
+            classColour = RaidRolls_G.colours.UNKNOWN
+        else
+            classColour = classColour.colorStr
+        end
+        class = "|c" .. classColour .. class .. "|r"
+        subgroup = "|c" .. RaidRolls_G.colours[groupTypeUnit] .. subgroup .. "|r"
         
         local roll = roller.roll
         if roll == 0 then
-            roll = RaidRolls_G.textColours.PASS .. "pass|r"
+            roll = "|c" .. RaidRolls_G.colours.PASS .. "pass|r"
         elseif roll < 0 then
-            roll = RaidRolls_G.textColours.MULTIROLL .. math.abs(roll) .. "|r"
+            roll = "|c" .. RaidRolls_G.colours.MULTIROLL .. math.abs(roll) .. "|r"
         end
         
         row = RaidRolls_G.getRow(i)

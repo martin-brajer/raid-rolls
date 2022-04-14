@@ -57,7 +57,7 @@ end
 -- Erace previous rolls.
 function RaidRolls_G.reset()
     RaidRolls_G.rollers = {}
-    RaidRolls_G.update(true)
+    RaidRolls_G.update()
 end
 
 -- Main frame width change.
@@ -81,5 +81,5 @@ function RaidRolls_G.test()
         player2 = 0,
         player3 = -99,
     }
-    RaidRolls_G.update(true)
+    RaidRolls_G.update()
 end
