@@ -2,7 +2,9 @@
 
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
-Raid Rolls is a free and open-source addon for World of Warcraft - client version 5.4.8 (Mists of Pandaria). Records `/roll`s of your raid/party members. Meant for rolling for items in the Master Looter mode, therefore players are sorted in descending order by their rolls.
+Raid Rolls is a free and open-source addon for World of Warcraft - client version 5.4.8 (Mists of Pandaria).
+Records `/roll`s of your raid/party members. Meant for rolling for items in the Master Looter mode,
+therefore players are sorted in descending order by their rolls.
 
 ## Features
 
@@ -41,7 +43,9 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - Icon `pair-of-dice.png` is sourced from
   [iconspng.com](https://www.iconspng.com/image/7894/pair-of-dice)
   under the following licence:
-  > Licencing! Pair of dice PNG icons - The pictures are free for personal and even for commercial use. You can modify, copy and distribute the vectors on Pair of dice in iconspng.com. All without asking for permission or setting a link to the source. So, attribution is not required.
+  > Licencing! Pair of dice PNG icons - The pictures are free for personal and even for commercial use.
+  You can modify, copy and distribute the vectors on Pair of dice in iconspng.com. All without asking
+  for permission or setting a link to the source. So, attribution is not required.
 - Versioning follows [Semantic Versioning 2.0.0](https://semver.org/).
 
 Feel free to comment, share ideas or report bugs.
