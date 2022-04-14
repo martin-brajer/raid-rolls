@@ -64,8 +64,9 @@ local GroupUpdate_EventFrame = CreateFrame("Frame", "GroupUpdate_EventFrame")
 GroupUpdate_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 GroupUpdate_EventFrame:SetScript("OnEvent",
     function(self, event)
-        -- The addon user (!!) just joined or left the group. NOT UPDATE (freeze the addon info shown).
-        if IsInGroup() ~= RaidRolls_G.wasInGroup then  -- Group status changed.
+        -- The addon user (!!) just joined or left the group. Do not update here. Freeze the addon
+        -- info shown on leave. On join the event will be invoked twice anyway (so it updates).
+        if IsInGroup() ~= RaidRolls_G.wasInGroup then  -- Player's group status changed.
             RaidRolls_G.wasInGroup = IsInGroup()
             if IsInGroup() then  -- Just joined.
                 RaidRolls_G.RegisterChatEvents()
@@ -93,7 +94,7 @@ GroupChannels_EventFrame:SetScript("OnEvent",
     end
 )
 
--- Listen to CHAT_MSG_SYSTEM event and catch rolling.
+-- Listen to CHAT_MSG_SYSTEM event and catch /rolling.
 local SystemMsg_EventFrame = CreateFrame("Frame", "SystemMsg_EventFrame")
 SystemMsg_EventFrame:SetScript("OnEvent",
     function(self, event, text)
@@ -136,7 +137,7 @@ function RaidRolls_G.onLoad(self)
         end
     )
     
-    local row = RaidRolls_MainFrame:CreateFontString("$parent_LOOT", "RaidRolls_MainFrame", "GameTooltipText")
+    local row = RaidRolls_MainFrame:CreateFontString("$parent_lootWarning", "RaidRolls_MainFrame", "GameTooltipText")
     row:SetHeight(20)
     row:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
     row:SetText("Set |c" .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
@@ -198,8 +199,7 @@ end
 
 -- If player not found, return default values. E.g. when the player has already left the group.
 local function getGroupMemberInfo(name, groupType)
-    -- defaults
-    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", "NOGROUP"
+    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", "NOGROUP"  -- defaults
     
     if groupType == "RAID" then
         local _name, _subgroup, _class, _fileName  -- Candidates.
@@ -208,8 +208,7 @@ local function getGroupMemberInfo(name, groupType)
             if _name == name then
                 subgroup, class, fileName = _subgroup, _class, _fileName
                 groupTypeUnit = groupType
-                break
-                -- If not break, name stays and others get default values.
+                break  -- If not break, name stays and others get default values.
             end
         end
     elseif groupType == "PARTY" then
@@ -225,8 +224,6 @@ local function getGroupMemberInfo(name, groupType)
 end
 
 -- Main drawing function.
--- Any param (other than nil) make the function work even out of group. IS IT A PROBLEM?
--- Used for rolls reset and testing.
 function RaidRolls_G.update()
     local groupType = groupType()
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
@@ -273,13 +270,13 @@ function RaidRolls_G.update()
     -- Here `i` is set to the line following the last one used.
         
     if lootWarning then
-        RaidRolls_MainFrame_LOOT:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
-        RaidRolls_MainFrame_LOOT:Show()
+        RaidRolls_MainFrame_lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
+        RaidRolls_MainFrame_lootWarning:Show()
     else
-        RaidRolls_MainFrame_LOOT:Hide()
+        RaidRolls_MainFrame_lootWarning:Hide()
     end
     
-    -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning
+    -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning.
     while i <= tableCount(RaidRolls_G.rowPool) do
         row = RaidRolls_G.getRow(i)
         row.unit:Hide()
