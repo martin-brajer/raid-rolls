@@ -2,8 +2,8 @@
 ## Title: Raid Rolls
 ## Notes: List raid /rolls.
 ## Author: Martin Brajer
-## Version: 2.1.0
+## Version: 2.2.0
 ## SavedVariablesPerCharacter: RaidRollsShown
 
-main.xml
-# Other *.lua files are loaded in main.xml.
+main.lua
+cli.lua

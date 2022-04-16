@@ -2,14 +2,14 @@
 
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
-Raid Rolls is a free and open-source addon for World of Warcraft - client version 5.4.8 (Mists of Pandaria).
-Records `/roll`s of your raid/party members. Meant for rolling for items in the Master Looter mode,
-therefore players are sorted in descending order by their rolls.
+Raid Rolls is a lightweight addon for World of Warcraft.
+Records `/roll`s of your raid/party members and simplifies items distribution when using Master Looter.
 
 ## Features
 
-- Shows roller's class (can they equip the item) and raid group number
-  (simplifies item distribution).
+- Rollers are sorted in descending order by their rolls.
+- Shows roller's class (can they equip the item) and raid group number (simplifies
+  item distribution).
 - Saying `pass` in group channels is treated as rolling zero.
 - Right-mouse clicking on the addon window erases all rolls (the same as `/rr reset`).
 - Cheese counters:
