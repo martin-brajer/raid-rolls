@@ -12,11 +12,10 @@ addonLoaded_EventFrame:SetScript("OnEvent", function(self, event, addOnName)
         end
         RaidRolls_G.update()  -- To do lootWarning check.
         
-        -- Saved variables (RaidRollsShown) are loaded here.
+        -- Load saved variables.
         if RaidRollsShown == nil then  -- Initialize when first loaded.
             RaidRollsShown = true;
         end
-        -- Load the saved stuff.
         RaidRolls_G.show(RaidRollsShown)
     end
 end)

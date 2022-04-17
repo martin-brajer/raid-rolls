@@ -42,9 +42,9 @@ function RaidRolls_G.help()
     print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. ".");
     print("Slash Commands '/raidrolls' (or '/rr'):")
     print("  none - Commands list.")
-    print("  'show' / 'hide' / 'toggle' - Show / hide / toggle GUI.")
+    print("  'show' / 'hide' / 'toggle' - Show / hide / toggle UI.")
     print("  'help' - Uroboros!")
-    print("  'reset' - Erace all rolls.")
+    print("  'reset' - Erase all rolls.")
     print("  'resize <number>' - Extend frame width to <number> percent of default.")
     print("  'resize' - Reset frame width.")
     print("  'test' - Fill in test rolls.")
@@ -59,9 +59,6 @@ end
 -- Main frame width change.
 function RaidRolls_G.resize(percentage)
     percentage = tonumber(percentage)
-    -- if ((percentage == nil) or (percentage < 100)) then
-    --     percentage = 100
-    -- end
     if percentage == nil then
         percentage = 100
     elseif percentage < 100 then
