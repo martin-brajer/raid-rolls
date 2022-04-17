@@ -6,28 +6,22 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     
     if command == "" then
         print("Cmds: show, hide, toggle, help, reset, resize, test.")
-    
     elseif command == "show" then
         RaidRolls_G.show(true)
-    
     elseif command == "hide" then
         RaidRolls_G.show(false)
-    
     elseif command == "toggle" then
         RaidRolls_G.show(not RaidRollsShown)
-    
     elseif command == "help" then
         RaidRolls_G.help()
-        
     elseif command == "reset" then
         RaidRolls_G.reset()
-    
     elseif command == "resize" then
         RaidRolls_G.resize(arg1)
-    
     elseif command == "test" then
-        RaidRolls_G.test()
-    
+        RaidRolls_G.test(arg1)
+    elseif command == "allowsolo" then
+        RaidRolls_G.allowSolo()
     end
 end
 
@@ -42,12 +36,11 @@ function RaidRolls_G.help()
     print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. ".");
     print("Slash Commands '/raidrolls' (or '/rr'):")
     print("  none - Commands list.")
-    print("  'show' / 'hide' / 'toggle' - Show / hide / toggle UI.")
+    print("  'show' / 'hide' / 'toggle' - UI visibility.")
     print("  'help' - Uroboros!")
     print("  'reset' - Erase all rolls.")
-    print("  'resize <number>' - Extend frame width to <number> percent of default.")
-    print("  'resize' - Reset frame width.")
-    print("  'test' - Fill in test rolls.")
+    print("  'resize <percentage>' - Change the width to <percentage> of default.")
+    print("  'test <tool>' - Choose: <fill> fills in test rolls, <solo> allows out of group use.")
 end
 
 -- Erace previous rolls.
@@ -73,13 +66,20 @@ end
 
 -- Fill `rollers` by artificial values.
 -- No need to be part of a group for this to work.
-function RaidRolls_G.test()
-    RaidRolls_G.rollers = {
-        player1 = 20,
-        player2 = 0,
-        player3 = -99,
-    }
-    RaidRolls_G.update()
+function RaidRolls_G.test(tool)
+    if tool == "fill" then
+        RaidRolls_G.rollers = {
+            player1 = 20,
+            player2 = 0,
+            player3 = -99,
+        }
+        RaidRolls_G.update()
+    elseif tool == "solo" then
+        passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
+        rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+    else    
+        print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
+    end
 end
 
 function RaidRolls_G.initializeUI()
@@ -111,7 +111,7 @@ function RaidRolls_G.initializeUI()
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
     mainFrame:SetBackdropColor(unpack(RaidRolls_G.colours.BACKGROUND))
-    -- RaidRolls_G.mainFrame = mainFrame
+    RaidRolls_G.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString("$parent_UnitHeader", "OVERLAY", "SystemFont_Small")
     unitHeader:SetPoint("TOPLEFT", 5, -5)  -- right down
@@ -129,7 +129,7 @@ function RaidRolls_G.initializeUI()
     rollHeader:SetJustifyV("TOP")
     rollHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
     rollHeader:SetText("Roll")
-    -- RaidRolls_G.rollHeader = rollHeader
+    RaidRolls_G.rollHeader = rollHeader
     -- LOOT
     local lootWarning = mainFrame:CreateFontString("$parent_LootWarning", "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(RaidRolls_G.ROW_HEIGHT)

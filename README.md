@@ -29,13 +29,13 @@ Then click `AddOns` button in champion select where you can toggle the addon on 
 Cmds start by `/raidrolls` or equivalently by `/rr`.
 
 - `/rr` List commands.
-- `/rr show` `hide` `toggle` GUI visibility.
+- `/rr show` / `hide` / `toggle` UI visibility.
 - `/rr help` Show all slash commands.
 - `/rr reset` Erase all rolls.
-- `/rr resize number` Change the width to `number` percent of the default.
+- `/rr resize percentage` Change the width to `percentage` of default.
   - Minimal accepted value is 100 (default)
   - Omitting the `number` parameter resets the width.
-- `/rr test` Fill in artificial rolls.
+- `/rr test fill` / `solo` Fill in artificial rolls / allow use out of a group (until `/reload`).
 
 ## Licence & compliance
 
