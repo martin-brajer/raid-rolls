@@ -111,7 +111,7 @@ function RaidRolls_G.initializeUI()
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
     mainFrame:SetBackdropColor(unpack(RaidRolls_G.colours.BACKGROUND))
-    RaidRolls_G.mainFrame = mainFrame
+    -- RaidRolls_G.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString("$parent_UnitHeader", "OVERLAY", "SystemFont_Small")
     unitHeader:SetPoint("TOPLEFT", 5, -5)  -- right down
@@ -120,7 +120,7 @@ function RaidRolls_G.initializeUI()
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText("Player (class)[subgroup]")
     unitHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
-    RaidRolls_G.unitHeader = unitHeader
+    -- RaidRolls_G.unitHeader = unitHeader
     -- ROLL
     local rollHeader = mainFrame:CreateFontString("$parent_RollHeader", "OVERLAY", "SystemFont_Small")
     rollHeader:SetPoint("TOPLEFT", unitHeader, "TOPRIGHT", 35, 0)  -- horizontal offset relative to unitHeader
@@ -129,14 +129,14 @@ function RaidRolls_G.initializeUI()
     rollHeader:SetJustifyV("TOP")
     rollHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
     rollHeader:SetText("Roll")
-    RaidRolls_G.rollHeader = rollHeader
+    -- RaidRolls_G.rollHeader = rollHeader
     -- LOOT
-    local lootWarning = mainFrame:CreateFontString("$parent_lootWarning", "OVERLAY", "GameTooltipText")
+    local lootWarning = mainFrame:CreateFontString("$parent_LootWarning", "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(RaidRolls_G.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
     lootWarning:SetText("Set " .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     lootWarning:Hide()
-    RaidRolls_G.lootWarning = lootWarning
+    -- RaidRolls_G.lootWarning = lootWarning
 end
 
 -- Handle FontStrings needed for listing rolling players.
@@ -144,7 +144,7 @@ end
 -- Return i-th row (create if necessary). Zero gives headers.
 function RaidRolls_G.getRow(i)
     if i == 0 then
-        return { unit = RaidRolls_G.unitHeader, roll = RaidRolls_G.rollHeader }
+        return { unit = RaidRolls_MainFrame_UnitHeader, roll = RaidRolls_MainFrame_RollHeader }
     end
 
     local row = RaidRolls_G.rowPool[i]
@@ -152,8 +152,8 @@ function RaidRolls_G.getRow(i)
         row.unit:Show()
         row.roll:Show()
     else
-        local unit = RaidRolls_G.mainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "OVERLAY", "GameTooltipText")
-        local roll = RaidRolls_G.mainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "OVERLAY", "GameTooltipText")
+        local unit = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "OVERLAY", "GameTooltipText")
+        local roll = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "OVERLAY", "GameTooltipText")
         
         local parents = RaidRolls_G.getRow(i - 1)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")

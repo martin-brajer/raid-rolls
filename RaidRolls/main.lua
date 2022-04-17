@@ -90,6 +90,8 @@ local function getGroupMemberInfo(name, groupType)
             class, fileName = UnitClass(name)
             groupTypeUnit = groupType
         end
+    elseif name == UnitName("player") then  -- Also groupType == "NOGROUP".
+        class, fileName = UnitClass(name)
     end
     
     -- `class` is localized, `fileName` is a token.
@@ -97,7 +99,8 @@ local function getGroupMemberInfo(name, groupType)
 end
 
 -- Main drawing function.
-function RaidRolls_G.update()
+function RaidRolls_G.update(lootWarningOnly)
+    lootWarningOnly = lootWarningOnly or false
     local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
 
     do
@@ -105,51 +108,53 @@ function RaidRolls_G.update()
         RaidRolls_MainFrame:SetHeight(30 + RaidRolls_G.ROW_HEIGHT * numberOfRows)  -- 30 = (5 + 15 + 10)
     end
     
-    -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
-    local sortedRollers = {}
-    for name, roll in pairs(RaidRolls_G.rollers) do
-        table.insert(sortedRollers, { name = name, roll = roll })
-    end
-    table.sort(sortedRollers, function(lhs, rhs)
-        return math.abs(lhs.roll) > math.abs(rhs.roll)
-    end)
-    
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
-    local groupType = groupType()  -- Called here to avoid repetitively getting the same value.
-    local colours = RaidRolls_G.colours
-    local row
-    for _, roller in ipairs(sortedRollers) do
-        local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
-        
-        local classColour = RAID_CLASS_COLORS[fileName]
-        if classColour == nil then
-            classColour = colours.UNKNOWN
-        else
-            classColour = "|c" .. classColour.colorStr
+    if not lootWarningOnly then
+        -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
+        local sortedRollers = {}
+        for name, roll in pairs(RaidRolls_G.rollers) do
+            table.insert(sortedRollers, { name = name, roll = roll })
         end
-        class = classColour .. class .. "|r"
-        subgroup = colours[groupTypeUnit] .. subgroup .. "|r"
+        table.sort(sortedRollers, function(lhs, rhs)
+            return math.abs(lhs.roll) > math.abs(rhs.roll)
+        end)
         
-        local roll = roller.roll
-        if roll == 0 then
-            roll = colours.PASS .. "pass|r"
-        elseif roll < 0 then
-            roll = colours.MULTIROLL .. math.abs(roll) .. "|r"
-        end
-        
-        row = RaidRolls_G.getRow(i)
-        row.unit:SetText(name .. " (" .. class .. ")[" .. subgroup .. "]")
-        row.roll:SetText(roll)
+        local groupType = groupType()  -- Called here to avoid repetitively getting the same value.
+        local colours = RaidRolls_G.colours
+        local row
+        for _, roller in ipairs(sortedRollers) do
+            local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
+            
+            local classColour = RAID_CLASS_COLORS[fileName]
+            if classColour == nil then
+                classColour = colours.UNKNOWN
+            else
+                classColour = "|c" .. classColour.colorStr
+            end
+            class = classColour .. class .. "|r"
+            subgroup = colours[groupTypeUnit] .. subgroup .. "|r"
+            
+            local roll = roller.roll
+            if roll == 0 then
+                roll = colours.PASS .. "pass|r"
+            elseif roll < 0 then
+                roll = colours.MULTIROLL .. math.abs(roll) .. "|r"
+            end
+            
+            row = RaidRolls_G.getRow(i)
+            row.unit:SetText(name .. " (" .. class .. ")[" .. subgroup .. "]")
+            row.roll:SetText(roll)
 
-        i = i + 1
+            i = i + 1
+        end
+        -- Here `i` is set to the line following the last one used.
     end
-    -- Here `i` is set to the line following the last one used.
         
     if lootWarning then
-        RaidRolls_MainFrame_lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
-        RaidRolls_MainFrame_lootWarning:Show()
+        RaidRolls_MainFrame_LootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
+        RaidRolls_MainFrame_LootWarning:Show()
     else
-        RaidRolls_MainFrame_lootWarning:Hide()
+        RaidRolls_MainFrame_LootWarning:Hide()
     end
     
     -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning.
