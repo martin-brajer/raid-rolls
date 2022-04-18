@@ -13,9 +13,9 @@ Records `/roll`s of your raid/party members and simplifies items distribution wh
 - Saying `pass` in group channels is treated as rolling zero.
 - Right-mouse clicking on the addon window erases all rolls (the same as `/rr reset`).
 - Cheese counters:
-  - If the player rolled multiple times, the value si marked in red.
+    - If the player rolled multiple times, the value si marked in red.
     It is not ignored in case you forgot to reset the previous roll session.
-  - Only rolls from the default interval 1-100 are counted
+    - Only rolls from the default interval 1-100 are counted
     (e.g. `/roll 99-100` is ignored regardless of the rolled value).
 - If you are a group leader and Master Looter is not selected, notification is shown.
 
@@ -33,8 +33,8 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - `/rr help` Show all slash commands.
 - `/rr reset` Erase all rolls.
 - `/rr resize percentage` Change the width to `percentage` of default.
-  - Minimal accepted value is 100 (default)
-  - Omitting the `number` parameter resets the width.
+    - Minimal accepted value is 100 (default)
+    - Omitting the `number` parameter resets the width.
 - `/rr test fill` / `solo` Fill in artificial rolls / allow use out of a group (until `/reload`).
 
 ## Licence & compliance

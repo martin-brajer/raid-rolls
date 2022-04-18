@@ -1,12 +1,14 @@
 {
     "cSpell.words": [
-        "allowsolo",
         "iconspng",
-        "Pandaria",
-        "PPTR",
         "raidrolls",
         "TOPLEFT",
         "TOPRIGHT",
         "userdata"
-    ]
+    ],
+    "markdownlint.config": {
+        "MD007": {
+            "indent": 4
+        },
+    },
 }

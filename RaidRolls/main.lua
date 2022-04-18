@@ -5,8 +5,10 @@ RaidRollsShown = true  -- Was the main frame shown at the end of the last sessio
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
--- Collection of {unit, roll} to be used to show data rows.
-RaidRolls_G.rowPool = {}
+-- Table of Frames and FontStrings.
+RaidRolls_G.regions = {
+    rowPool = {}  -- Collection of {unit, roll} to be used to show data rows.
+}
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
 -- All colours used..
@@ -37,20 +39,19 @@ RaidRolls_G.ROW_HEIGHT = 20
 
 
 -- Register events.
--- Must be defined after EventFrames are defined (otherwise onLoad call will try to access global variants).
 function RaidRolls_G.RegisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
-        passing_EventFrame:RegisterEvent(event)
+        RaidRolls_G.regions.passing_EventFrame:RegisterEvent(event)
     end
-    rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+    RaidRolls_G.regions.rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 end
 
 -- Unregister events.
 function RaidRolls_G.UnregisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
-        passing_EventFrame:UnregisterEvent(event)
+        RaidRolls_G.regions.passing_EventFrame:UnregisterEvent(event)
     end
-    rolling_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+    RaidRolls_G.regions.rolling_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
 end
 
 -- Table length (sort of).
@@ -149,7 +150,7 @@ function RaidRolls_G.update(lootWarningOnly)
 
     do
         local numberOfRows = tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-        RaidRolls_MainFrame:SetHeight(30 + RaidRolls_G.ROW_HEIGHT * numberOfRows)  -- 30 = (5 + 15 + 10)
+        RaidRolls_G.regions.mainFrame:SetHeight(30 + RaidRolls_G.ROW_HEIGHT * numberOfRows)  -- 30 = (5 + 15 + 10)
     end
     
     local i = 1  -- Defined outside the for loop, so the index `i` is kept for future use.
@@ -158,14 +159,14 @@ function RaidRolls_G.update(lootWarningOnly)
     end
         
     if lootWarning then
-        RaidRolls_MainFrame_LootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
-        RaidRolls_MainFrame_LootWarning:Show()
+        RaidRolls_G.regions.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(i - 1).unit, "BOTTOMLEFT")
+        RaidRolls_G.regions.lootWarning:Show()
     else
-        RaidRolls_MainFrame_LootWarning:Hide()
+        RaidRolls_G.regions.lootWarning:Hide()
     end
     
     -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning.
-    while i <= tableCount(RaidRolls_G.rowPool) do
+    while i <= tableCount(RaidRolls_G.regions.rowPool) do
         row = RaidRolls_G.getRow(i)
         row.unit:Hide()
         row.roll:Hide()

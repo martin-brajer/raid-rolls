@@ -28,7 +28,7 @@ end
 -- Show or hide UI.
 function RaidRolls_G.show(bool)
     RaidRollsShown = bool
-    RaidRolls_G.mainFrame:SetShown(bool)
+    RaidRolls_G.regions.mainFrame:SetShown(bool)
 end
 
 -- Ingame help.
@@ -60,8 +60,8 @@ function RaidRolls_G.resize(percentage)
     end
     
     local offset = 200 * ((percentage / 100) - 1)  -- 200 == default frame width.
-    RaidRolls_G.mainFrame:SetWidth(200 + offset)
-    RaidRolls_G.rollHeader:SetPoint("TOPLEFT", RaidRolls_G.unitHeader, "TOPRIGHT", 35 + offset, 0)
+    RaidRolls_G.regions.mainFrame:SetWidth(200 + offset)
+    RaidRolls_G.regions.rollHeader:SetPoint("TOPLEFT", RaidRolls_G.regions.unitHeader, "TOPRIGHT", 35 + offset, 0)
 end
 
 -- Fill `rollers` by artificial values.
@@ -75,8 +75,8 @@ function RaidRolls_G.test(tool)
         }
         RaidRolls_G.update()
     elseif tool == "solo" then
-        passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
-        rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+        RaidRolls_G.regions.passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
+        RaidRolls_G.regions.rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
     else    
         print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
     end
@@ -85,7 +85,7 @@ end
 function RaidRolls_G.initializeUI()
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
-    local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    local mainFrame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mainFrame:SetSize(200, 30)
     mainFrame:SetPoint("CENTER", UIParent, 0, 0)
     -- Mouse
@@ -111,32 +111,32 @@ function RaidRolls_G.initializeUI()
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
     mainFrame:SetBackdropColor(unpack(RaidRolls_G.colours.BACKGROUND))
-    RaidRolls_G.mainFrame = mainFrame
+    RaidRolls_G.regions.mainFrame = mainFrame
     -- UNIT
-    local unitHeader = mainFrame:CreateFontString("$parent_UnitHeader", "OVERLAY", "SystemFont_Small")
+    local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     unitHeader:SetPoint("TOPLEFT", 5, -5)  -- right down
     unitHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
     unitHeader:SetJustifyH("RIGHT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText("Player (class)[subgroup]")
     unitHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
-    -- RaidRolls_G.unitHeader = unitHeader
+    RaidRolls_G.regions.unitHeader = unitHeader
     -- ROLL
-    local rollHeader = mainFrame:CreateFontString("$parent_RollHeader", "OVERLAY", "SystemFont_Small")
+    local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     rollHeader:SetPoint("TOPLEFT", unitHeader, "TOPRIGHT", 35, 0)  -- horizontal offset relative to unitHeader
     rollHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
     rollHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
     rollHeader:SetText("Roll")
-    RaidRolls_G.rollHeader = rollHeader
+    RaidRolls_G.regions.rollHeader = rollHeader
     -- LOOT
-    local lootWarning = mainFrame:CreateFontString("$parent_LootWarning", "OVERLAY", "GameTooltipText")
+    local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(RaidRolls_G.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
     lootWarning:SetText("Set " .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     lootWarning:Hide()
-    -- RaidRolls_G.lootWarning = lootWarning
+    RaidRolls_G.regions.lootWarning = lootWarning
 end
 
 -- Handle FontStrings needed for listing rolling players.
@@ -144,16 +144,16 @@ end
 -- Return i-th row (create if necessary). Zero gives headers.
 function RaidRolls_G.getRow(i)
     if i == 0 then
-        return { unit = RaidRolls_MainFrame_UnitHeader, roll = RaidRolls_MainFrame_RollHeader }
+        return { unit = RaidRolls_G.regions.unitHeader, roll = RaidRolls_G.regions.rollHeader }
     end
 
-    local row = RaidRolls_G.rowPool[i]
+    local row = RaidRolls_G.regions.rowPool[i]
     if row then
         row.unit:Show()
         row.roll:Show()
     else
-        local unit = RaidRolls_MainFrame:CreateFontString("$parent_UnitRow" .. tostring(i), "OVERLAY", "GameTooltipText")
-        local roll = RaidRolls_MainFrame:CreateFontString("$parent_RollRow" .. tostring(i), "OVERLAY", "GameTooltipText")
+        local unit = RaidRolls_G.regions.mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+        local roll = RaidRolls_G.regions.mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
         
         local parents = RaidRolls_G.getRow(i - 1)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
@@ -163,7 +163,7 @@ function RaidRolls_G.getRow(i)
         roll:SetHeight(RaidRolls_G.ROW_HEIGHT)
 
         row = { unit = unit, roll = roll }
-        tinsert(RaidRolls_G.rowPool, row)
+        tinsert(RaidRolls_G.regions.rowPool, row)
     end
 
     return row
