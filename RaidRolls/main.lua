@@ -146,7 +146,11 @@ end
 -- Main drawing function.
 function RaidRolls_G.update(lootWarningOnly)
     lootWarningOnly = lootWarningOnly or false
-    local lootWarning = UnitIsGroupLeader("player") and GetLootMethod() ~= "master"
+    
+    local lootWarning do
+        local lootMethod = GetLootMethod()
+        lootWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
+    end
 
     do
         local numberOfRows = tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
@@ -167,7 +171,7 @@ function RaidRolls_G.update(lootWarningOnly)
     
     -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning.
     while i <= tableCount(RaidRolls_G.regions.rowPool) do
-        row = RaidRolls_G.getRow(i)
+        local row = RaidRolls_G.getRow(i)
         row.unit:Hide()
         row.roll:Hide()
         i = i + 1
