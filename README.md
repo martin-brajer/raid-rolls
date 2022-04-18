@@ -34,7 +34,7 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - `/rr reset` Erase all rolls.
 - `/rr resize percentage` Change the width to `percentage` of default.
     - Minimal accepted value is 100 (default)
-    - Omitting the `number` parameter resets the width.
+    - Omitting the `percentage` parameter resets the width.
 - `/rr test fill` / `solo` Fill in artificial rolls / allow use out of a group (until `/reload`).
 
 ## Licence & compliance
