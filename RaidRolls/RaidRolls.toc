@@ -2,7 +2,7 @@
 ## Title: Raid Rolls
 ## Notes: List raid /rolls.
 ## Author: Martin Brajer
-## Version: 2.2.0
+## Version: 2.2.1
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.lua
