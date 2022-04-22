@@ -85,7 +85,7 @@ end
 function RaidRolls_G.initializeUI()
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
-    local mainFrame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mainFrame:SetSize(200, 30)
     mainFrame:SetPoint("CENTER", UIParent, 0, 0)
     -- Mouse
