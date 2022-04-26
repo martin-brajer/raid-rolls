@@ -1,14 +1,10 @@
 {
     "cSpell.words": [
         "iconspng",
+        "Pandaria",
         "raidrolls",
         "TOPLEFT",
         "TOPRIGHT",
         "userdata"
     ],
-    "markdownlint.config": {
-        "MD007": {
-            "indent": 4
-        },
-    },
 }

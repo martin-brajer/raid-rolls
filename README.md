@@ -1,6 +1,7 @@
 # Raid Rolls
 
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
+Branch for Mists of Pandaria (5.4.8).
 
 Raid Rolls is a lightweight addon for World of Warcraft.
 Records `/roll`s of your raid/party members and simplifies items distribution when using Master Looter.
