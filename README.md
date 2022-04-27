@@ -3,7 +3,7 @@
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
 Raid Rolls is a lightweight addon for World of Warcraft.
-Records `/roll`s of your raid/party members and simplifies items distribution when using Master Looter.
+Records `/roll`s of your raid/party members and simplifies items distribution.
 
 ## Features
 
@@ -17,11 +17,11 @@ Records `/roll`s of your raid/party members and simplifies items distribution wh
     It is not ignored in case you forgot to reset the previous roll session.
     - Only rolls from the default interval 1-100 are counted
     (e.g. `/roll 99-100` is ignored regardless of the rolled value).
-- If you are a group leader and Master Looter is not selected, notification is shown.
+- (pre `Personal Loot`) If you are a group leader and Master Looter is not selected, notification is shown.
 
 ## Installation
 
-Copy `RaidRolls` folder into your client `\World of Warcraft\Interface\AddOns`.
+Copy `RaidRolls` folder into your client `\World of Warcraft\_retail_\Interface\AddOns`.
 Then click `AddOns` button in champion select where you can toggle the addon on or off.
 
 ## Slash Commands
