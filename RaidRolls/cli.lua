@@ -59,9 +59,7 @@ function RaidRolls_G.resize(percentage)
         return
     end
     
-    local offset = 200 * ((percentage / 100) - 1)  -- 200 == default frame width.
-    RaidRolls_G.regions.mainFrame:SetWidth(200 + offset)
-    RaidRolls_G.regions.rollHeader:SetPoint("TOPLEFT", RaidRolls_G.regions.unitHeader, "TOPRIGHT", 35 + offset, 0)
+    RaidRolls_G.regions.mainFrame:SetWidth(RaidRolls_G.FRAME_WIDTH * (percentage / 100))
 end
 
 -- Fill `rollers` by artificial values.
@@ -86,8 +84,8 @@ function RaidRolls_G.initializeUI()
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
     local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
-    mainFrame:SetSize(200, 30)
-    mainFrame:SetPoint("CENTER", UIParent, 0, 0)
+    mainFrame:SetSize(RaidRolls_G.FRAME_WIDTH, 30)
+    mainFrame:SetPoint("TOPLEFT", UIParent, 0, 0)
     -- Mouse
     mainFrame:SetMovable(true)
     mainFrame:EnableMouse(true)
@@ -114,16 +112,16 @@ function RaidRolls_G.initializeUI()
     RaidRolls_G.regions.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
-    unitHeader:SetPoint("TOPLEFT", 5, -5)  -- right down
+    unitHeader:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 5, -5)  -- Offset right and down.
     unitHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
-    unitHeader:SetJustifyH("RIGHT")
+    unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText("Player (class)[subgroup]")
     unitHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
     RaidRolls_G.regions.unitHeader = unitHeader
     -- ROLL
     local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
-    rollHeader:SetPoint("TOPLEFT", unitHeader, "TOPRIGHT", 35, 0)  -- horizontal offset relative to unitHeader
+    rollHeader:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -16, -5)
     rollHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
