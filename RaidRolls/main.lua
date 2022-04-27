@@ -29,10 +29,12 @@ RaidRolls_G.colours = {
 }
 -- All the events (channels) searched for saying "pass".
 local CHAT_MSG_EVENTS = {
-    "CHAT_MSG_PARTY_LEADER",
+    "CHAT_MSG_INSTANCE_CHAT",
+    "CHAT_MSG_INSTANCE_CHAT_LEADER",
     "CHAT_MSG_PARTY",
-    "CHAT_MSG_RAID_LEADER",
+    "CHAT_MSG_PARTY_LEADER",
     "CHAT_MSG_RAID",
+    "CHAT_MSG_RAID_LEADER",
     "CHAT_MSG_WHISPER",
 }
 RaidRolls_G.ROW_HEIGHT = 20
