@@ -36,6 +36,7 @@ local CHAT_MSG_EVENTS = {
     "CHAT_MSG_WHISPER",
 }
 RaidRolls_G.ROW_HEIGHT = 20
+RaidRolls_G.FRAME_WIDTH = 200  -- Default value.
 
 
 -- Register events.
