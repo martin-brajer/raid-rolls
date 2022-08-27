@@ -2,8 +2,8 @@
 
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
-Raid Rolls is a lightweight addon for World of Warcraft.
-Records `/roll`s of your raid/party members and simplifies items distribution.
+Raid Rolls is a lightweight addon for World of Warcraft (both Retail and Classic).
+Records `/roll`s of your raid/party members to simplify items distribution.
 
 ## Features
 
@@ -21,7 +21,7 @@ Records `/roll`s of your raid/party members and simplifies items distribution.
 
 ## Installation
 
-Copy `RaidRolls` folder into your client `\World of Warcraft\_retail_\Interface\AddOns`.
+Copy `RaidRolls` folder into your client (e.g. `\World of Warcraft\_retail_\Interface\AddOns`).
 Then click `AddOns` button in champion select where you can toggle the addon on or off.
 
 ## Slash Commands
