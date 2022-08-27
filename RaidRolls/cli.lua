@@ -20,8 +20,6 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
         RaidRolls_G.resize(arg1)
     elseif command == "test" then
         RaidRolls_G.test(arg1)
-    elseif command == "allowsolo" then
-        RaidRolls_G.allowSolo()
     end
 end
 
