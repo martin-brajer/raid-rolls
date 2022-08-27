@@ -31,7 +31,7 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - `/rr` List commands.
 - `/rr show` / `hide` / `toggle` UI visibility.
 - `/rr help` Show all slash commands.
-- `/rr reset` Erase all rolls.
+- `/rr reset` Erase all rolls (or right-click the window).
 - `/rr resize percentage` Change the width to `percentage` of default.
     - Minimal accepted value is 100 (default)
     - Omitting the `percentage` parameter resets the width.

@@ -38,7 +38,7 @@ function RaidRolls_G.help()
     print("  none - Commands list.")
     print("  'show' / 'hide' / 'toggle' - UI visibility.")
     print("  'help' - Uroboros!")
-    print("  'reset' - Erase all rolls.")
+    print("  'reset' - Erase all rolls (or right-click the window).")
     print("  'resize <percentage>' - Change the width to <percentage> of default.")
     print("  'test <tool>' - Choose: <fill> fills in test rolls, <solo> allows out of group use.")
 end
