@@ -2,7 +2,7 @@
 ## Title: Raid Rolls
 ## Notes: Records /rolls in your group to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 3.1.0
+## Version: 3.2.0
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.lua
