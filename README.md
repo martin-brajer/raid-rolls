@@ -3,7 +3,7 @@
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
 Raid Rolls is a lightweight addon for World of Warcraft (both Retail and Classic).
-Records `/roll`s of your raid/party members to simplify items distribution.
+Records `/roll`s of your raid/party members to simplify items distribution (e.g. in [Vault of Archavon](https://www.wowhead.com/wotlk/vault-of-archavon) - VOA).
 
 ## Features
 
