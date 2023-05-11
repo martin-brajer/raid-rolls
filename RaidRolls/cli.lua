@@ -3,7 +3,7 @@ SLASH_RAIDROLLS1 = '/raidrolls';
 SLASH_RAIDROLLS2 = '/rr';
 SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     local command, arg1 = strsplit(" ", msg)
-    
+
     if command == "" then
         print("Cmds: show, hide, toggle, help, reset, resize, test.")
     elseif command == "show" then
@@ -56,7 +56,7 @@ function RaidRolls_G.resize(percentage)
         print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Cannot resize below 100%.")
         return
     end
-    
+
     RaidRolls_G.regions.mainFrame:SetWidth(RaidRolls_G.FRAME_WIDTH * (percentage / 100))
 end
 
@@ -73,7 +73,7 @@ function RaidRolls_G.test(tool)
     elseif tool == "solo" then
         RaidRolls_G.regions.passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
         RaidRolls_G.regions.rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
-    else    
+    else
         print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
     end
 end
@@ -110,7 +110,7 @@ function RaidRolls_G.initializeUI()
     RaidRolls_G.regions.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
-    unitHeader:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 5, -5)  -- Offset right and down.
+    unitHeader:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 5, -5) -- Offset right and down.
     unitHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
@@ -150,11 +150,11 @@ function RaidRolls_G.getRow(i)
     else
         local unit = RaidRolls_G.regions.mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
         local roll = RaidRolls_G.regions.mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-        
+
         local parents = RaidRolls_G.getRow(i - 1)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
         roll:SetPoint("TOPLEFT", parents.roll, "BOTTOMLEFT")
-        
+
         unit:SetHeight(RaidRolls_G.ROW_HEIGHT)
         roll:SetHeight(RaidRolls_G.ROW_HEIGHT)
 

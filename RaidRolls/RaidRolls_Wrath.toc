@@ -1,8 +1,8 @@
-## Interface: 30400
+## Interface: 30401
 ## Title: Raid Rolls
 ## Notes: Records /rolls in your group to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 3.2.0
+## Version: 4.0.0
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.lua

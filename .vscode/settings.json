@@ -5,6 +5,22 @@
         "raidrolls",
         "TOPLEFT",
         "TOPRIGHT",
-        "userdata"
+    ],
+    "Lua.diagnostics.globals": [
+        "GetAddOnMetadata",
+        "SlashCmdList",
+        "CreateFrame",
+        "IsInGroup",
+        "GetNumGroupMembers",
+        "GetRaidRosterInfo",
+        "UnitInParty",
+        "UnitClass",
+        "UnitName",
+        "GetLootMethod",
+        "UnitIsGroupLeader",
+        "IsInRaid",
+        "BackdropTemplateMixin",
+        "strsplit",
+        "tinsert"
     ],
 }
