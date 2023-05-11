@@ -41,7 +41,7 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 
 - This addon is licensed under the [MIT licence](LICENSE).
 - The icon's [source and licence](https://www.iconspng.com/image/7894/pair-of-dice)
-(in-game edited).
+  (in-game edited).
 - Versioning follows [Semantic Versioning 2.0.0](https://semver.org/).
 
 Feel free to comment, share ideas or report bugs.

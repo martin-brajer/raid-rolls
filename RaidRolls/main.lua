@@ -124,12 +124,13 @@ function RaidRolls_G.updateRollers()
         local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
 
         local classColour = RAID_CLASS_COLORS[fileName]
+        local classColour_str
         if classColour == nil then
-            classColour = colours.UNKNOWN
+            classColour_str = colours.UNKNOWN
         else
-            classColour = "|c" .. classColour.colorStr
+            classColour_str = "|c" .. classColour.colorStr
         end
-        class = classColour .. class .. "|r"
+        class = classColour_str .. class .. "|r"
         subgroup = colours[groupTypeUnit] .. subgroup .. "|r"
 
         local roll = roller.roll
