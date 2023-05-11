@@ -71,8 +71,7 @@ function RaidRolls_G.test(tool)
         }
         RaidRolls_G.update()
     elseif tool == "solo" then
-        RaidRolls_G.regions.passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
-        RaidRolls_G.regions.rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+        RaidRolls_G.RegisterSoloChatEvents()
     else
         print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
     end

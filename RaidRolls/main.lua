@@ -2,6 +2,8 @@
 RaidRolls_G = {}
 -- Table of event functions (namespace of `eventFunctions.lua`).
 RaidRolls_G.eventFunctions = {}
+-- Table of event frames and register functions(namespace of `eventFrames.lua`).
+RaidRolls_G.eventFrames = {}
 
 -- Saved variables
 RaidRollsShown = true -- Was the main frame shown at the end of the last session?
@@ -30,37 +32,12 @@ RaidRolls_G.colours = {
     UNKNOWN = "|cFFFFFF00",   -- System message colour
     SYSTEMMSG = "|cFFFFFF00", -- System message colour
 }
--- All the events (channels) searched for saying "pass".
-local CHAT_MSG_EVENTS = {
-    "CHAT_MSG_INSTANCE_CHAT",
-    "CHAT_MSG_INSTANCE_CHAT_LEADER",
-    "CHAT_MSG_PARTY",
-    "CHAT_MSG_PARTY_LEADER",
-    "CHAT_MSG_RAID",
-    "CHAT_MSG_RAID_LEADER",
-    "CHAT_MSG_WHISPER",
-}
+
 RaidRolls_G.ROW_HEIGHT = 20
 RaidRolls_G.FRAME_WIDTH = 220 -- Default value.
 
 function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.show(not RaidRollsShown)
-end
-
--- Register events.
-function RaidRolls_G.RegisterChatEvents()
-    for _, event in ipairs(CHAT_MSG_EVENTS) do
-        RaidRolls_G.regions.passing_EventFrame:RegisterEvent(event)
-    end
-    RaidRolls_G.regions.rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
-end
-
--- Unregister events.
-function RaidRolls_G.UnregisterChatEvents()
-    for _, event in ipairs(CHAT_MSG_EVENTS) do
-        RaidRolls_G.regions.passing_EventFrame:UnregisterEvent(event)
-    end
-    RaidRolls_G.regions.rolling_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
 end
 
 -- Table length (sort of).
