@@ -1,9 +1,11 @@
-## Interface: 100000
+## Interface: 100100
 ## Title: Raid Rolls
 ## Notes: Records /rolls in your group to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 3.2.1
+## Version: 4.0.0
+## IconTexture: interface\AddOns\RaidRolls\icon
 ## SavedVariablesPerCharacter: RaidRollsShown
+## AddonCompartmentFunc: RaidRolls_OnAddonCompartmentClick
 
 main.lua
 cli.lua
