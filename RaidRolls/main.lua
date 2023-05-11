@@ -1,5 +1,8 @@
 -- Global locals.
 RaidRolls_G = {}
+-- Table of event functions (namespace of `eventFunctions.lua`).
+RaidRolls_G.eventFunctions = {}
+
 -- Saved variables
 RaidRollsShown = true -- Was the main frame shown at the end of the last session?
 
