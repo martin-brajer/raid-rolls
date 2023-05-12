@@ -86,9 +86,13 @@ local function getGroupMemberInfo(name, groupType)
     return name, subgroup, class, fileName, groupTypeUnit
 end
 
+function RaidRolls_G.colorText(color, text)
+    return "|c" .. color .. text .. "|r"
+end
+
 --
 function RaidRolls_G.updateRollers()
-    local i = 1
+    local used_rows = 1
     -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
     local sortedRollers = {}
     for name, roll in pairs(RaidRolls_G.rollers) do
@@ -117,21 +121,23 @@ function RaidRolls_G.updateRollers()
 
         -- roller
         local roller_roll = roller.roll
-        local roller_str
+        local roll_str
         if roller_roll == 0 then
-            roller_str = "|c" .. RaidRolls_G.colours.PASS .. "pass" .. "|r"
+            roll_str = "|c" .. RaidRolls_G.colours.PASS .. "pass" .. "|r"
         elseif roller_roll < 0 then
-            roller_str = "|c" .. RaidRolls_G.colours.MULTIROLL .. math.abs(roller_roll) .. "|r"
+            roll_str = "|c" .. RaidRolls_G.colours.MULTIROLL .. math.abs(roller_roll) .. "|r"
+        else
+            roll_str = roller_roll
         end
 
-        row = RaidRolls_G.getRow(i)
+        row = RaidRolls_G.getRow(used_rows)
         row.unit:SetText(name .. " (" .. class_str .. ")[" .. subgroup_str .. "]")
-        row.roll:SetText(roller_str)
+        row.roll:SetText(roll_str)
 
-        i = i + 1
+        used_rows = used_rows + 1
     end
-    -- Here `i` is set to the line following the last one used.
-    return i
+    -- Here `used_rows` is set to the line following the last one used.
+    return used_rows
 end
 
 -- Main drawing function.
