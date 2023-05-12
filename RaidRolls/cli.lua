@@ -53,7 +53,7 @@ function RaidRolls_G.resize(percentage)
     if percentage == nil then
         percentage = 100
     elseif percentage < 100 then
-        print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Cannot resize below 100%.")
+        print("|c" .. RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Cannot resize below 100%.")
         return
     end
 
@@ -73,8 +73,17 @@ function RaidRolls_G.test(tool)
     elseif tool == "solo" then
         RaidRolls_G.RegisterSoloChatEvents()
     else
-        print(RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
+        print("|c" .. RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
     end
+end
+
+-- Return RGBA values between 0 and 1.
+local function hex2table(colorHexString)
+    local color_table = {}
+    for hexString in colorHexString:gmatch("..") do
+        table.insert(color_table, tonumber(hexString, 16) / 255)
+    end
+    return color_table[2], color_table[3], color_table[4], color_table[1]
 end
 
 function RaidRolls_G.initializeUI()
@@ -105,7 +114,7 @@ function RaidRolls_G.initializeUI()
         edgeSize = 16,
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
-    mainFrame:SetBackdropColor(unpack(RaidRolls_G.colours.BACKGROUND))
+    mainFrame:SetBackdropColor(hex2table(RaidRolls_G.colours.BACKGROUND))
     RaidRolls_G.regions.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
@@ -114,7 +123,7 @@ function RaidRolls_G.initializeUI()
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText("Player (class)[subgroup]")
-    unitHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
+    unitHeader:SetTextColor(hex2table(RaidRolls_G.colours.HEADER))
     RaidRolls_G.regions.unitHeader = unitHeader
     -- ROLL
     local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
@@ -122,14 +131,14 @@ function RaidRolls_G.initializeUI()
     rollHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
-    rollHeader:SetTextColor(unpack(RaidRolls_G.colours.HEADER))
+    rollHeader:SetTextColor(hex2table(RaidRolls_G.colours.HEADER))
     rollHeader:SetText("Roll")
     RaidRolls_G.regions.rollHeader = rollHeader
     -- LOOT
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(RaidRolls_G.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
-    lootWarning:SetText("Set " .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
+    lootWarning:SetText("Set |c" .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
     lootWarning:Hide()
     RaidRolls_G.regions.lootWarning = lootWarning
 end

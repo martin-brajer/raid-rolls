@@ -5,8 +5,27 @@ RaidRolls_G.eventFunctions = {}
 -- Table of event frames and register functions(namespace of `eventFrames.lua`).
 RaidRolls_G.eventFrames = {}
 
--- Saved variables
+-- SAVED VARIABLES
 RaidRollsShown = true -- Was the main frame shown at the end of the last session?
+-- CONSTANTS.
+RaidRolls_G.ROW_HEIGHT = 20
+RaidRolls_G.FRAME_WIDTH = 220 -- Default value.
+-- All colours used..
+RaidRolls_G.colours = {
+    -- Group type
+    NOGROUP = "FFFFFF00", -- System message colour
+    PARTY = "FFAAA7FF",
+    RAID = "FFFF7D00",
+    -- GUI
+    BACKGROUND = "B2333333", -- { 0.2, 0.2, 0.2, 0.7 } red, green, blue [, alpha]
+    HEADER = "FFFFFF00",     -- { 1, 1, 0, 1 } red, green, blue [, alpha]
+    MASTERLOOTER = "FFFF0000",
+    MULTIROLL = "FFFF0000",
+    PASS = "FF00ccff",
+    -- Misc.
+    UNKNOWN = "FFFFFF00",   -- System message colour
+    SYSTEMMSG = "FFFFFF00", -- System message colour
+}
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
@@ -16,25 +35,7 @@ RaidRolls_G.regions = {
 }
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
--- All colours used..
-RaidRolls_G.colours = {
-    -- Group type
-    NOGROUP = "|cFFFFFF00", -- System message colour
-    PARTY = "|cFFAAA7FF",
-    RAID = "|cFFFF7D00",
-    -- GUI
-    BACKGROUND = { 0.2, 0.2, 0.2, 0.7 },
-    HEADER = { 1, 1, 0, 1 },
-    MASTERLOOTER = "|cFFFF0000",
-    MULTIROLL = "|cFFFF0000",
-    PASS = "|cFF00ccff",
-    -- Misc.
-    UNKNOWN = "|cFFFFFF00",   -- System message colour
-    SYSTEMMSG = "|cFFFFFF00", -- System message colour
-}
 
-RaidRolls_G.ROW_HEIGHT = 20
-RaidRolls_G.FRAME_WIDTH = 220 -- Default value.
 
 function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.show(not RaidRollsShown)
@@ -98,31 +99,34 @@ function RaidRolls_G.updateRollers()
     end)
 
     local groupType = groupType() -- Called here to avoid repetitively getting the same value.
-    local colours = RaidRolls_G.colours
     local row
     for _, roller in ipairs(sortedRollers) do
         local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
 
+        -- class
         local classColour = RAID_CLASS_COLORS[fileName]
         local classColour_str
         if classColour == nil then
-            classColour_str = colours.UNKNOWN
+            classColour_str = RaidRolls_G.colours.UNKNOWN
         else
-            classColour_str = "|c" .. classColour.colorStr
+            classColour_str = classColour.colorStr
         end
-        class = classColour_str .. class .. "|r"
-        subgroup = colours[groupTypeUnit] .. subgroup .. "|r"
+        local class_str = "|c" .. classColour_str .. class .. "|r"
+        -- subgroup
+        local subgroup_str = "|c" .. RaidRolls_G.colours[groupTypeUnit] .. subgroup .. "|r"
 
-        local roll = roller.roll
-        if roll == 0 then
-            roll = colours.PASS .. "pass|r"
-        elseif roll < 0 then
-            roll = colours.MULTIROLL .. math.abs(roll) .. "|r"
+        -- roller
+        local roller_roll = roller.roll
+        local roller_str
+        if roller_roll == 0 then
+            roller_str = "|c" .. RaidRolls_G.colours.PASS .. "pass" .. "|r"
+        elseif roller_roll < 0 then
+            roller_str = "|c" .. RaidRolls_G.colours.MULTIROLL .. math.abs(roller_roll) .. "|r"
         end
 
         row = RaidRolls_G.getRow(i)
-        row.unit:SetText(name .. " (" .. class .. ")[" .. subgroup .. "]")
-        row.roll:SetText(roll)
+        row.unit:SetText(name .. " (" .. class_str .. ")[" .. subgroup_str .. "]")
+        row.roll:SetText(roller_str)
 
         i = i + 1
     end
