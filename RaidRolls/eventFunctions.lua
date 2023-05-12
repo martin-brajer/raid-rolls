@@ -3,8 +3,6 @@
 -- ADDON_LOADED
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == "RaidRolls" then
-        print(GetAddOnMetadata("RaidRolls", "Title") ..
-            " v" .. GetAddOnMetadata("RaidRolls", "Version") .. " loaded. Type '/raidrolls help' for help.")
         RaidRolls_G.initializeUI()
 
         RaidRolls_G.wasInGroup = IsInGroup()

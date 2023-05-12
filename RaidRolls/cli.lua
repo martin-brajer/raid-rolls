@@ -7,7 +7,7 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     local command, arg1 = strsplit(" ", msg)
 
     if command == "" then
-        print("Cmds: show, hide, toggle, help, reset, resize, test.")
+        print(cfg.texts.LIST_CMDS)
     elseif command == "show" then
         RaidRolls_G.show(true)
     elseif command == "hide" then
@@ -34,13 +34,9 @@ end
 -- Ingame help.
 function RaidRolls_G.help()
     print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. ".");
-    print("Slash Commands '/raidrolls' (or '/rr'):")
-    print("  none - Commands list.")
-    print("  'show' / 'hide' / 'toggle' - UI visibility.")
-    print("  'help' - Uroboros!")
-    print("  'reset' - Erase all rolls (or right-click the window).")
-    print("  'resize <percentage>' - Change the width to <percentage> of default.")
-    print("  'test <tool>' - Choose: <fill> fills in test rolls, <solo> allows out of group use.")
+    for _, line in ipairs(cfg.texts.HELP_LINES) do
+        print(line)
+    end
 end
 
 -- Erace previous rolls.
@@ -55,7 +51,7 @@ function RaidRolls_G.resize(percentage)
     if percentage == nil then
         percentage = 100
     elseif percentage < 100 then
-        print(WrapTextInColor("RaidRolls: Cannot resize below 100%.", cfg.colors.SYSTEMMSG))
+        print(WrapTextInColor(cfg.texts.RESIZE_ERROR, cfg.colors.SYSTEMMSG))
         return
     end
 
@@ -75,7 +71,7 @@ function RaidRolls_G.test(tool)
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
     else
-        print(WrapTextInColor("RaidRolls: Append either 'fill' or 'solo' parameter.", cfg.colors.SYSTEMMSG))
+        print(WrapTextInColor(cfg.texts.TEST_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
     end
 end
 
@@ -116,7 +112,7 @@ function RaidRolls_G.initializeUI()
     unitHeader:SetHeight(cfg.ROW_HEIGHT)
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
-    unitHeader:SetText("Player (class)[subgroup]")
+    unitHeader:SetText(cfg.texts.UNIT_HEADER)
     unitHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
     RaidRolls_G.regions.unitHeader = unitHeader
     -- ROLL
@@ -126,13 +122,13 @@ function RaidRolls_G.initializeUI()
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
     rollHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
-    rollHeader:SetText("Roll")
+    rollHeader:SetText(cfg.texts.ROLL_HEADER)
     RaidRolls_G.regions.rollHeader = rollHeader
     -- LOOT
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
-    lootWarning:SetText(WrapTextInColor("Set MASTER LOOTER!!!|r", cfg.colors.MASTERLOOTER))
+    lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
     RaidRolls_G.regions.lootWarning = lootWarning
 end

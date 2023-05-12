@@ -58,7 +58,7 @@ local function getGroupMemberInfo(name, groupType)
         end
     elseif groupType == "PARTY" then
         if UnitInParty(name) then
-            subgroup = "P"
+            subgroup = cfg.texts.PARTY_LABEL
             class, fileName = UnitClass(name)
             groupTypeUnit = groupType
         end
@@ -68,10 +68,6 @@ local function getGroupMemberInfo(name, groupType)
 
     -- `class` is localized, `fileName` is a token.
     return name, subgroup, class, fileName, groupTypeUnit
-end
-
-function RaidRolls_G.colorText(color, text)
-    return "|c" .. color .. text .. "|r"
 end
 
 --
@@ -103,7 +99,7 @@ function RaidRolls_G.updateRollers()
         local roller_roll = roller.roll
         local roll_str
         if roller_roll == 0 then
-            roll_str = WrapTextInColor("pass", cfg.colors.PASS)
+            roll_str = WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
         elseif roller_roll < 0 then
             roll_str = WrapTextInColor(math.abs(roller_roll), cfg.colors.MULTIROLL)
         else
