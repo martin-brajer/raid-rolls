@@ -18,6 +18,7 @@ RaidRolls_G.regions = {
 }
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
+local cfg = RaidRolls_G.config
 
 
 function RaidRolls_OnAddonCompartmentClick()
@@ -85,7 +86,6 @@ function RaidRolls_G.updateRollers()
         return math.abs(lhs.roll) > math.abs(rhs.roll)
     end)
 
-    local colors = RaidRolls_G.config.colors
     local groupType = groupType() -- Called here to avoid repetitively getting the same value.
     local row
     for _, roller in ipairs(sortedRollers) do
@@ -93,23 +93,19 @@ function RaidRolls_G.updateRollers()
 
         -- class
         local classColour = RAID_CLASS_COLORS[fileName]
-        local classColour_str
         if classColour == nil then
-            classColour_str = colors.UNKNOWN
-        else
-            classColour_str = classColour.colorStr
+            classColour = cfg.colors.UNKNOWN
         end
-        local class_str = "|c" .. classColour_str .. class .. "|r"
+        local class_str = WrapTextInColor(class, classColour)
         -- subgroup
-        local subgroup_str = "|c" .. colors[groupTypeUnit] .. subgroup .. "|r"
-
+        local subgroup_str = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
         -- roller
         local roller_roll = roller.roll
         local roll_str
         if roller_roll == 0 then
-            roll_str = "|c" .. colors.PASS .. "pass" .. "|r"
+            roll_str = WrapTextInColor("pass", cfg.colors.PASS)
         elseif roller_roll < 0 then
-            roll_str = "|c" .. colors.MULTIROLL .. math.abs(roller_roll) .. "|r"
+            roll_str = WrapTextInColor(math.abs(roller_roll), cfg.colors.MULTIROLL)
         else
             roll_str = roller_roll
         end
@@ -136,7 +132,7 @@ function RaidRolls_G.update(lootWarningOnly)
 
     do
         local numberOfRows = tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-        RaidRolls_G.regions.mainFrame:SetHeight(30 + RaidRolls_G.config.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
+        RaidRolls_G.regions.mainFrame:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
     end
 
     local i = 1 -- Defined outside the for loop, so the index `i` is kept for future use.
