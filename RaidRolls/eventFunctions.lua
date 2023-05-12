@@ -9,7 +9,7 @@ function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
 
         RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then
-            RaidRolls_G.RegisterChatEvents()
+            RaidRolls_G.eventFrames.RegisterChatEvents()
         end
         RaidRolls_G.update() -- To do lootWarning check.
 
@@ -28,9 +28,9 @@ function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
     if IsInGroup() ~= RaidRolls_G.wasInGroup then -- Player's group status changed.
         RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then                       -- Just joined.
-            RaidRolls_G.RegisterChatEvents()
+            RaidRolls_G.eventFrames.RegisterChatEvents()
         else                                      -- Just left.
-            RaidRolls_G.UnregisterChatEvents()
+            RaidRolls_G.eventFrames.UnregisterChatEvents()
         end
         -- Other changes like other ppl joining or leaving.
     elseif IsInGroup() then

@@ -40,7 +40,7 @@ local CHAT_MSG_EVENTS = {
     "CHAT_MSG_WHISPER",
 }
 
-function RaidRolls_G.RegisterChatEvents()
+function RaidRolls_G.eventFrames.RegisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         passing_EventFrame:RegisterEvent(event)
     end
@@ -48,7 +48,7 @@ function RaidRolls_G.RegisterChatEvents()
 end
 
 -- Unregister events.
-function RaidRolls_G.UnregisterChatEvents()
+function RaidRolls_G.eventFrames.UnregisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         passing_EventFrame:UnregisterEvent(event)
     end
@@ -56,7 +56,7 @@ function RaidRolls_G.UnregisterChatEvents()
 end
 
 -- Register solo channels for testing.
-function RaidRolls_G.RegisterSoloChatEvents()
+function RaidRolls_G.eventFrames.RegisterSoloChatEvents()
     passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
     rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 end
