@@ -1,3 +1,5 @@
+local cfg = RaidRolls_G.config
+
 -- Slash commands.
 SLASH_RAIDROLLS1 = '/raidrolls';
 SLASH_RAIDROLLS2 = '/rr';
@@ -53,11 +55,11 @@ function RaidRolls_G.resize(percentage)
     if percentage == nil then
         percentage = 100
     elseif percentage < 100 then
-        print("|c" .. RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Cannot resize below 100%.")
+        print("|c" .. cfg.colors.SYSTEMMSG .. "RaidRolls: Cannot resize below 100%.")
         return
     end
 
-    RaidRolls_G.regions.mainFrame:SetWidth(RaidRolls_G.FRAME_WIDTH * (percentage / 100))
+    RaidRolls_G.regions.mainFrame:SetWidth(cfg.FRAME_WIDTH * (percentage / 100))
 end
 
 -- Fill `rollers` by artificial values.
@@ -73,7 +75,7 @@ function RaidRolls_G.test(tool)
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
     else
-        print("|c" .. RaidRolls_G.colours.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
+        print("|c" .. cfg.colors.SYSTEMMSG .. "RaidRolls: Append either 'fill' or 'solo' parameter.")
     end
 end
 
@@ -90,7 +92,7 @@ function RaidRolls_G.initializeUI()
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
     local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
-    mainFrame:SetSize(RaidRolls_G.FRAME_WIDTH, 30)
+    mainFrame:SetSize(cfg.FRAME_WIDTH, 30)
     mainFrame:SetPoint("TOPLEFT", UIParent, 0, 0)
     -- Mouse
     mainFrame:SetMovable(true)
@@ -114,31 +116,31 @@ function RaidRolls_G.initializeUI()
         edgeSize = 16,
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
-    mainFrame:SetBackdropColor(hex2table(RaidRolls_G.colours.BACKGROUND))
+    mainFrame:SetBackdropColor(hex2table(cfg.colors.BACKGROUND))
     RaidRolls_G.regions.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     unitHeader:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 5, -5) -- Offset right and down.
-    unitHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
+    unitHeader:SetHeight(cfg.ROW_HEIGHT)
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText("Player (class)[subgroup]")
-    unitHeader:SetTextColor(hex2table(RaidRolls_G.colours.HEADER))
+    unitHeader:SetTextColor(hex2table(cfg.colors.HEADER))
     RaidRolls_G.regions.unitHeader = unitHeader
     -- ROLL
     local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     rollHeader:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -16, -5)
-    rollHeader:SetHeight(RaidRolls_G.ROW_HEIGHT)
+    rollHeader:SetHeight(cfg.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
-    rollHeader:SetTextColor(hex2table(RaidRolls_G.colours.HEADER))
+    rollHeader:SetTextColor(hex2table(cfg.colors.HEADER))
     rollHeader:SetText("Roll")
     RaidRolls_G.regions.rollHeader = rollHeader
     -- LOOT
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-    lootWarning:SetHeight(RaidRolls_G.ROW_HEIGHT)
+    lootWarning:SetHeight(cfg.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.getRow(0).unit, "BOTTOMLEFT")
-    lootWarning:SetText("Set |c" .. RaidRolls_G.colours.MASTERLOOTER .. "MASTER LOOTER|r!!!")
+    lootWarning:SetText("|c" .. cfg.colors.MASTERLOOTER .. "Set MASTER LOOTER!!!|r")
     lootWarning:Hide()
     RaidRolls_G.regions.lootWarning = lootWarning
 end
@@ -163,8 +165,8 @@ function RaidRolls_G.getRow(i)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
         roll:SetPoint("TOPLEFT", parents.roll, "BOTTOMLEFT")
 
-        unit:SetHeight(RaidRolls_G.ROW_HEIGHT)
-        roll:SetHeight(RaidRolls_G.ROW_HEIGHT)
+        unit:SetHeight(cfg.ROW_HEIGHT)
+        roll:SetHeight(cfg.ROW_HEIGHT)
 
         row = { unit = unit, roll = roll }
         tinsert(RaidRolls_G.regions.rowPool, row)

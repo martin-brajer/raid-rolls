@@ -22,6 +22,7 @@
         "IsInRaid",
         "BackdropTemplateMixin",
         "strsplit",
-        "tinsert"
+        "tinsert",
+        "WrapTextInColor",
     ],
 }

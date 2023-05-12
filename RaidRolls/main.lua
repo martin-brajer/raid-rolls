@@ -4,28 +4,11 @@ RaidRolls_G = {}
 RaidRolls_G.eventFunctions = {}
 -- Table of event frames and register functions(namespace of `eventFrames.lua`).
 RaidRolls_G.eventFrames = {}
+-- Configuration.
+RaidRolls_G.config = {}
 
 -- SAVED VARIABLES
 RaidRollsShown = true -- Was the main frame shown at the end of the last session?
--- CONSTANTS.
-RaidRolls_G.ROW_HEIGHT = 20
-RaidRolls_G.FRAME_WIDTH = 220 -- Default value.
--- All colours used..
-RaidRolls_G.colours = {
-    -- Group type
-    NOGROUP = "FFFFFF00", -- System message colour
-    PARTY = "FFAAA7FF",
-    RAID = "FFFF7D00",
-    -- GUI
-    BACKGROUND = "B2333333", -- { 0.2, 0.2, 0.2, 0.7 } red, green, blue [, alpha]
-    HEADER = "FFFFFF00",     -- { 1, 1, 0, 1 } red, green, blue [, alpha]
-    MASTERLOOTER = "FFFF0000",
-    MULTIROLL = "FFFF0000",
-    PASS = "FF00ccff",
-    -- Misc.
-    UNKNOWN = "FFFFFF00",   -- System message colour
-    SYSTEMMSG = "FFFFFF00", -- System message colour
-}
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
@@ -102,6 +85,7 @@ function RaidRolls_G.updateRollers()
         return math.abs(lhs.roll) > math.abs(rhs.roll)
     end)
 
+    local colors = RaidRolls_G.config.colors
     local groupType = groupType() -- Called here to avoid repetitively getting the same value.
     local row
     for _, roller in ipairs(sortedRollers) do
@@ -111,21 +95,21 @@ function RaidRolls_G.updateRollers()
         local classColour = RAID_CLASS_COLORS[fileName]
         local classColour_str
         if classColour == nil then
-            classColour_str = RaidRolls_G.colours.UNKNOWN
+            classColour_str = colors.UNKNOWN
         else
             classColour_str = classColour.colorStr
         end
         local class_str = "|c" .. classColour_str .. class .. "|r"
         -- subgroup
-        local subgroup_str = "|c" .. RaidRolls_G.colours[groupTypeUnit] .. subgroup .. "|r"
+        local subgroup_str = "|c" .. colors[groupTypeUnit] .. subgroup .. "|r"
 
         -- roller
         local roller_roll = roller.roll
         local roll_str
         if roller_roll == 0 then
-            roll_str = "|c" .. RaidRolls_G.colours.PASS .. "pass" .. "|r"
+            roll_str = "|c" .. colors.PASS .. "pass" .. "|r"
         elseif roller_roll < 0 then
-            roll_str = "|c" .. RaidRolls_G.colours.MULTIROLL .. math.abs(roller_roll) .. "|r"
+            roll_str = "|c" .. colors.MULTIROLL .. math.abs(roller_roll) .. "|r"
         else
             roll_str = roller_roll
         end
@@ -152,7 +136,7 @@ function RaidRolls_G.update(lootWarningOnly)
 
     do
         local numberOfRows = tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-        RaidRolls_G.regions.mainFrame:SetHeight(30 + RaidRolls_G.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
+        RaidRolls_G.regions.mainFrame:SetHeight(30 + RaidRolls_G.config.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
     end
 
     local i = 1 -- Defined outside the for loop, so the index `i` is kept for future use.
