@@ -1,5 +1,7 @@
 -- GUI elements and manipulation.
-local cfg = RaidRolls_G.config
+-- Populate `RaidRolls_G.gui` namespace.
+
+local cfg = RaidRolls_G.configuration
 
 RaidRolls_G.gui = {
     rowPool = {} -- Collection of {unit, roll} to be used to show data rows.

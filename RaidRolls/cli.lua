@@ -1,5 +1,7 @@
 -- Slash commands and the called functions.
-local cfg = RaidRolls_G.config
+-- Populate no namespace.
+
+local cfg = RaidRolls_G.configuration
 
 -- Slash commands.
 SLASH_RAIDROLLS1 = '/raidrolls';

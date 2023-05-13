@@ -1,4 +1,5 @@
--- Functions called on events defined in `eventFrames.lua`.
+-- Functions called on events defined in `RaidRolls_G.eventFrames`.
+-- Populate `RaidRolls_G.eventFunctions` namespace.
 
 -- ADDON_LOADED
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)

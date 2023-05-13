@@ -1,7 +1,8 @@
 -- Configuration.
+-- Populate `RaidRolls_G.config` namespace.
 
-RaidRolls_G.config.ROW_HEIGHT = 20
-RaidRolls_G.config.FRAME_WIDTH = 220 -- Default value.
+RaidRolls_G.configuration.ROW_HEIGHT = 20
+RaidRolls_G.configuration.FRAME_WIDTH = 220 -- Default value.
 
 -- All colors used..
 local colors = {
@@ -23,10 +24,10 @@ local colorMixins = {}
 for k, v in pairs(colors) do
     colorMixins[k] = CreateColorFromHexString(v)
 end
-RaidRolls_G.config.colors = colorMixins
+RaidRolls_G.configuration.colors = colorMixins
 
 -- Texts
-RaidRolls_G.config.texts = {
+RaidRolls_G.configuration.texts = {
     -- General.
     LIST_CMDS = "Cmds: show, hide, toggle, help, reset, resize, test.",
     UNIT_HEADER = "Player (class)[subgroup]",

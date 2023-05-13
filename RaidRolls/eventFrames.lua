@@ -1,5 +1,6 @@
--- Define EventFrames and connect them with OnEvent functions from `eventFunctions.lua`.
--- Also def register helper functions.
+-- Define EventFrames and connect them with OnEvent functions from `RaidRolls_G.eventFunctions`.
+-- Define register helper functions.
+-- Populate `RaidRolls_G.eventFrames` namespace.
 
 -- CREATE EVENT FRAMES
 

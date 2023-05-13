@@ -1,25 +1,25 @@
--- Global locals.
+-- Main file. Info and globals.
+
+-- Global locals (this addon's global namespace).
 RaidRolls_G = {}
--- Table of event functions (namespace of `eventFunctions.lua`).
--- Used exclusively in eventFrames (kept here for simple structure).
+-- `eventFunctions.lua` namespace.
 RaidRolls_G.eventFunctions = {}
--- Table of event frames and register functions(namespace of `eventFrames.lua`).
+-- `eventFrames.lua` namespace.
 RaidRolls_G.eventFrames = {}
--- Configuration.
-RaidRolls_G.config = {}
--- gui.lua namespace.
+-- `configuration.lua` namespace.
+RaidRolls_G.configuration = {}
+-- `gui.lua` namespace.
 RaidRolls_G.gui = {}
 
--- SAVED VARIABLES
+-- SAVED VARIABLES: `RaidRollsShown`
 -- Was the main frame shown at the end of the last session?
 -- Initialized in `RaidRolls_G.eventFunctions.OnLoad`.
--- RaidRollsShown = true
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
-local cfg = RaidRolls_G.config
+local cfg = RaidRolls_G.configuration
 
 
 function RaidRolls_OnAddonCompartmentClick()
