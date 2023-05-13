@@ -3,7 +3,7 @@
 -- ADDON_LOADED
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == "RaidRolls" then
-        RaidRolls_G.initializeUI()
+        RaidRolls_G.gui:Initialize()
 
         RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then

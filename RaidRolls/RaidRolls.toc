@@ -9,6 +9,7 @@
 
 main.lua
 config.lua
+gui.lua
 cli.lua
 eventFunctions.lua
 eventFrames.lua
