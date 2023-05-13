@@ -18,15 +18,15 @@ function RaidRolls_G.gui.Initialize(self)
     -- Mouse
     mainFrame:SetMovable(true)
     mainFrame:EnableMouse(true)
-    mainFrame:SetScript("OnMouseDown", function(self, event)
+    mainFrame:SetScript("OnMouseDown", function(self_mainFrame, event)
         if event == "LeftButton" then
-            self:StartMoving();
+            self_mainFrame:StartMoving();
         elseif event == "RightButton" then
             RaidRolls_G.reset()
         end
     end)
-    mainFrame:SetScript("OnMouseUp", function(self)
-        self:StopMovingOrSizing()
+    mainFrame:SetScript("OnMouseUp", function(self_mainFrame)
+        self_mainFrame:StopMovingOrSizing()
     end)
     -- Background
     mainFrame:SetBackdrop({

@@ -8,7 +8,7 @@
 ## AddonCompartmentFunc: RaidRolls_OnAddonCompartmentClick
 
 main.lua
-config.lua
+configuration.lua
 gui.lua
 cli.lua
 eventFunctions.lua
