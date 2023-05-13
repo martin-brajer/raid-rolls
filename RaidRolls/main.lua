@@ -10,6 +10,8 @@ RaidRolls_G.eventFrames = {}
 RaidRolls_G.configuration = {}
 -- `gui.lua` namespace.
 RaidRolls_G.gui = {}
+-- Container for plugin namespaces.
+RaidRolls_G.plugins = {}
 
 -- SAVED VARIABLES: `RaidRollsShown`
 -- Was the main frame shown at the end of the last session?
@@ -116,28 +118,18 @@ function RaidRolls_G.UpdateRollers()
 end
 
 -- Main drawing function.
-function RaidRolls_G.Update(lootWarningOnly)
-    lootWarningOnly = lootWarningOnly or false -- nit to false? (default false)
+function RaidRolls_G.Update()
+    local currentRow
 
-    local lootMethod = GetLootMethod()
-    local lootWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
-
-    local numberOfRows = RaidRolls_G.TableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-    RaidRolls_G.gui:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
-
-    -- One for the header.
-    local i = 1
-    if not lootWarningOnly then
-        i = i + RaidRolls_G.UpdateRollers() -- Fetch data, fill, sort, write.
-    end
-
-    if lootWarning then
-        RaidRolls_G.gui.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(i - 1).unit, "BOTTOMLEFT")
-        RaidRolls_G.gui.lootWarning:Show()
-    else
-        RaidRolls_G.gui.lootWarning:Hide()
-    end
-
+    -- Start at 0 for header.
+    currentRow = RaidRolls_G.UpdateRollers() -- Fetch data, fill, sort, write.
     -- Hide the rest of the rows. Including the one (maybe) overlaid by lootWarning.
-    RaidRolls_G.gui:HideRowsTail(i)
+    RaidRolls_G.gui:HideRowsTail(currentRow + 1)
+
+    -- Plugins updates.
+    for name, plugin in pairs(RaidRolls_G.plugins) do
+        currentRow = currentRow + plugin:Update(currentRow)
+    end
+
+    RaidRolls_G.gui:SetHeight(30 + cfg.ROW_HEIGHT * (currentRow)) -- 30 = (5 + 15 + 10)
 end

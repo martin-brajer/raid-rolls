@@ -4,7 +4,7 @@
 local cfg = RaidRolls_G.configuration
 
 RaidRolls_G.gui = {
-    rowPool = {} -- Collection of {unit, roll} to be used to show data rows.
+    rowPool = {}, -- Collection of {unit, roll} to be used to show data rows.
 }
 
 

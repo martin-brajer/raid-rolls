@@ -10,6 +10,7 @@
 main.lua
 configuration.lua
 gui.lua
+gui_LootWarning.lua
 cli.lua
 eventFunctions.lua
 eventFrames.lua
