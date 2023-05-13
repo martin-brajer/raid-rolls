@@ -122,9 +122,9 @@ function RaidRolls_G.Update()
     local currentRow
 
     -- Start at 0 for header.
-    currentRow = RaidRolls_G.UpdateRollers() -- Fetch data, fill, sort, write.
+    currentRow = RaidRolls_G.UpdateRollers()     -- Fetch data, fill, sort, write.
     -- Hide the rest of the rows. Including the one (maybe) overlaid by lootWarning.
-    RaidRolls_G.gui:HideRowsTail(currentRow + 1)
+    RaidRolls_G.gui:HideRowsTail(currentRow + 1) -- put into UpdateRollers and simplify with plugins.
 
     -- Plugins updates.
     for name, plugin in pairs(RaidRolls_G.plugins) do

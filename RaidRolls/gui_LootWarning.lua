@@ -2,22 +2,55 @@
 -- Populate `RaidRolls_G.plugins.gui_LootWarning` namespace.
 -- This plugin is used by adding it in the required toc file.
 
+local cfg = RaidRolls_G.configuration
+
 RaidRolls_G.plugins.gui_LootWarning = {
     showWarning = false
 }
 
+-- GUI
+
+function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
+    local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+    lootWarning:SetHeight(cfg.ROW_HEIGHT)
+    lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(0).unit, "BOTTOMLEFT")
+    lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
+    lootWarning:Hide()
+    self.lootWarning = lootWarning
+end
+
+-- MAIN
+
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
+-- Parameter `rowsUsed` is optional (if nil, do not update parent, only visibility).
 -- Return how many additional rows (for addon window size) do this needs.
 function RaidRolls_G.plugins.gui_LootWarning.Update(self, rowsUsed)
-    local lootMethod = GetLootMethod()
-    -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
-
     if self.showWarning then
-        RaidRolls_G.gui.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
-        RaidRolls_G.gui.lootWarning:Show()
+        if rowsUsed then
+            self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
+        end
+        self.lootWarning:Show()
         return 1
     else
-        RaidRolls_G.gui.lootWarning:Hide()
+        self.lootWarning:Hide()
         return 0
     end
 end
+
+-- EVENT FUNCTIONS
+
+-- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
+local function OnMasterLooterMayHaveChanged(self, event)
+    local lootMethod = GetLootMethod()
+    -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
+
+    RaidRolls_G.plugins.gui_LootWarning:Update()
+end
+
+-- EVENT FRAMES
+
+-- Invoke update after Master Looter relevant events are raised.
+local masterLooter_EventFrame = CreateFrame("Frame")
+masterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)

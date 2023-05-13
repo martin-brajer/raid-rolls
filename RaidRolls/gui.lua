@@ -8,7 +8,7 @@ RaidRolls_G.gui = {
 }
 
 
--- Needs `RaidRollsShown` initialized.
+-- Needs `RaidRollsShown` (saved variable) initialized.
 function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
@@ -57,13 +57,6 @@ function RaidRolls_G.gui.Initialize(self)
     rollHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
     rollHeader:SetText(cfg.texts.ROLL_HEADER)
     self.rollHeader = rollHeader
-    -- LOOT
-    local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-    lootWarning:SetHeight(cfg.ROW_HEIGHT)
-    lootWarning:SetPoint("TOPLEFT", self:GetRow(0).unit, "BOTTOMLEFT")
-    lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
-    lootWarning:Hide()
-    self.lootWarning = lootWarning
 end
 
 -- Handle FontStrings needed for listing rolling players.

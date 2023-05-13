@@ -22,12 +22,6 @@ passing_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnChatMsg)
 local rolling_EventFrame = CreateFrame("Frame")
 rolling_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnSystemMsg)
 
--- Invoke update after Master Looter relevant events are raised.
-local masterLooter_EventFrame = CreateFrame("Frame")
-masterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-masterLooter_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnMasterLooterMayHaveChanged)
-
 -- REGISTERING AND UNREGISTERING EVENTS - HELPER FUNCTIONS.
 
 -- All the events (channels) searched for saying "pass".

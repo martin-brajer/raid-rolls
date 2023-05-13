@@ -5,6 +5,10 @@
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == "RaidRolls" then
         RaidRolls_G.gui:Initialize()
+        -- Plugins initialize.
+        for name, plugin in pairs(RaidRolls_G.plugins) do
+            plugin:Initialize(RaidRolls_G.gui.mainFrame)
+        end
 
         -- Load saved variables.
         if RaidRollsShown == nil then -- Initialize when first loaded.
@@ -66,9 +70,4 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
         end
         RaidRolls_G.Update()
     end
-end
-
--- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
-function RaidRolls_G.eventFunctions.OnMasterLooterMayHaveChanged(self, event)
-    RaidRolls_G.Update()
 end
