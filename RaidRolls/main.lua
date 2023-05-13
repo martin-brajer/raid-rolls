@@ -26,15 +26,15 @@ function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
 end
 
--- Table length (sort of).
-local function tableCount(t)
+-- Table length (no need to be a sequence).
+function RaidRolls_G.TableCount(t)
     local count = 0
     for _ in pairs(t) do count = count + 1 end
     return count
 end
 
 -- Find what kind of group the player (addon user) is in.
-local function groupType()
+local function GetGroupType()
     if IsInRaid() then
         return "RAID"
     elseif IsInGroup() then -- Any group type but raid == party.
@@ -44,7 +44,7 @@ local function groupType()
 end
 
 -- If player not found, return default values. E.g. when the player has already left the group.
-local function getGroupMemberInfo(name, groupType)
+local function GetGroupMemberInfo(name, groupType)
     local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", "NOGROUP" -- defaults
 
     if groupType == "RAID" then
@@ -72,8 +72,8 @@ local function getGroupMemberInfo(name, groupType)
 end
 
 --
-function RaidRolls_G.updateRollers()
-    local used_rows = 1
+function RaidRolls_G.UpdateRollers()
+    local rowsUsed = 0
     -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
     local sortedRollers = {}
     for name, roll in pairs(RaidRolls_G.rollers) do
@@ -83,58 +83,52 @@ function RaidRolls_G.updateRollers()
         return math.abs(lhs.roll) > math.abs(rhs.roll)
     end)
 
-    local groupType = groupType() -- Called here to avoid repetitively getting the same value.
-    local row
-    for _, roller in ipairs(sortedRollers) do
-        local name, subgroup, class, fileName, groupTypeUnit = getGroupMemberInfo(roller.name, groupType)
+    local groupType = GetGroupType() -- Called here to avoid repetitively getting the same value.
+    for currentRow, roller in ipairs(sortedRollers) do
+        local name, subgroup, class, fileName, groupTypeUnit = GetGroupMemberInfo(roller.name, groupType)
 
         -- class
         local classColour = RAID_CLASS_COLORS[fileName]
         if classColour == nil then
             classColour = cfg.colors.UNKNOWN
         end
-        local class_str = WrapTextInColor(class, classColour)
+        local classText = WrapTextInColor(class, classColour)
         -- subgroup
-        local subgroup_str = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
+        local subgroupText = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
         -- roller
-        local roller_roll = roller.roll
-        local roll_str
-        if roller_roll == 0 then
-            roll_str = WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
-        elseif roller_roll < 0 then
-            roll_str = WrapTextInColor(math.abs(roller_roll), cfg.colors.MULTIROLL)
+        local roll = roller.roll
+        local rollText
+        if roll == 0 then
+            rollText = WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
+        elseif roll < 0 then
+            rollText = WrapTextInColor(math.abs(roll), cfg.colors.MULTIROLL)
         else
-            roll_str = roller_roll
+            rollText = roll
         end
 
-        row = RaidRolls_G.gui:GetRow(used_rows)
-        row.unit:SetText(name .. " (" .. class_str .. ")[" .. subgroup_str .. "]")
-        row.roll:SetText(roll_str)
+        local unitText = name .. " (" .. classText .. ")[" .. subgroupText .. "]"
+        RaidRolls_G.gui:WriteRow(currentRow, unitText, rollText)
 
-        used_rows = used_rows + 1
+        rowsUsed = currentRow
     end
-    -- Here `used_rows` is set to the line following the last one used.
-    return used_rows
+    -- Here `current_row` points to the line following the last one record.
+    return rowsUsed
 end
 
 -- Main drawing function.
-function RaidRolls_G.update(lootWarningOnly)
-    lootWarningOnly = lootWarningOnly or false
+function RaidRolls_G.Update(lootWarningOnly)
+    lootWarningOnly = lootWarningOnly or false -- nit to false? (default false)
 
-    local lootWarning
-    do
-        local lootMethod = GetLootMethod()
-        lootWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
-    end
+    local lootMethod = GetLootMethod()
+    local lootWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
 
-    do
-        local numberOfRows = tableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-        RaidRolls_G.gui.mainFrame:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
-    end
+    local numberOfRows = RaidRolls_G.TableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
+    RaidRolls_G.gui.mainFrame:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
 
-    local i = 1 -- Defined outside the for loop, so the index `i` is kept for future use.
+    -- One for the header.
+    local i = 1
     if not lootWarningOnly then
-        i = RaidRolls_G.updateRollers()
+        i = i + RaidRolls_G.UpdateRollers() -- Fetch data, fill, sort, write.
     end
 
     if lootWarning then
@@ -144,11 +138,6 @@ function RaidRolls_G.update(lootWarningOnly)
         RaidRolls_G.gui.lootWarning:Hide()
     end
 
-    -- Iterate over the rest of rows. Including the one (maybe) overlaid by lootWarning.
-    while i <= tableCount(RaidRolls_G.gui.rowPool) do
-        local row = RaidRolls_G.gui:GetRow(i)
-        row.unit:Hide()
-        row.roll:Hide()
-        i = i + 1
-    end
+    -- Hide the rest of the rows. Including the one (maybe) overlaid by lootWarning.
+    RaidRolls_G.gui:HideRowsTail(i)
 end

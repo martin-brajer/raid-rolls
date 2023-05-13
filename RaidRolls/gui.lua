@@ -22,7 +22,7 @@ function RaidRolls_G.gui.Initialize(self)
         if event == "LeftButton" then
             self_mainFrame:StartMoving();
         elseif event == "RightButton" then
-            RaidRolls_G.reset()
+            RaidRolls_G.Reset()
         end
     end)
     mainFrame:SetScript("OnMouseUp", function(self_mainFrame)
@@ -94,6 +94,24 @@ function RaidRolls_G.gui.GetRow(self, i)
     end
 
     return row
+end
+
+-- Write character name and their roll to the given row index.
+function RaidRolls_G.gui.WriteRow(self, i, unitText, rollText)
+    local row = self:GetRow(i)
+    row.unit:SetText(unitText)
+    row.roll:SetText(rollText)
+end
+
+-- Hide all rows with index equal or greater than the parameter.
+function RaidRolls_G.gui.HideRowsTail(self, i)
+    local max_i = RaidRolls_G.TableCount(self.rowPool)
+    while i <= max_i do
+        local row = self:GetRow(i)
+        row.unit:Hide()
+        row.roll:Hide()
+        i = i + 1
+    end
 end
 
 -- Show or hide the GUI.

@@ -16,7 +16,7 @@ function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
         if IsInGroup() then
             RaidRolls_G.eventFrames.RegisterChatEvents()
         end
-        RaidRolls_G.update() -- To do lootWarning check.
+        RaidRolls_G.Update() -- To do lootWarning check.
     end
 end
 
@@ -33,7 +33,7 @@ function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
         end
         -- Other changes like other ppl joining or leaving.
     elseif IsInGroup() then
-        RaidRolls_G.update()
+        RaidRolls_G.Update()
     end
 end
 
@@ -45,7 +45,7 @@ function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
 
     if string.lower(text) == "pass" then
         RaidRolls_G.rollers[character_name] = 0
-        RaidRolls_G.update()
+        RaidRolls_G.Update()
     end
 end
 
@@ -64,11 +64,11 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
         else
             RaidRolls_G.rollers[name] = -tonumber(roll) -- Minus to mark multiroll.
         end
-        RaidRolls_G.update()
+        RaidRolls_G.Update()
     end
 end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 function RaidRolls_G.eventFunctions.OnMasterLooterMayHaveChanged(self, event)
-    RaidRolls_G.update()
+    RaidRolls_G.Update()
 end
