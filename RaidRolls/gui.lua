@@ -6,7 +6,7 @@ RaidRolls_G.gui = {
 }
 
 
---
+-- Needs `RaidRollsShown` initialized.
 function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
@@ -92,4 +92,10 @@ function RaidRolls_G.gui.GetRow(self, i)
     end
 
     return row
+end
+
+-- Show or hide the GUI.
+function RaidRolls_G.gui.SetVisibility(self, bool)
+    RaidRollsShown = bool
+    self.mainFrame:SetShown(bool)
 end

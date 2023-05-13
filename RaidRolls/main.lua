@@ -11,7 +11,9 @@ RaidRolls_G.config = {}
 RaidRolls_G.gui = {}
 
 -- SAVED VARIABLES
-RaidRollsShown = true -- Was the main frame shown at the end of the last session?
+-- Was the main frame shown at the end of the last session?
+-- Initialized in `RaidRolls_G.eventFunctions.OnLoad`.
+-- RaidRollsShown = true
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
@@ -21,7 +23,7 @@ local cfg = RaidRolls_G.config
 
 
 function RaidRolls_OnAddonCompartmentClick()
-    RaidRolls_G.show(not RaidRollsShown)
+    RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
 end
 
 -- Table length (sort of).

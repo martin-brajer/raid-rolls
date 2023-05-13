@@ -33,7 +33,9 @@ RaidRolls_G.config.texts = {
     ROLL_HEADER = "Roll",
     PASS = "pass",
     SET_MASTER_LOOTER = "Set MASTER LOOTER!!!",
+    -- RAID_LABEL = <subgroup number>,
     PARTY_LABEL = "P",
+    NOGROUP_LABEL = "?",
     -- Errors.
     RESIZE_ERROR = "RaidRolls: Cannot resize below 100%.",
     TEST_PARAMETER_ERROR = "RaidRolls: Append either 'fill' or 'solo' parameter.",

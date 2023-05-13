@@ -5,17 +5,17 @@ function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == "RaidRolls" then
         RaidRolls_G.gui:Initialize()
 
+        -- Load saved variables.
+        if RaidRollsShown == nil then -- Initialize when first loaded.
+            RaidRollsShown = true;
+        end
+        RaidRolls_G.gui:SetVisibility(RaidRollsShown)
+
         RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then
             RaidRolls_G.eventFrames.RegisterChatEvents()
         end
         RaidRolls_G.update() -- To do lootWarning check.
-
-        -- Load saved variables.
-        if RaidRollsShown == nil then -- Initialize when first loaded.
-            RaidRollsShown = true;
-        end
-        RaidRolls_G.show(RaidRollsShown)
     end
 end
 

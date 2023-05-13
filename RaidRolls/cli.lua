@@ -10,11 +10,11 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     if command == "" then
         print(cfg.texts.LIST_CMDS)
     elseif command == "show" then
-        RaidRolls_G.show(true)
+        RaidRolls_G.gui:SetVisibility(true)
     elseif command == "hide" then
-        RaidRolls_G.show(false)
+        RaidRolls_G.gui:SetVisibility(false)
     elseif command == "toggle" then
-        RaidRolls_G.show(not RaidRollsShown)
+        RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
     elseif command == "help" then
         RaidRolls_G.help()
     elseif command == "reset" then
@@ -24,12 +24,6 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     elseif command == "test" then
         RaidRolls_G.test(arg1)
     end
-end
-
--- Show or hide UI.
-function RaidRolls_G.show(bool)
-    RaidRollsShown = bool
-    RaidRolls_G.gui.mainFrame:SetShown(bool)
 end
 
 -- Ingame help.
