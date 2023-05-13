@@ -52,7 +52,7 @@ function RaidRolls_G.Resize(percentage)
         return
     end
 
-    RaidRolls_G.gui.mainFrame:SetWidth(cfg.FRAME_WIDTH * (percentage / 100))
+    RaidRolls_G.gui:SetWidth(cfg.FRAME_WIDTH * (percentage / 100))
 end
 
 -- Fill `rollers` by artificial values.

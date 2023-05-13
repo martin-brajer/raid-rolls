@@ -123,7 +123,7 @@ function RaidRolls_G.Update(lootWarningOnly)
     local lootWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
 
     local numberOfRows = RaidRolls_G.TableCount(RaidRolls_G.rollers) + (lootWarning and 1 or 0)
-    RaidRolls_G.gui.mainFrame:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
+    RaidRolls_G.gui:SetHeight(30 + cfg.ROW_HEIGHT * numberOfRows) -- 30 = (5 + 15 + 10)
 
     -- One for the header.
     local i = 1

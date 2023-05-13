@@ -119,3 +119,11 @@ function RaidRolls_G.gui.SetVisibility(self, bool)
     RaidRollsShown = bool
     self.mainFrame:SetShown(bool)
 end
+
+function RaidRolls_G.gui.SetWidth(self, width)
+    self.mainFrame:SetWidth(width)
+end
+
+function RaidRolls_G.gui.SetHeight(self, height)
+    self.mainFrame:SetHeight(height)
+end
