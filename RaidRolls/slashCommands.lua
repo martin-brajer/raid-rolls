@@ -26,7 +26,9 @@ end
 
 -- Fill `rollers` by artificial values.
 -- No need to be part of a group for this to work.
-local function Test(tool)
+local function Test(msg)
+    local tool, args = strsplit(" ", msg, 2)
+
     if tool == "fill" then
         RaidRolls_G.rollers = {
             player1 = 20,
@@ -37,7 +39,18 @@ local function Test(tool)
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
     else
-        print(WrapTextInColor(cfg.texts.TEST_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
+        local pluginFound = false
+
+        for name, plugin in pairs(RaidRolls_G.plugins) do
+            if tool == name then
+                plugin:Test(args)
+                pluginFound = true
+            end
+        end
+
+        if not pluginFound then
+            print(WrapTextInColor(cfg.texts.TEST_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
+        end
     end
 end
 

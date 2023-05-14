@@ -3,7 +3,8 @@
 These are the sources for the [Raid Rolls WoW addon](https://www.curseforge.com/wow/addons/raid-rolls/).
 
 Raid Rolls is a lightweight addon for World of Warcraft (both Retail and Classic).
-Records `/roll`s of your raid/party members to simplify items distribution (e.g. in [Vault of Archavon](https://www.wowhead.com/wotlk/vault-of-archavon) - VOA).
+Records `/roll`s of your raid/party members to simplify items distribution
+(e.g. in [Vault of Archavon](https://www.wowhead.com/wotlk/vault-of-archavon) - VOA).
 
 ## Features
 
@@ -35,7 +36,9 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - `/rr resize percentage` Change the width to `percentage` of default.
     - Minimal accepted value is 100 (default)
     - Omitting the `percentage` parameter resets the width.
-- `/rr test fill` / `solo` Fill in artificial rolls / allow use out of a group (until `/reload`).
+- `/rr test fill` / `solo` / `plugin name` Fill in artificial rolls
+  / allow use out of a group (until `/reload`)
+  / run plugin's own testing.
 
 ## Licence & compliance
 

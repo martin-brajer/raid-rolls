@@ -8,17 +8,13 @@ RaidRolls_G.plugins.gui_LootWarning = {
     showWarning = false
 }
 
--- EVENT FUNCTIONS
-
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
-local function OnMasterLooterMayHaveChanged(self, event)
+local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
     local lootMethod = GetLootMethod()
     -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
 
     RaidRolls_G.plugins.gui_LootWarning:Draw()
 end
-
--- EVENT FRAMES
 
 -- Invoke update after Master Looter relevant events are raised.
 local masterLooter_EventFrame = CreateFrame("Frame")
@@ -26,8 +22,7 @@ masterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 
--- GUI
-
+--
 function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.ROW_HEIGHT)
@@ -39,8 +34,6 @@ function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
     -- Is the warning shown on load?
     OnMasterLooterMayHaveChanged()
 end
-
--- MAIN
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
 -- Parameter `rowsUsed` is optional (if nil, do not update parent, only visibility).
@@ -56,4 +49,10 @@ function RaidRolls_G.plugins.gui_LootWarning.Draw(self, rowsUsed)
         self.lootWarning:Hide()
         return 0
     end
+end
+
+-- Testing
+function RaidRolls_G.plugins.gui_LootWarning.Test(self, args)
+    self.showWarning = not self.showWarning
+    RaidRolls_G.Update()
 end

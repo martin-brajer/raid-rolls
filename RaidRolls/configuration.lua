@@ -40,15 +40,15 @@ RaidRolls_G.configuration.texts = {
     -- Errors.
     RESIZE_ERROR = "RaidRolls: cannot resize below 100%.",
     SLASH_PARAMETER_ERROR = "RaidRolls: unknown command. Run '/rr' for available commands.",
-    TEST_PARAMETER_ERROR = "RaidRolls: test accepts either 'fill' or 'solo' parameter.",
+    TEST_PARAMETER_ERROR = "RaidRolls: test accepts either 'fill', 'solo' or plugin name.",
     -- Help lines.
     HELP_LINES = {
         "Slash Commands '/raidrolls' (or '/rr'):",
         "  none - Commands list.",
         "  'show' / 'hide' / 'toggle' - UI visibility.",
         "  'help' - Uroboros!",
-        "  'reset' - Erase all rolls (or right-click the window).",
+        "  'reset' - Erase all rolls (same as right-clicking the window).",
         "  'resize <percentage>' - Change the width to <percentage> of default.",
-        "  'test <tool>' - Choose: <fill> fills in test rolls, <solo> allows out of group use.",
+        "  'test <tool>' - Tool can either be 'fill', 'solo' or <plugin name>.",
     }
 }
