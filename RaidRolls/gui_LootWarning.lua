@@ -24,7 +24,7 @@ end
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
 -- Parameter `rowsUsed` is optional (if nil, do not update parent, only visibility).
 -- Return how many additional rows (for addon window size) do this needs.
-function RaidRolls_G.plugins.gui_LootWarning.Update(self, rowsUsed)
+function RaidRolls_G.plugins.gui_LootWarning.Draw(self, rowsUsed)
     if self.showWarning then
         if rowsUsed then
             self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
@@ -44,7 +44,7 @@ local function OnMasterLooterMayHaveChanged(self, event)
     local lootMethod = GetLootMethod()
     -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
 
-    RaidRolls_G.plugins.gui_LootWarning:Update()
+    RaidRolls_G.plugins.gui_LootWarning:Draw()
 end
 
 -- EVENT FRAMES

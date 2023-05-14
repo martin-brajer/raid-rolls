@@ -21,6 +21,11 @@ RaidRolls_G.plugins = {}
 RaidRolls_G.rollers = {}
 -- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
 RaidRolls_G.wasInGroup = nil
+local GroupType = {
+    NOGROUP = "NOGROUP",
+    PARTY = "PARTY",
+    RAID = "RAID",
+}
 local cfg = RaidRolls_G.configuration
 
 
@@ -38,18 +43,18 @@ end
 -- Find what kind of group the player (addon user) is in.
 local function GetGroupType()
     if IsInRaid() then
-        return "RAID"
+        return GroupType.RAID
     elseif IsInGroup() then -- Any group type but raid == party.
-        return "PARTY"
+        return GroupType.PARTY
     end
-    return "NOGROUP"
+    return GroupType.NOGROUP
 end
 
 -- If player not found, return default values. E.g. when the player has already left the group.
 local function GetGroupMemberInfo(name, groupType)
-    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", "NOGROUP" -- defaults
+    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", GroupType.NOGROUP -- defaults
 
-    if groupType == "RAID" then
+    if groupType == GroupType.RAID then
         local _name, _subgroup, _class, _fileName -- Candidates.
         for i = 1, GetNumGroupMembers() do
             _name, _, _subgroup, _, _class, _fileName = GetRaidRosterInfo(i)
@@ -59,7 +64,7 @@ local function GetGroupMemberInfo(name, groupType)
                 break -- If not break, name stays and others get default values.
             end
         end
-    elseif groupType == "PARTY" then
+    elseif groupType == GroupType.PARTY then
         if UnitInParty(name) then
             subgroup = cfg.texts.PARTY_LABEL
             class, fileName = UnitClass(name)
@@ -74,8 +79,9 @@ local function GetGroupMemberInfo(name, groupType)
 end
 
 --
-function RaidRolls_G.UpdateRollers()
-    local rowsUsed = 0
+function RaidRolls_G.RollersDraw()
+    local currentRow = 0
+
     -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
     local sortedRollers = {}
     for name, roll in pairs(RaidRolls_G.rollers) do
@@ -86,7 +92,7 @@ function RaidRolls_G.UpdateRollers()
     end)
 
     local groupType = GetGroupType() -- Called here to avoid repetitively getting the same value.
-    for currentRow, roller in ipairs(sortedRollers) do
+    for rowIndex, roller in ipairs(sortedRollers) do
         local name, subgroup, class, fileName, groupTypeUnit = GetGroupMemberInfo(roller.name, groupType)
 
         -- class
@@ -109,26 +115,34 @@ function RaidRolls_G.UpdateRollers()
         end
 
         local unitText = name .. " (" .. classText .. ")[" .. subgroupText .. "]"
-        RaidRolls_G.gui:WriteRow(currentRow, unitText, rollText)
+        RaidRolls_G.gui:WriteRow(rowIndex, unitText, rollText)
 
-        rowsUsed = currentRow
+        currentRow = rowIndex
     end
+
+    -- Hide the rest of the rows.
+    RaidRolls_G.gui:HideRowsTail(currentRow + 1)
+
     -- Here `current_row` points to the line following the last one record.
-    return rowsUsed
+    return currentRow
+end
+
+-- Now Draw AND Update -> split.
+function RaidRolls_G.Update()
+    RaidRolls_G.Draw()
 end
 
 -- Main drawing function.
-function RaidRolls_G.Update()
-    local currentRow
-
+function RaidRolls_G.Draw()
     -- Start at 0 for header.
-    currentRow = RaidRolls_G.UpdateRollers()     -- Fetch data, fill, sort, write.
-    -- Hide the rest of the rows. Including the one (maybe) overlaid by lootWarning.
-    RaidRolls_G.gui:HideRowsTail(currentRow + 1) -- put into UpdateRollers and simplify with plugins.
+    local currentRow = 0
 
-    -- Plugins updates.
+    -- Fetch data, fill, sort, write.
+    currentRow = currentRow + RaidRolls_G.RollersDraw()
+
+    -- Plugins draw.
     for name, plugin in pairs(RaidRolls_G.plugins) do
-        currentRow = currentRow + plugin:Update(currentRow)
+        currentRow = currentRow + plugin:Draw(currentRow)
     end
 
     RaidRolls_G.gui:SetHeight(30 + cfg.ROW_HEIGHT * (currentRow)) -- 30 = (5 + 15 + 10)

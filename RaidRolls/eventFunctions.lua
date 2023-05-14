@@ -16,6 +16,7 @@ function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
         end
         RaidRolls_G.gui:SetVisibility(RaidRollsShown)
 
+        -- Initial state.
         RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then
             RaidRolls_G.eventFrames.RegisterChatEvents()
@@ -45,10 +46,10 @@ end
 -- Look for "pass" in the group channels.
 function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
     -- If the player name contains a hyphen, return the text up to the hyphen.
-    local character_name, server = strsplit("-", playerName)
+    local characterName, server = strsplit("-", playerName)
 
     if string.lower(text) == "pass" then
-        RaidRolls_G.rollers[character_name] = 0
+        RaidRolls_G.rollers[characterName] = 0
         RaidRolls_G.Update()
     end
 end
@@ -59,9 +60,7 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
     if string.find(text, "rolls") ~= nil then
         local name, roll, minRoll, maxRoll = text:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
 
-        minRoll = tonumber(minRoll)
-        maxRoll = tonumber(maxRoll)
-        if (minRoll ~= 1 or maxRoll ~= 100) then return end
+        if (tonumber(minRoll) ~= 1 or tonumber(maxRoll) ~= 100) then return end
 
         if RaidRolls_G.rollers[name] == nil then
             RaidRolls_G.rollers[name] = tonumber(roll)
