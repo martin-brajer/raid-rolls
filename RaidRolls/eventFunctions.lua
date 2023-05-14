@@ -43,10 +43,10 @@ end
 -- Look for "pass" in the group channels.
 function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
     -- If the player name contains a hyphen, return the text up to the hyphen.
-    local characterName, server = strsplit("-", playerName)
+    local name, server = strsplit("-", playerName)
 
     if string.lower(text) == "pass" then
-        RaidRolls_G.rollers[characterName] = 0
+        RaidRolls_G.rollers:Save(name, 0)
         RaidRolls_G.Update()
     end
 end
@@ -57,13 +57,11 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
     if string.find(text, "rolls") ~= nil then
         local name, roll, minRoll, maxRoll = text:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
 
-        if (tonumber(minRoll) ~= 1 or tonumber(maxRoll) ~= 100) then return end
-
-        if RaidRolls_G.rollers[name] == nil then
-            RaidRolls_G.rollers[name] = tonumber(roll)
-        else
-            RaidRolls_G.rollers[name] = -tonumber(roll) -- Minus to mark multiroll.
+        minRoll = tonumber(minRoll)
+        maxRoll = tonumber(maxRoll)
+        if (minRoll == 1 and maxRoll == 100) then
+            RaidRolls_G.rollers:Save(name, tonumber(roll))
+            RaidRolls_G.Update()
         end
-        RaidRolls_G.Update()
     end
 end

@@ -30,11 +30,7 @@ local function Test(msg)
     local tool, args = strsplit(" ", msg, 2)
 
     if tool == "fill" then
-        RaidRolls_G.rollers = {
-            player1 = 20,
-            player2 = 0,
-            player3 = -99,
-        }
+        RaidRolls_G.rollers:Fill()
         RaidRolls_G.Update()
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()

@@ -3,9 +3,8 @@
 
 local cfg = RaidRolls_G.configuration
 
-RaidRolls_G.gui = {
-    rowPool = {}, -- Collection of {unit, roll} to be used to show data rows.
-}
+-- Collection of {unit, roll} to be used to show data rows.
+RaidRolls_G.gui.rowPool = {}
 
 
 -- Needs `RaidRollsShown` (saved variable) initialized.

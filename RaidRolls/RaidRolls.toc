@@ -14,3 +14,4 @@ gui_LootWarning.lua
 slashCommands.lua
 eventFunctions.lua
 eventFrames.lua
+rollers.lua
