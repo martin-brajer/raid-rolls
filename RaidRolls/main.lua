@@ -31,6 +31,12 @@ function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
 end
 
+-- Erace previous rolls.
+function RaidRolls_G.Reset()
+    RaidRolls_G.rollers = {}
+    RaidRolls_G.Update()
+end
+
 -- Table length (no need to be a sequence).
 function RaidRolls_G.TableCount(t)
     local count = 0

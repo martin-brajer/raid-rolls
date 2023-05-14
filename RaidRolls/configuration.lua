@@ -38,8 +38,9 @@ RaidRolls_G.configuration.texts = {
     PARTY_LABEL = "P",
     NOGROUP_LABEL = "?",
     -- Errors.
-    RESIZE_ERROR = "RaidRolls: Cannot resize below 100%.",
-    TEST_PARAMETER_ERROR = "RaidRolls: Append either 'fill' or 'solo' parameter.",
+    RESIZE_ERROR = "RaidRolls: cannot resize below 100%.",
+    SLASH_PARAMETER_ERROR = "RaidRolls: unknown command. Run '/rr' for available commands.",
+    TEST_PARAMETER_ERROR = "RaidRolls: test accepts either 'fill' or 'solo' parameter.",
     -- Help lines.
     HELP_LINES = {
         "Slash Commands '/raidrolls' (or '/rr'):",

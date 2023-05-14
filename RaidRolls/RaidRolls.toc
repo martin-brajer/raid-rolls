@@ -11,6 +11,6 @@ main.lua
 configuration.lua
 gui.lua
 gui_LootWarning.lua
-cli.lua
+slashCommands.lua
 eventFunctions.lua
 eventFrames.lua
