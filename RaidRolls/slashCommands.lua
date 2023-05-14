@@ -24,16 +24,20 @@ local function Resize(percentage)
     RaidRolls_G.gui:SetWidth(cfg.FRAME_WIDTH * (percentage / 100))
 end
 
--- Fill `rollers` by artificial values.
 -- No need to be part of a group for this to work.
 local function Test(msg)
     local tool, args = strsplit(" ", msg, 2)
 
+    -- Fill `rollers` by artificial values.
     if tool == "fill" then
         RaidRolls_G.rollers:Fill()
         RaidRolls_G.Update()
+
+        -- No need to be part of a group for this to work.
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
+
+        -- is plugin test being called?
     else
         local pluginFound = false
 
@@ -41,9 +45,11 @@ local function Test(msg)
             if tool == name then
                 plugin:Test(args)
                 pluginFound = true
+                break
             end
         end
 
+        -- None, just wrong cmd.
         if not pluginFound then
             print(WrapTextInColor(cfg.texts.TEST_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
         end
