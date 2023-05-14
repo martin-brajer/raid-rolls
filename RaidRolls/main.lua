@@ -19,8 +19,6 @@ RaidRolls_G.plugins = {}
 
 -- Table of rolling players.
 RaidRolls_G.rollers = {}
--- Was the player in group last time GROUP_ROSTER_UPDATE was invoked?
-RaidRolls_G.wasInGroup = nil
 local GroupType = {
     NOGROUP = "NOGROUP",
     PARTY = "PARTY",
@@ -40,7 +38,7 @@ function RaidRolls_G.TableCount(t)
     return count
 end
 
--- Find what kind of group the player (addon user) is in.
+-- Find what kind of group the current player is in.
 local function GetGroupType()
     if IsInRaid() then
         return GroupType.RAID

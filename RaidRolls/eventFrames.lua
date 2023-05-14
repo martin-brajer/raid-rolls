@@ -9,7 +9,17 @@ local addonLoaded_EventFrame = CreateFrame("Frame")
 addonLoaded_EventFrame:RegisterEvent("ADDON_LOADED")
 addonLoaded_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnLoad)
 
--- Register / unregister events when the addon user joins or leaves a group.
+-- The current player joins a group.
+local groupJoin_EventFrame = CreateFrame("Frame")
+groupJoin_EventFrame:RegisterEvent("GROUP_JOINED")
+groupJoin_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnGroupJoined)
+
+-- The current player left a group.
+local groupJoin_EventFrame = CreateFrame("Frame")
+groupJoin_EventFrame:RegisterEvent("GROUP_LEFT")
+groupJoin_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnGroupLeft)
+
+-- Group type changed, a player changed subgroup.
 local groupUpdate_EventFrame = CreateFrame("Frame")
 groupUpdate_EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 groupUpdate_EventFrame:SetScript("OnEvent", RaidRolls_G.eventFunctions.OnGroupUpdate)

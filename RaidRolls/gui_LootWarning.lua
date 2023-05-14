@@ -8,6 +8,24 @@ RaidRolls_G.plugins.gui_LootWarning = {
     showWarning = false
 }
 
+-- EVENT FUNCTIONS
+
+-- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
+local function OnMasterLooterMayHaveChanged(self, event)
+    local lootMethod = GetLootMethod()
+    -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
+
+    RaidRolls_G.plugins.gui_LootWarning:Draw()
+end
+
+-- EVENT FRAMES
+
+-- Invoke update after Master Looter relevant events are raised.
+local masterLooter_EventFrame = CreateFrame("Frame")
+masterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
+masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
+
 -- GUI
 
 function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
@@ -17,6 +35,9 @@ function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
     lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
     self.lootWarning = lootWarning
+
+    -- Is the warning shown on load?
+    OnMasterLooterMayHaveChanged()
 end
 
 -- MAIN
@@ -36,21 +57,3 @@ function RaidRolls_G.plugins.gui_LootWarning.Draw(self, rowsUsed)
         return 0
     end
 end
-
--- EVENT FUNCTIONS
-
--- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
-local function OnMasterLooterMayHaveChanged(self, event)
-    local lootMethod = GetLootMethod()
-    -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
-
-    RaidRolls_G.plugins.gui_LootWarning:Draw()
-end
-
--- EVENT FRAMES
-
--- Invoke update after Master Looter relevant events are raised.
-local masterLooter_EventFrame = CreateFrame("Frame")
-masterLooter_EventFrame:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)

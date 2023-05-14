@@ -17,29 +17,26 @@ function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
         RaidRolls_G.gui:SetVisibility(RaidRollsShown)
 
         -- Initial state.
-        RaidRolls_G.wasInGroup = IsInGroup()
         if IsInGroup() then
-            RaidRolls_G.eventFrames.RegisterChatEvents()
+            RaidRolls_G.eventFunctions.OnGroupJoined(self, event)
         end
         RaidRolls_G.Update() -- To do lootWarning check.
     end
 end
 
+-- GROUP_JOINED
+function RaidRolls_G.eventFunctions.OnGroupJoined(self, event)
+    RaidRolls_G.eventFrames.RegisterChatEvents()
+end
+
+-- GROUP_LEFT
+function RaidRolls_G.eventFunctions.OnGroupLeft(self, event)
+    RaidRolls_G.eventFrames.UnregisterChatEvents()
+end
+
 -- GROUP_ROSTER_UPDATE
 function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
-    -- The addon user (!!) just joined or left the group. Do not update here. Freeze the addon
-    -- info shown on leave. On join the event will be invoked twice anyway (so it updates).
-    if IsInGroup() ~= RaidRolls_G.wasInGroup then -- Player's group status changed.
-        RaidRolls_G.wasInGroup = IsInGroup()
-        if IsInGroup() then                       -- Just joined.
-            RaidRolls_G.eventFrames.RegisterChatEvents()
-        else                                      -- Just left.
-            RaidRolls_G.eventFrames.UnregisterChatEvents()
-        end
-        -- Other changes like other ppl joining or leaving.
-    elseif IsInGroup() then
-        RaidRolls_G.Update()
-    end
+    RaidRolls_G.Update()
 end
 
 -- CHAT_MSG_EVENTS
