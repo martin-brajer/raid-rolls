@@ -36,7 +36,7 @@ RaidRolls_G.configuration.texts = {
     SET_MASTER_LOOTER = "Set MASTER LOOTER!!!",
     -- RAID_LABEL = <subgroup number>,
     PARTY_LABEL = "P",
-    NOGROUP_LABEL = "?",
+    NOGROUP_LABEL = "S",
     -- Errors.
     RESIZE_ERROR = "RaidRolls: cannot resize below 100%.",
     SLASH_PARAMETER_ERROR = "RaidRolls: unknown command. Run '/rr' for available commands.",
