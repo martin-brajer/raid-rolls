@@ -3,19 +3,16 @@
 
 local cfg = RaidRolls_G.configuration
 
--- Array of player rolls { name = { name, roll, repeated, subgroup, unitText, rollText } }
+-- Array of player rolls { name = playerRoll }
+-- playerRoll = { name, roll, repeated, subgroup, unitText, rollText }
 RaidRolls_G.rollers.values = {}
 
--- function RaidRolls_G.rollers.save(self, name, value)
---     if value == "pass" then
---         value = 0
---     end
---     if self.values[name] == nil then
---         local playerRoll = { name, value, false }
---     else
---         --
---     end
--- end
+-- On GROUP_ROSTER_UPDATE may `subgroup` be changed. Ignore the rest.
+function RaidRolls_G.rollers.Update(self)
+    -- on subgroup changed
+    -- update subgroup
+    -- always for now
+end
 
 local GroupType = {
     NOGROUP = "NOGROUP",
@@ -64,37 +61,42 @@ local function GetPlayerInfo(name, groupType)
 end
 
 -- Data to string.
-local function MakeText(name, subgroup, class, fileName, groupTypeUnit, roll)
+local function MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
     -- class
     local classColour = RAID_CLASS_COLORS[fileName]
     if classColour == nil then
         classColour = cfg.colors.UNKNOWN
     end
     local classText = WrapTextInColor(class, classColour)
+
     -- subgroup
     local subgroupText = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
-    -- roller
+
+    return name .. " (" .. classText .. ")[" .. subgroupText .. "]"
+end
+
+-- Data to string.
+local function MakeRollText(roll, repeated)
     local rollText
     if roll == 0 then
         rollText = WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
-    elseif roll < 0 then
-        rollText = WrapTextInColor(math.abs(roll), cfg.colors.MULTIROLL)
+    elseif repeated then
+        rollText = WrapTextInColor(roll, cfg.colors.MULTIROLL)
     else
         rollText = roll
     end
 
-    local unitText = name .. " (" .. classText .. ")[" .. subgroupText .. "]"
-    return unitText, rollText
+    return rollText
 end
 
 -- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
 local function GetSortedRollers(values)
     local sortedRollers = {}
-    for name, roll in pairs(values) do
-        table.insert(sortedRollers, { name = name, roll = roll })
+    for name, playerRoll in pairs(values) do
+        table.insert(sortedRollers, playerRoll)
     end
     table.sort(sortedRollers, function(lhs, rhs)
-        return math.abs(lhs.roll) > math.abs(rhs.roll)
+        return lhs.roll > rhs.roll
     end)
     return sortedRollers
 end
@@ -105,10 +107,18 @@ function RaidRolls_G.rollers.Draw(self)
     local sortedRollers = GetSortedRollers(self.values)
     local groupType = GetGroupType() -- Called here to avoid repetitively getting the same value.
 
-    for rowIndex, roller in ipairs(sortedRollers) do
-        local name, subgroup, class, fileName, groupTypeUnit = GetPlayerInfo(roller.name, groupType)
+    for rowIndex, playerRoll in ipairs(sortedRollers) do
+        local name, subgroup, class, fileName, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
 
-        local unitText, rollText = MakeText(name, subgroup, class, fileName, groupTypeUnit, roller.roll)
+        local unitText = MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
+        local rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+
+        -- self.values[name].unitText = unitText
+        -- self.values[name].rollText = rollText
+
+        -- self.values[name].unitText = MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
+        -- self.values[name].rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+
         RaidRolls_G.gui:WriteRow(rowIndex, unitText, rollText)
 
         currentRow = rowIndex
@@ -121,20 +131,34 @@ function RaidRolls_G.rollers.Draw(self)
     return currentRow
 end
 
-function RaidRolls_G.rollers.Save(self, name, value)
-    if (self.values[name] ~= nil) and (value ~= 0) then
-        value = -value -- Minus to mark multiroll.
-    end
+function RaidRolls_G.rollers.Save(self, name, roll)
+    -- New player.
+    if self.values[name] == nil then
+        --  { name, roll, repeated, subgroup, unitText, rollText }
+        self.values[name] = {
+            name = name,
+            roll = roll,
+            repeated = false,
+            subgroup = 0,
+            unitText = "",
+            rollText = ""
+        }
+        -- update unitText
+        -- update rollText
 
-    self.values[name] = value
+        -- Repeated roll.
+    else
+        local playerRoll = self.values[name]
+        playerRoll.repeated = true
+        playerRoll.roll = roll
+        -- update rollText
+    end
 end
 
 function RaidRolls_G.rollers.Fill(self)
-    self.values = {
-        player1 = 20,
-        player2 = 0,
-        player3 = -99,
-    }
+    self:Save("player1", 20)
+    self:Save("player2", 0)
+    self:Save("player3", -99)
 end
 
 function RaidRolls_G.rollers.Clear(self)
