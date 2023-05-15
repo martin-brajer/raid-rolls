@@ -22,6 +22,12 @@ RaidRolls_G.plugins = {}
 local cfg = RaidRolls_G.configuration
 
 
+RaidRolls_G.GroupType = {
+    NOGROUP = "NOGROUP",
+    PARTY = "PARTY",
+    RAID = "RAID",
+}
+
 function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
 end

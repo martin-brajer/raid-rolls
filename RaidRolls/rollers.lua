@@ -2,6 +2,7 @@
 -- Populate `RaidRolls_G.rollers` namespace.
 
 local cfg = RaidRolls_G.configuration
+local GroupType = RaidRolls_G.GroupType
 
 -- Array of player rolls { playerRoll }
 -- playerRoll = { name, classText, subgroup, unitText, roll, repeated, rollText, changed }
@@ -13,12 +14,6 @@ function RaidRolls_G.rollers.Update(self)
     -- update subgroup
     -- always for now
 end
-
-local GroupType = {
-    NOGROUP = "NOGROUP",
-    PARTY = "PARTY",
-    RAID = "RAID",
-}
 
 -- Find what kind of group is the current player in.
 local function GetGroupType()

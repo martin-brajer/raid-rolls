@@ -6,10 +6,10 @@ RaidRolls_G.configuration.FRAME_WIDTH = 220 -- Default value.
 
 -- All colors used..
 local colors = {
-    -- Group types (matches values of `rollers.lua > GroupType` enum).
-    NOGROUP = "FFFFFF00", -- System message color
-    PARTY = "FFAAA7FF",
-    RAID = "FFFF7D00",
+    -- Group type
+    [RaidRolls_G.GroupType.NOGROUP] = "FFFFFF00", -- System message color
+    [RaidRolls_G.GroupType.PARTY] = "FFAAA7FF",
+    [RaidRolls_G.GroupType.RAID] = "FFFF7D00",
     -- GUI
     BACKGROUND = "B2333333", -- { 0.2, 0.2, 0.2, 0.7 } red, green, blue [, alpha]
     HEADER = "FFFFFF00",     -- { 1.0, 1.0, 0.0, 1.0 } red, green, blue [, alpha]
