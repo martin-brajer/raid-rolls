@@ -11,7 +11,10 @@ RaidRolls_G.plugins.gui_LootWarning = {
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
     local lootMethod = GetLootMethod()
-    -- self.showWarning = UnitIsGroupLeader("player") and lootMethod ~= "master" and lootMethod ~= "personalloot"
+    RaidRolls_G.plugins.gui_LootWarning.showWarning = (
+        UnitIsGroupLeader("player")
+        and lootMethod ~= "master"
+        and lootMethod ~= "personalloot")
 
     RaidRolls_G.plugins.gui_LootWarning:Draw()
 end

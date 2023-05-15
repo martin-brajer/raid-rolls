@@ -3,8 +3,8 @@
 
 local cfg = RaidRolls_G.configuration
 
--- Array of player rolls { name = playerRoll }
--- playerRoll = { name, roll, repeated, subgroup, unitText, rollText }
+-- Array of player rolls { playerRoll }
+-- playerRoll = { name, classText, subgroup, unitText, roll, repeated, rollText, changed }
 RaidRolls_G.rollers.values = {}
 
 -- On GROUP_ROSTER_UPDATE may `subgroup` be changed. Ignore the rest.
@@ -20,7 +20,7 @@ local GroupType = {
     RAID = "RAID",
 }
 
--- Find what kind of group the current player is in.
+-- Find what kind of group is the current player in.
 local function GetGroupType()
     if IsInRaid() then
         return GroupType.RAID
@@ -89,37 +89,23 @@ local function MakeRollText(roll, repeated)
     return rollText
 end
 
--- Python notation: From dict(<name>: <roll>, ...) to sorted list(dict(name: <name>, roll: <roll>), ...)
-local function GetSortedRollers(values)
-    local sortedRollers = {}
-    for name, playerRoll in pairs(values) do
-        table.insert(sortedRollers, playerRoll)
-    end
-    table.sort(sortedRollers, function(lhs, rhs)
-        return lhs.roll > rhs.roll
-    end)
-    return sortedRollers
-end
-
---
+-- Redraw `unitText` of the roller who changed group (or left). Maybe all after group type change.
+-- Redraw `RollText` of all rollers and reorder (new roller or new roll).
 function RaidRolls_G.rollers.Draw(self)
     local currentRow = 0
-    local sortedRollers = GetSortedRollers(self.values)
-    local groupType = GetGroupType() -- Called here to avoid repetitively getting the same value.
 
-    for rowIndex, playerRoll in ipairs(sortedRollers) do
-        local name, subgroup, class, fileName, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
+    table.sort(self.values, function(lhs, rhs)
+        return lhs.roll > rhs.roll
+    end)
+    local groupType = GetGroupType()
 
-        local unitText = MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
-        local rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+    for rowIndex, playerRoll in ipairs(self.values) do
+        local name, subgroup, class, classFilename, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
 
-        -- self.values[name].unitText = unitText
-        -- self.values[name].rollText = rollText
+        playerRoll.unitText = MakeUnitText(name, subgroup, class, classFilename, groupTypeUnit)
+        playerRoll.rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
 
-        -- self.values[name].unitText = MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
-        -- self.values[name].rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
-
-        RaidRolls_G.gui:WriteRow(rowIndex, unitText, rollText)
+        RaidRolls_G.gui:WriteRow(rowIndex, playerRoll.unitText, playerRoll.rollText)
 
         currentRow = rowIndex
     end
@@ -132,25 +118,31 @@ function RaidRolls_G.rollers.Draw(self)
 end
 
 function RaidRolls_G.rollers.Save(self, name, roll)
-    -- New player.
-    if self.values[name] == nil then
-        --  { name, roll, repeated, subgroup, unitText, rollText }
-        self.values[name] = {
+    local playerFound = false
+    for _, playerRoll in ipairs(self.values) do
+        if name == playerRoll.name then
+            playerFound = true
+
+            -- Update exiting player.
+            playerRoll.repeated = true
+            playerRoll.roll = roll
+            -- update rollText
+        end
+    end
+    if not playerFound then
+        -- Add new playerRoll.
+        local _, subgroup, class, classFilename, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
+        table.insert(self.values, {
             name = name,
             roll = roll,
             repeated = false,
-            subgroup = 0,
+            subgroup = subgroup,
+            classText = "",
             unitText = "",
-            rollText = ""
-        }
+            rollText = "",
+            changed = true,
+        })
         -- update unitText
-        -- update rollText
-
-        -- Repeated roll.
-    else
-        local playerRoll = self.values[name]
-        playerRoll.repeated = true
-        playerRoll.roll = roll
         -- update rollText
     end
 end
@@ -158,7 +150,8 @@ end
 function RaidRolls_G.rollers.Fill(self)
     self:Save("player1", 20)
     self:Save("player2", 0)
-    self:Save("player3", -99)
+    self:Save("player3", 4)
+    self:Save("player3", 99) -- repeated
 end
 
 function RaidRolls_G.rollers.Clear(self)
