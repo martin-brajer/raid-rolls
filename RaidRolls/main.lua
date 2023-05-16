@@ -47,21 +47,21 @@ end
 
 -- Now Draw AND Update -> split.
 function RaidRolls_G.Update()
-    RaidRolls_G.Draw()
+    RaidRolls_G:Draw()
 end
 
 -- Main drawing function.
-function RaidRolls_G.Draw()
+function RaidRolls_G.Draw(self)
     -- Start at 0 for header.
     local currentRow = 0
 
     -- Fetch data, fill, sort, write.
-    currentRow = currentRow + RaidRolls_G.rollers:Draw()
+    currentRow = currentRow + self.rollers:Draw()
 
     -- Plugins draw.
-    for name, plugin in pairs(RaidRolls_G.plugins) do
+    for name, plugin in pairs(self.plugins) do
         currentRow = currentRow + plugin:Draw(currentRow)
     end
 
-    RaidRolls_G.gui:SetHeight(30 + cfg.ROW_HEIGHT * (currentRow)) -- 30 = (5 + 15 + 10)
+    self.gui:SetHeight(30 + cfg.ROW_HEIGHT * (currentRow)) -- 30 = (5 + 15 + 10)
 end

@@ -8,17 +8,8 @@ local GroupType = RaidRolls_G.GroupType
 -- playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }
 RaidRolls_G.rollers.values = {}
 -- Is to be sorted during the next `Draw`?
-RaidRolls_G.rollers.sorted = false
+RaidRolls_G.rollers.isSorted = false
 
--- On GROUP_ROSTER_UPDATE may `subgroup` be changed. Ignore the rest.
-function RaidRolls_G.rollers.OnGroupUpdate(self)
-    -- on subgroup changed
-    -- update subgroup
-    -- always for now
-    for index, playerRoll in ipairs(self.values) do
-        playerRoll.unitChanged = true
-    end
-end
 
 -- Find what kind of group is the current player in.
 local function GetGroupType()
@@ -74,12 +65,8 @@ local function MakeClassText(class, classFilename)
 end
 
 --
-local function MakeSubgroupText(subgroup, groupTypeUnit)
-    return WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
-end
-
---
-local function MakeUnitText(name, classText, subgroupText)
+local function MakeUnitText(name, classText, subgroup, groupTypeUnit)
+    local subgroupText = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
     return name .. " (" .. classText .. ")[" .. subgroupText .. "]"
 end
 
@@ -94,40 +81,57 @@ local function MakeRollText(roll, repeated)
     end
 end
 
+-- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
+function RaidRolls_G.rollers.OnGroupUpdate(self)
+    local groupType = GetGroupType()
+
+    for _, playerRoll in ipairs(self.values) do
+        local _, _, subgroup, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
+        -- Raid subgroup number or group type changed.
+        if playerRoll.subgroup ~= subgroup then
+            playerRoll.subgroup = subgroup
+            -- if `groupTypeUnit` changes, `subgroup` must change as well (no need to separate check).
+            playerRoll.groupTypeUnit = groupTypeUnit
+            playerRoll.unitChanged = true
+        end
+    end
+end
+
 -- Redraw `unitText` of the roller who changed group (or left). Maybe all after group type change.
 -- Redraw `RollText` of all rollers and reorder (new roller or new roll).
 function RaidRolls_G.rollers.Draw(self)
     local currentRow = 0
+    local orderChanged = false
 
-    print("sorted", self.sorted)
-    self.sorted = true
-    table.sort(self.values, function(lhs, rhs)
-        return lhs.roll > rhs.roll
-    end)
+    if not self.isSorted then
+        table.sort(self.values, function(lhs, rhs)
+            return lhs.roll > rhs.roll
+        end)
 
-    local groupType = GetGroupType()
-
-    for rowIndex, playerRoll in ipairs(self.values) do
-        print(playerRoll.name, playerRoll.unitChanged, playerRoll.rollChanged)
-        playerRoll.unitChanged = false
-        playerRoll.rollChanged = false
-
-        local name = playerRoll.name
-        local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, groupType)
-
-        local classText = MakeClassText(class, classFilename)
-        local subgroupText = MakeSubgroupText(subgroup, groupTypeUnit)
-        local unitText = MakeUnitText(name, classText, subgroupText)
-
-        local rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
-
-        RaidRolls_G.gui:WriteRow(rowIndex, unitText, rollText)
-
-        currentRow = rowIndex
+        orderChanged = true
+        self.isSorted = true
     end
-    print("---")
+
+    for index, playerRoll in ipairs(self.values) do
+        local unitText = nil
+        if orderChanged or playerRoll.unitChanged then
+            unitText = MakeUnitText(playerRoll.name, playerRoll.classText, playerRoll.subgroup, playerRoll.groupTypeUnit)
+            playerRoll.unitChanged = false
+        end
+
+        local rollText = nil
+        if orderChanged or playerRoll.rollChanged then
+            rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+            playerRoll.rollChanged = false
+        end
+
+        RaidRolls_G.gui:WriteRow(index, unitText, rollText)
+
+        currentRow = index
+    end
+
     -- Hide the rest of the rows.
-    RaidRolls_G.gui:HideRowsTail(currentRow + 1)
+    RaidRolls_G.gui:HideTailRows(currentRow + 1)
 
     -- Here `current_row` points to the line following the last one record.
     return currentRow
@@ -143,7 +147,6 @@ function RaidRolls_G.rollers.Save(self, name, roll)
             playerRoll.repeated = true
             playerRoll.roll = roll
             playerRoll.rollChanged = true
-            -- update rollText
             break
         end
     end
@@ -161,11 +164,9 @@ function RaidRolls_G.rollers.Save(self, name, roll)
             repeated = false,
             rollChanged = true,
         })
-        -- update unitText
-        -- update rollText
     end
 
-    self.sorted = false
+    self.isSorted = false
 end
 
 function RaidRolls_G.rollers.Fill(self)
