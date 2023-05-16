@@ -99,9 +99,16 @@ function RaidRolls_G.gui.WriteRow(self, i, unitText, rollText)
     end
 end
 
+-- Table length (no need to be a sequence).
+local function TableCount(t)
+    local count = 0
+    for _ in pairs(t) do count = count + 1 end
+    return count
+end
+
 -- Hide all rows with index equal or greater than the parameter.
 function RaidRolls_G.gui.HideTailRows(self, fromIndex)
-    local max_index = RaidRolls_G.TableCount(self.rowPool)
+    local max_index = TableCount(self.rowPool)
     while fromIndex <= max_index do
         local row = self:GetRow(fromIndex)
         row.unit:Hide()
