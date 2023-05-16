@@ -36,6 +36,7 @@ end
 
 -- GROUP_ROSTER_UPDATE
 function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
+    RaidRolls_G.rollers:OnGroupUpdate()
     RaidRolls_G.Update()
 end
 

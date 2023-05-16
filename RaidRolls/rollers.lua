@@ -5,14 +5,19 @@ local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
 -- Array of player rolls { playerRoll }
--- playerRoll = { name, classText, subgroup, unitText, roll, repeated, rollText, changed }
+-- playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }
 RaidRolls_G.rollers.values = {}
+-- Is to be sorted during the next `Draw`?
+RaidRolls_G.rollers.sorted = false
 
 -- On GROUP_ROSTER_UPDATE may `subgroup` be changed. Ignore the rest.
-function RaidRolls_G.rollers.Update(self)
+function RaidRolls_G.rollers.OnGroupUpdate(self)
     -- on subgroup changed
     -- update subgroup
     -- always for now
+    for index, playerRoll in ipairs(self.values) do
+        playerRoll.unitChanged = true
+    end
 end
 
 -- Find what kind of group is the current player in.
@@ -28,60 +33,65 @@ end
 
 -- Name to data.
 -- If player not found, return default values. E.g. when the player has already left the group.
+-- Parameter `groupType` is addon user group status.
 local function GetPlayerInfo(name, groupType)
-    local subgroup, class, fileName, groupTypeUnit = "?", "unknown", "UNKNOWN", GroupType.NOGROUP -- defaults
+    -- defaults
+    local class, classFilename = "unknown", "UNKNOWN"
+    local subgroup, groupTypeUnit = cfg.texts.NOGROUP_LABEL, GroupType.NOGROUP
 
     if groupType == GroupType.RAID then
-        local _name, _subgroup, _class, _fileName -- Candidates.
+        local _name, _subgroup, _class, _classFilename -- Candidates.
         for i = 1, GetNumGroupMembers() do
-            _name, _, _subgroup, _, _class, _fileName = GetRaidRosterInfo(i)
+            _name, _, _subgroup, _, _class, _classFilename = GetRaidRosterInfo(i)
             if _name == name then
-                subgroup, class, fileName = _subgroup, _class, _fileName
+                class, classFilename = _class, _classFilename
+                subgroup = tostring(_subgroup)
                 groupTypeUnit = groupType
                 break -- If not break, name stays and others get default values.
             end
         end
     elseif groupType == GroupType.PARTY then
         if UnitInParty(name) then
+            class, classFilename = UnitClass(name)
             subgroup = cfg.texts.PARTY_LABEL
-            class, fileName = UnitClass(name)
             groupTypeUnit = groupType
         end
     elseif name == UnitName("player") then -- Also groupType == "NOGROUP".
-        class, fileName = UnitClass(name)
+        class, classFilename = UnitClass(name)
     end
 
-    -- `class` is localized, `fileName` is a token.
-    return name, subgroup, class, fileName, groupTypeUnit
+    -- `class` is localized, `classFilename` is a token.
+    return class, classFilename, subgroup, groupTypeUnit
 end
 
--- Data to string.
-local function MakeUnitText(name, subgroup, class, fileName, groupTypeUnit)
-    -- class
-    local classColour = RAID_CLASS_COLORS[fileName]
+--
+local function MakeClassText(class, classFilename)
+    local classColour = RAID_CLASS_COLORS[classFilename]
     if classColour == nil then
         classColour = cfg.colors.UNKNOWN
     end
-    local classText = WrapTextInColor(class, classColour)
+    return WrapTextInColor(class, classColour)
+end
 
-    -- subgroup
-    local subgroupText = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
+--
+local function MakeSubgroupText(subgroup, groupTypeUnit)
+    return WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
+end
 
+--
+local function MakeUnitText(name, classText, subgroupText)
     return name .. " (" .. classText .. ")[" .. subgroupText .. "]"
 end
 
--- Data to string.
+--
 local function MakeRollText(roll, repeated)
-    local rollText
     if roll == 0 then
-        rollText = WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
+        return WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
     elseif repeated then
-        rollText = WrapTextInColor(roll, cfg.colors.MULTIROLL)
+        return WrapTextInColor(roll, cfg.colors.MULTIROLL)
     else
-        rollText = roll
+        return tostring(roll)
     end
-
-    return rollText
 end
 
 -- Redraw `unitText` of the roller who changed group (or left). Maybe all after group type change.
@@ -89,22 +99,33 @@ end
 function RaidRolls_G.rollers.Draw(self)
     local currentRow = 0
 
+    print("sorted", self.sorted)
+    self.sorted = true
     table.sort(self.values, function(lhs, rhs)
         return lhs.roll > rhs.roll
     end)
+
     local groupType = GetGroupType()
 
     for rowIndex, playerRoll in ipairs(self.values) do
-        local name, subgroup, class, classFilename, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
+        print(playerRoll.name, playerRoll.unitChanged, playerRoll.rollChanged)
+        playerRoll.unitChanged = false
+        playerRoll.rollChanged = false
 
-        playerRoll.unitText = MakeUnitText(name, subgroup, class, classFilename, groupTypeUnit)
-        playerRoll.rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+        local name = playerRoll.name
+        local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, groupType)
 
-        RaidRolls_G.gui:WriteRow(rowIndex, playerRoll.unitText, playerRoll.rollText)
+        local classText = MakeClassText(class, classFilename)
+        local subgroupText = MakeSubgroupText(subgroup, groupTypeUnit)
+        local unitText = MakeUnitText(name, classText, subgroupText)
+
+        local rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
+
+        RaidRolls_G.gui:WriteRow(rowIndex, unitText, rollText)
 
         currentRow = rowIndex
     end
-
+    print("---")
     -- Hide the rest of the rows.
     RaidRolls_G.gui:HideRowsTail(currentRow + 1)
 
@@ -121,25 +142,30 @@ function RaidRolls_G.rollers.Save(self, name, roll)
             -- Update exiting player.
             playerRoll.repeated = true
             playerRoll.roll = roll
+            playerRoll.rollChanged = true
             -- update rollText
+            break
         end
     end
     if not playerFound then
         -- Add new playerRoll.
-        local _, subgroup, class, classFilename, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
+        local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
+        local classText = MakeClassText(class, classFilename)
         table.insert(self.values, {
             name = name,
+            classText = classText,
+            subgroup = subgroup,
+            groupTypeUnit = groupTypeUnit,
+            unitChanged = true,
             roll = roll,
             repeated = false,
-            subgroup = subgroup,
-            classText = "",
-            unitText = "",
-            rollText = "",
-            changed = true,
+            rollChanged = true,
         })
         -- update unitText
         -- update rollText
     end
+
+    self.sorted = false
 end
 
 function RaidRolls_G.rollers.Fill(self)
