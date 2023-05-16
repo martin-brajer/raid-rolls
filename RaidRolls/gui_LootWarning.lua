@@ -43,13 +43,10 @@ function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
 end
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
--- Parameter `rowsUsed` is optional (if nil, do not update parent, only visibility).
 -- Return how many additional rows (for addon window size) do this needs.
 function RaidRolls_G.plugins.gui_LootWarning.Draw(self, rowsUsed)
     if self.showWarning then
-        if rowsUsed then
-            self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
-        end
+        self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
         self.lootWarning:Show()
         return 1
     else
@@ -61,5 +58,5 @@ end
 -- Testing
 function RaidRolls_G.plugins.gui_LootWarning.Test(self, args)
     self.showWarning = not self.showWarning
-    RaidRolls_G.Update()
+    RaidRolls_G:Draw()
 end

@@ -21,18 +21,17 @@ end
 -- GROUP_ROSTER_UPDATE
 function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
     RaidRolls_G.rollers:OnGroupUpdate()
-    RaidRolls_G.Update()
+    RaidRolls_G:Draw()
 end
 
 -- CHAT_MSG_EVENTS
 -- Look for "pass" in the group channels.
 function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
-    -- If the player name contains a hyphen, return the text up to the hyphen.
     local name, server = strsplit("-", playerName)
 
-    if string.lower(text) == "pass" then
+    if text:lower() == "pass" then
         RaidRolls_G.rollers:Save(name, 0)
-        RaidRolls_G.Update()
+        RaidRolls_G:Draw()
     end
 end
 
@@ -46,7 +45,7 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
         maxRoll = tonumber(maxRoll)
         if (minRoll == 1 and maxRoll == 100) then
             RaidRolls_G.rollers:Save(name, tonumber(roll))
-            RaidRolls_G.Update()
+            RaidRolls_G:Draw()
         end
     end
 end

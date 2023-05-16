@@ -7,7 +7,7 @@ local GroupType = RaidRolls_G.GroupType
 -- Array of player rolls { playerRoll }
 -- playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }
 RaidRolls_G.rollers.values = {}
--- Is to be sorted during the next `Draw`?
+-- Are rollers `self.values` to be sorted during the next `Draw`?
 RaidRolls_G.rollers.isSorted = false
 
 

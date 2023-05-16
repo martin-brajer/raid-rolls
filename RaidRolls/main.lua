@@ -57,7 +57,7 @@ end
 -- Erace previous rolls.
 function RaidRolls_G.Reset()
     RaidRolls_G.rollers:Clear()
-    RaidRolls_G.Update()
+    RaidRolls_G:Draw()
 end
 
 -- Table length (no need to be a sequence).
@@ -65,11 +65,6 @@ function RaidRolls_G.TableCount(t)
     local count = 0
     for _ in pairs(t) do count = count + 1 end
     return count
-end
-
--- Now Draw AND Update -> split.
-function RaidRolls_G.Update()
-    RaidRolls_G:Draw()
 end
 
 -- Main drawing function.

@@ -31,7 +31,7 @@ local function Test(msg)
     -- Fill `rollers` by artificial values.
     if tool == "fill" then
         RaidRolls_G.rollers:Fill()
-        RaidRolls_G.Update()
+        RaidRolls_G:Draw()
 
         -- No need to be part of a group for this to work.
     elseif tool == "solo" then
