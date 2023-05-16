@@ -21,7 +21,7 @@ function RaidRolls_G.gui.Initialize(self)
         if event == "LeftButton" then
             self_mainFrame:StartMoving();
         elseif event == "RightButton" then
-            RaidRolls_G.Reset()
+            RaidRolls_G:Reset()
         end
     end)
     mainFrame:SetScript("OnMouseUp", function(self_mainFrame)

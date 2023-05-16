@@ -73,7 +73,7 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     elseif command == "help" then
         Help()
     elseif command == "reset" then
-        RaidRolls_G.Reset()
+        RaidRolls_G:Reset()
     elseif command == "resize" then
         Resize(args)
     elseif command == "test" then
