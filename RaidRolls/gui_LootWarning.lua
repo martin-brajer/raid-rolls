@@ -8,15 +8,19 @@ RaidRolls_G.plugins.gui_LootWarning = {
     showWarning = false
 }
 
--- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
-local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
+--
+function RaidRolls_G.plugins.gui_LootWarning.UpdateShowWarning(self)
     local lootMethod = GetLootMethod()
     RaidRolls_G.plugins.gui_LootWarning.showWarning = (
         UnitIsGroupLeader("player")
         and lootMethod ~= "master"
         and lootMethod ~= "personalloot")
+end
 
-    RaidRolls_G.plugins.gui_LootWarning:Draw()
+-- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
+local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
+    RaidRolls_G.plugins.gui_LootWarning:UpdateShowWarning()
+    RaidRolls_G:Draw()
 end
 
 -- Invoke update after Master Looter relevant events are raised.
@@ -35,7 +39,7 @@ function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
     self.lootWarning = lootWarning
 
     -- Is the warning shown on load?
-    OnMasterLooterMayHaveChanged()
+    self:UpdateShowWarning()
 end
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?

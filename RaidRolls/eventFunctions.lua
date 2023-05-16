@@ -4,23 +4,7 @@
 -- ADDON_LOADED
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == "RaidRolls" then
-        RaidRolls_G.gui:Initialize()
-        -- Plugins initialize.
-        for name, plugin in pairs(RaidRolls_G.plugins) do
-            plugin:Initialize(RaidRolls_G.gui.mainFrame)
-        end
-
-        -- Load saved variables.
-        if RaidRollsShown == nil then -- Initialize when first loaded.
-            RaidRollsShown = true;
-        end
-        RaidRolls_G.gui:SetVisibility(RaidRollsShown)
-
-        -- Initial state.
-        if IsInGroup() then
-            RaidRolls_G.eventFunctions.OnGroupJoined(self, event)
-        end
-        RaidRolls_G.Update() -- To do lootWarning check.
+        RaidRolls_G:Initialize()
     end
 end
 

@@ -3,6 +3,7 @@
 -- Global locals (this addon's global namespace).
 RaidRolls_G = {}
 -- `eventFunctions.lua` namespace.
+-- Do not use `self` (`self ~= RaidRolls_G.eventFunctions`)
 RaidRolls_G.eventFunctions = {}
 -- `eventFrames.lua` namespace.
 RaidRolls_G.eventFrames = {}
@@ -30,6 +31,27 @@ RaidRolls_G.GroupType = {
 
 function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
+end
+
+-- Initialize self, plugins, saved variables
+function RaidRolls_G.Initialize(self)
+    RaidRolls_G.gui:Initialize()
+    -- Plugins initialize.
+    for name, plugin in pairs(RaidRolls_G.plugins) do
+        plugin:Initialize(RaidRolls_G.gui.mainFrame)
+    end
+
+    -- Load saved variables.
+    if RaidRollsShown == nil then -- Initialize when first loaded.
+        RaidRollsShown = true;
+    end
+    RaidRolls_G.gui:SetVisibility(RaidRollsShown)
+
+    -- Initial state.
+    if IsInGroup() then
+        RaidRolls_G.eventFunctions.OnGroupJoined(self)
+    end
+    RaidRolls_G:Draw() -- Plugins might have sth to say.
 end
 
 -- Erace previous rolls.
