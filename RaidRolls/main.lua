@@ -77,5 +77,5 @@ function RaidRolls_G.Draw(self)
         currentRow = currentRow + plugin:Draw(currentRow)
     end
 
-    self.gui:SetHeight(30 + cfg.ROW_HEIGHT * currentRow) -- 30 = (5 + 15 + 10)
+    self.gui:SetHeight(cfg.size.EMPTY_HEIGHT + cfg.size.ROW_HEIGHT * currentRow)
 end

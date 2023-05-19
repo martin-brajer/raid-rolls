@@ -1,11 +1,17 @@
 -- Configuration.
 -- Populate `RaidRolls_G.config` namespace.
 
-RaidRolls_G.configuration.ROW_HEIGHT = 20
-RaidRolls_G.configuration.FRAME_WIDTH = 220 -- Default value.
+--
+RaidRolls_G.configuration.size = {
+    EMPTY_HEIGHT = 30, -- Header and border: 30 = (5 + 15 + 10)
+    ROW_HEIGHT = 20,
+    FRAME_WIDTH = 220, -- Default value.
+}
 
--- All colors used..
-local colors = {
+-- All colors used as `ColorMixin`.
+RaidRolls_G.configuration.colors = {}
+local colors = RaidRolls_G.configuration.colors
+local hexColors = {
     -- Group type
     [RaidRolls_G.GroupType.NOGROUP] = "FFFFFF00", -- System message color
     [RaidRolls_G.GroupType.PARTY] = "FFAAA7FF",
@@ -20,11 +26,9 @@ local colors = {
     UNKNOWN = "FFFFFF00",   -- System message color
     SYSTEMMSG = "FFFFFF00", -- System message color
 }
-local colorMixins = {}
-for k, v in pairs(colors) do
-    colorMixins[k] = CreateColorFromHexString(v)
+for k, v in pairs(hexColors) do
+    colors[k] = CreateColorFromHexString(v)
 end
-RaidRolls_G.configuration.colors = colorMixins
 
 -- Texts
 RaidRolls_G.configuration.texts = {
@@ -51,4 +55,12 @@ RaidRolls_G.configuration.texts = {
         "  'resize <percentage>' - Change the width to <percentage> of default.",
         "  'test <tool>' - Tool can either be 'fill', 'solo' or <plugin name>.",
     }
+}
+
+-- Pairs of name and roll.
+RaidRolls_G.configuration.testFill = {
+    { "player1", 20 },
+    { "player2", 0 },
+    { "player3", 4 },
+    { "player3", 99 }, -- repeated
 }

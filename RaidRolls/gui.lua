@@ -12,7 +12,7 @@ function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
     local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
-    mainFrame:SetSize(cfg.FRAME_WIDTH, 30)
+    mainFrame:SetSize(cfg.size.FRAME_WIDTH, cfg.size.EMPTY_HEIGHT)
     mainFrame:SetPoint("CENTER", UIParent, 0, 0)
     -- Mouse
     mainFrame:SetMovable(true)
@@ -41,7 +41,7 @@ function RaidRolls_G.gui.Initialize(self)
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     unitHeader:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 5, -5) -- Offset right and down.
-    unitHeader:SetHeight(cfg.ROW_HEIGHT)
+    unitHeader:SetHeight(cfg.size.ROW_HEIGHT)
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText(cfg.texts.UNIT_HEADER)
@@ -50,7 +50,7 @@ function RaidRolls_G.gui.Initialize(self)
     -- ROLL
     local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
     rollHeader:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -16, -5)
-    rollHeader:SetHeight(cfg.ROW_HEIGHT)
+    rollHeader:SetHeight(cfg.size.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
     rollHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
@@ -78,8 +78,8 @@ function RaidRolls_G.gui.GetRow(self, i)
         unit:SetPoint("TOPLEFT", parents.unit, "BOTTOMLEFT")
         roll:SetPoint("TOPLEFT", parents.roll, "BOTTOMLEFT")
 
-        unit:SetHeight(cfg.ROW_HEIGHT)
-        roll:SetHeight(cfg.ROW_HEIGHT)
+        unit:SetHeight(cfg.size.ROW_HEIGHT)
+        roll:SetHeight(cfg.size.ROW_HEIGHT)
 
         row = { unit = unit, roll = roll }
         tinsert(self.rowPool, row)

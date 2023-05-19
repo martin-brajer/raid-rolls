@@ -32,7 +32,7 @@ masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 --
 function RaidRolls_G.plugins.gui_LootWarning.Initialize(self, mainFrame)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
-    lootWarning:SetHeight(cfg.ROW_HEIGHT)
+    lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(0).unit, "BOTTOMLEFT")
     lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
