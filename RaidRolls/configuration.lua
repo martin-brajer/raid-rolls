@@ -1,5 +1,9 @@
 -- Configuration.
--- Populate `RaidRolls_G.config` namespace.
+-- Populate the following namespace.
+local this_module = RaidRolls_G.configuration
+
+--
+RaidRolls_G.configuration.ADDON_NAME = "RaidRolls"
 
 --
 RaidRolls_G.configuration.size = {
@@ -33,19 +37,28 @@ end
 -- Texts
 RaidRolls_G.configuration.texts = {
     -- General.
+
     LIST_CMDS = "Cmds: show, hide, toggle, help, reset, resize, test.",
     UNIT_HEADER = "Player (class)[subgroup]",
     ROLL_HEADER = "Roll",
     PASS = "pass",
     SET_MASTER_LOOTER = "Set MASTER LOOTER!!!",
-    -- RAID_LABEL = <subgroup number>,
-    PARTY_LABEL = "P",
+
+    -- Labels belonging to `GroupType`s.
+
     NOGROUP_LABEL = "S",
-    -- Errors.
-    RESIZE_ERROR = "RaidRolls: cannot resize below 100%.",
-    SLASH_PARAMETER_ERROR = "RaidRolls: unknown command. Run '/rr' for available commands.",
-    TEST_PARAMETER_ERROR = "RaidRolls: test accepts either 'fill', 'solo' or plugin name.",
+    PARTY_LABEL = "P",
+    -- RAID_LABEL = <subgroup number>,
+
+    -- Errors. Used by `printError()`.
+
+    RESIZE_SIZE_ERROR = "cannot resize below 100%.",
+    RESIZE_PARAMETER_ERROR = "resize accepts either no argument or a number above 100.",
+    TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo' or a plugin name.",
+    SLASH_PARAMETER_ERROR = "unknown command. Run '/rr' for available commands.",
+
     -- Help lines.
+
     HELP_LINES = {
         "Slash Commands '/raidrolls' (or '/rr'):",
         "  none - Commands list.",
@@ -54,7 +67,7 @@ RaidRolls_G.configuration.texts = {
         "  'reset' - Erase all rolls (same as right-clicking the window).",
         "  'resize <percentage>' - Change the width to <percentage> of default.",
         "  'test <tool>' - Tool can either be 'fill', 'solo' or <plugin name>.",
-    }
+    },
 }
 
 -- Pairs of name and roll.

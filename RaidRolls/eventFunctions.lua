@@ -1,9 +1,11 @@
 -- Functions called on events defined in `RaidRolls_G.eventFrames`.
 -- Populate `RaidRolls_G.eventFunctions` namespace.
 
+local cfg = RaidRolls_G.configuration
+
 -- ADDON_LOADED
 function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
-    if addOnName == "RaidRolls" then
+    if addOnName == cfg.ADDON_NAME then
         RaidRolls_G:Initialize()
     end
 end

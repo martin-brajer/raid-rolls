@@ -11,7 +11,8 @@ RaidRolls_G.gui.rowPool = {}
 function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
-    local mainFrame = CreateFrame("Frame", "RaidRolls_MainFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+    local mainFrame = CreateFrame("Frame", ("%s_MainFrame"):format(cfg.ADDON_NAME),
+        UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mainFrame:SetSize(cfg.size.FRAME_WIDTH, cfg.size.EMPTY_HEIGHT)
     mainFrame:SetPoint("CENTER", UIParent, 0, 0)
     -- Mouse

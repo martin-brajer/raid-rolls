@@ -3,29 +3,47 @@
 
 local cfg = RaidRolls_G.configuration
 
+--
+local function printError(msg)
+    local text = ("%s: %s"):format(cfg.ADDON_NAME, msg)
+    print(WrapTextInColor(text, cfg.colors.SYSTEMMSG))
+end
+
 -- Print ingame help.
 local function Help()
-    print(GetAddOnMetadata("RaidRolls", "Title") .. " v" .. GetAddOnMetadata("RaidRolls", "Version") .. ".");
+    print(GetAddOnMetadata(cfg.ADDON_NAME, "Title") .. " v" .. GetAddOnMetadata(cfg.ADDON_NAME, "Version") .. ".");
     for _, line in ipairs(cfg.texts.HELP_LINES) do
         print(line)
     end
 end
 
 -- Main frame width change.
-local function Resize(percentage)
-    percentage = tonumber(percentage)
-    if percentage == nil then
+local function Resize(percentageStr)
+    local percentage
+    -- Parameter check.
+    if percentageStr == nil then -- No parameter -> default.
         percentage = 100
-    elseif percentage < 100 then
-        print(WrapTextInColor(cfg.texts.RESIZE_ERROR, cfg.colors.SYSTEMMSG))
-        return
+    else
+        percentage = tonumber(percentageStr)
+        if percentage == nil then -- Not a number.
+            printError(cfg.texts.RESIZE_PARAMETER_ERROR)
+            return
+        elseif percentage < 100 then
+            printError(cfg.texts.RESIZE_SIZE_ERROR)
+            return
+        end
     end
 
-    RaidRolls_G.gui:SetWidth(cfg.FRAME_WIDTH * (percentage / 100))
+    RaidRolls_G.gui:SetWidth(cfg.size.FRAME_WIDTH * (percentage / 100))
 end
 
 -- No need to be part of a group for this to work.
 local function Test(msg)
+    -- Parameter check.
+    if not msg then
+        printError(cfg.texts.TEST_PARAMETER_ERROR)
+        return
+    end
     local tool, args = strsplit(" ", msg, 2)
 
     -- Fill `rollers` by artificial values.
@@ -51,7 +69,7 @@ local function Test(msg)
 
         -- None, just wrong cmd.
         if not pluginFound then
-            print(WrapTextInColor(cfg.texts.TEST_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
+            printError(cfg.texts.TEST_PARAMETER_ERROR)
         end
     end
 end
@@ -79,6 +97,6 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     elseif command == "test" then
         Test(args)
     else
-        print(WrapTextInColor(cfg.texts.SLASH_PARAMETER_ERROR, cfg.colors.SYSTEMMSG))
+        printError(cfg.texts.SLASH_PARAMETER_ERROR)
     end
 end

@@ -1,4 +1,5 @@
 -- Main file. Info and globals.
+-- Globals: `RaidRolls_G`, `RaidRollsShown`, `RaidRolls_OnAddonCompartmentClick`
 
 -- Global locals (this addon's global namespace).
 RaidRolls_G = {}
