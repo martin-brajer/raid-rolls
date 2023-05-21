@@ -1,7 +1,7 @@
 -- Adds a warning showing if masterlooter should be on and isn't.
 -- This plugin is used by adding it in the required toc file.
 
--- `plugin_MasterLooter.lua` namespace.
+-- Initialize `plugin_masterLooter.lua` namespace.
 RaidRolls_G.plugins.masterLooter = {}
 
 local this_module = RaidRolls_G.plugins.masterLooter
