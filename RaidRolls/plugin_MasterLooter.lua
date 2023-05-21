@@ -4,7 +4,7 @@
 -- `plugin_MasterLooter.lua` namespace.
 RaidRolls_G.plugins.masterLooter = {}
 
-local this_module = RaidRolls_G.plugins.masterlooter
+local this_module = RaidRolls_G.plugins.masterLooter
 
 local cfg = RaidRolls_G.configuration
 
