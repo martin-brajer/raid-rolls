@@ -4,7 +4,7 @@ local this_module = RaidRolls_G.gui
 
 local cfg = RaidRolls_G.configuration
 
--- Collection of {unit, roll} to be used to show data rows.
+-- Collection of { unit, roll } to be used to show data rows.
 this_module.rowPool = {}
 
 
@@ -102,17 +102,9 @@ function this_module.WriteRow(self, i, unitText, rollText)
     end
 end
 
--- Table length (no need to be a sequence).
-local function TableCount(t)
-    local count = 0
-    for _ in pairs(t) do count = count + 1 end
-    return count
-end
-
 -- Hide all rows with index equal or greater than the parameter.
 function this_module.HideTailRows(self, fromIndex)
-    local max_index = TableCount(self.rowPool)
-    while fromIndex <= max_index do
+    while fromIndex <= #self.rowPool do
         local row = self:GetRow(fromIndex)
         row.unit:Hide()
         row.roll:Hide()
