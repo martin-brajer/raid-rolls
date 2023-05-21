@@ -68,7 +68,8 @@ function this_module.Draw(self)
 
     -- Plugins draw.
     for _, plugin in pairs(self.plugins) do
-        currentRow = currentRow + plugin:Draw(currentRow)
+        local relativePoint = RaidRolls_G.gui:GetRow(currentRow).unit
+        currentRow = currentRow + plugin:Draw(relativePoint)
     end
 
     self.gui:SetHeight(cfg.size.EMPTY_HEIGHT + cfg.size.ROW_HEIGHT * currentRow)

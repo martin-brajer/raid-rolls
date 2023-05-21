@@ -47,9 +47,9 @@ end
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
 -- Return how many additional rows (for addon window size) do this needs.
-function this_module.Draw(self, rowsUsed)
+function this_module.Draw(self, relativePoint)
     if self.showWarning then
-        self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
+        self.lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
         self.lootWarning:Show()
         return 1
     else
