@@ -17,9 +17,7 @@ RaidRolls_G.rollers = {}
 -- Container for plugin namespaces.
 RaidRolls_G.plugins = {}
 
--- SAVED VARIABLES: `RaidRollsShown`
--- Was the main frame shown at the end of the last session?
--- Initialized in `RaidRolls_G.eventFunctions.OnLoad`.
+local this_module = RaidRolls_G
 
 local cfg = RaidRolls_G.configuration
 
@@ -36,10 +34,10 @@ function RaidRolls_OnAddonCompartmentClick()
 end
 
 -- Initialize self, plugins, saved variables
-function RaidRolls_G.Initialize(self)
+function this_module.Initialize(self)
     self.gui:Initialize()
     -- Plugins initialize.
-    for name, plugin in pairs(self.plugins) do
+    for _, plugin in pairs(self.plugins) do
         plugin:Initialize(self.gui.mainFrame)
     end
 
@@ -60,13 +58,13 @@ function RaidRolls_G.Initialize(self)
 end
 
 -- Erace previous rolls.
-function RaidRolls_G.Reset(self)
+function this_module.Reset(self)
     self.rollers:Clear()
     self:Draw()
 end
 
 -- Main drawing function.
-function RaidRolls_G.Draw(self)
+function this_module.Draw(self)
     -- Start at 0 for header.
     local currentRow = 0
 
@@ -74,7 +72,7 @@ function RaidRolls_G.Draw(self)
     currentRow = currentRow + self.rollers:Draw()
 
     -- Plugins draw.
-    for name, plugin in pairs(self.plugins) do
+    for _, plugin in pairs(self.plugins) do
         currentRow = currentRow + plugin:Draw(currentRow)
     end
 

@@ -1,6 +1,8 @@
 -- Define EventFrames and connect them with OnEvent functions from `RaidRolls_G.eventFunctions`.
 -- Define register helper functions.
--- Populate `RaidRolls_G.eventFrames` namespace.
+
+local this_module = RaidRolls_G.eventFrames
+
 
 -- CREATE EVENT FRAMES
 
@@ -45,7 +47,7 @@ local CHAT_MSG_EVENTS = {
     "CHAT_MSG_WHISPER",
 }
 
-function RaidRolls_G.eventFrames.RegisterChatEvents()
+function this_module.RegisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         passing_EventFrame:RegisterEvent(event)
     end
@@ -53,7 +55,7 @@ function RaidRolls_G.eventFrames.RegisterChatEvents()
 end
 
 -- Unregister events.
-function RaidRolls_G.eventFrames.UnregisterChatEvents()
+function this_module.UnregisterChatEvents()
     for _, event in ipairs(CHAT_MSG_EVENTS) do
         passing_EventFrame:UnregisterEvent(event)
     end
@@ -61,7 +63,7 @@ function RaidRolls_G.eventFrames.UnregisterChatEvents()
 end
 
 -- Register solo channels for testing.
-function RaidRolls_G.eventFrames.RegisterSoloChatEvents()
+function this_module.RegisterSoloChatEvents()
     passing_EventFrame:RegisterEvent("CHAT_MSG_SAY")
     rolling_EventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 end

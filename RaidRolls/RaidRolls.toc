@@ -10,8 +10,8 @@
 main.lua
 configuration.lua
 gui.lua
-plugin_MasterLooter.lua
 slashCommands.lua
 eventFunctions.lua
 eventFrames.lua
 rollers.lua
+plugin_MasterLooter.lua

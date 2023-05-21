@@ -1,14 +1,15 @@
 -- GUI elements and manipulation.
--- Populate `RaidRolls_G.gui` namespace.
+
+local this_module = RaidRolls_G.gui
 
 local cfg = RaidRolls_G.configuration
 
 -- Collection of {unit, roll} to be used to show data rows.
-RaidRolls_G.gui.rowPool = {}
+this_module.rowPool = {}
 
 
 -- Needs `RaidRollsShown` (saved variable) initialized.
-function RaidRolls_G.gui.Initialize(self)
+function this_module.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
     local mainFrame = CreateFrame("Frame", ("%s_MainFrame"):format(cfg.ADDON_NAME),
@@ -62,7 +63,7 @@ end
 -- Handle FontStrings needed for listing rolling players.
 -- Uses as few rows as possible (recycles the old ones).
 -- Return i-th row (create if necessary). Zero gives headers.
-function RaidRolls_G.gui.GetRow(self, i)
+function this_module.GetRow(self, i)
     if i == 0 then
         return { unit = self.unitHeader, roll = self.rollHeader }
     end
@@ -90,7 +91,7 @@ function RaidRolls_G.gui.GetRow(self, i)
 end
 
 -- Write character name and their roll to the given row index. Skip `nil`.
-function RaidRolls_G.gui.WriteRow(self, i, unitText, rollText)
+function this_module.WriteRow(self, i, unitText, rollText)
     local row = self:GetRow(i)
     if unitText ~= nil then
         row.unit:SetText(unitText)
@@ -108,7 +109,7 @@ local function TableCount(t)
 end
 
 -- Hide all rows with index equal or greater than the parameter.
-function RaidRolls_G.gui.HideTailRows(self, fromIndex)
+function this_module.HideTailRows(self, fromIndex)
     local max_index = TableCount(self.rowPool)
     while fromIndex <= max_index do
         local row = self:GetRow(fromIndex)
@@ -119,15 +120,15 @@ function RaidRolls_G.gui.HideTailRows(self, fromIndex)
 end
 
 -- Show or hide the GUI.
-function RaidRolls_G.gui.SetVisibility(self, bool)
+function this_module.SetVisibility(self, bool)
     RaidRollsShown = bool
     self.mainFrame:SetShown(bool)
 end
 
-function RaidRolls_G.gui.SetWidth(self, width)
+function this_module.SetWidth(self, width)
     self.mainFrame:SetWidth(width)
 end
 
-function RaidRolls_G.gui.SetHeight(self, height)
+function this_module.SetHeight(self, height)
     self.mainFrame:SetHeight(height)
 end

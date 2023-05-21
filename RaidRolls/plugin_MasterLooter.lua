@@ -1,17 +1,20 @@
--- Adds Loot warning to show if masterlooter whould be on and isn't.
--- Populate `RaidRolls_G.plugins.masterLooter` namespace.
+-- Adds a warning showing if masterlooter should be on and isn't.
 -- This plugin is used by adding it in the required toc file.
+
+-- `plugin_MasterLooter.lua` namespace.
+RaidRolls_G.plugins.masterLooter = {}
+
+local this_module = RaidRolls_G.plugins.masterlooter
 
 local cfg = RaidRolls_G.configuration
 
-RaidRolls_G.plugins.masterLooter = {
-    showWarning = false
-}
+-- Should be the warning shown in the next draw?
+this_module.showWarning = false
 
 --
-function RaidRolls_G.plugins.masterLooter.UpdateShowWarning(self)
+function this_module.UpdateShowWarning(self)
     local lootMethod = GetLootMethod()
-    RaidRolls_G.plugins.masterLooter.showWarning = (
+    self.showWarning = (
         UnitIsGroupLeader("player")
         and lootMethod ~= "master"
         and lootMethod ~= "personalloot")
@@ -19,7 +22,7 @@ end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
-    RaidRolls_G.plugins.masterLooter:UpdateShowWarning()
+    this_module:UpdateShowWarning()
     RaidRolls_G:Draw()
 end
 
@@ -30,7 +33,7 @@ masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 
 --
-function RaidRolls_G.plugins.masterLooter.Initialize(self, mainFrame)
+function this_module.Initialize(self, mainFrame)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(0).unit, "BOTTOMLEFT")
@@ -44,7 +47,7 @@ end
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
 -- Return how many additional rows (for addon window size) do this needs.
-function RaidRolls_G.plugins.masterLooter.Draw(self, rowsUsed)
+function this_module.Draw(self, rowsUsed)
     if self.showWarning then
         self.lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(rowsUsed).unit, "BOTTOMLEFT")
         self.lootWarning:Show()
@@ -56,7 +59,7 @@ function RaidRolls_G.plugins.masterLooter.Draw(self, rowsUsed)
 end
 
 -- Testing
-function RaidRolls_G.plugins.masterLooter.Test(self, args)
+function this_module.Test(self, args)
     self.showWarning = not self.showWarning
     RaidRolls_G:Draw()
 end
