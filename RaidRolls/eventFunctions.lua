@@ -1,35 +1,34 @@
 -- Functions called on events defined in `RaidRolls_G.eventFrames`.
-
-local this_module = RaidRolls_G.eventFunctions
+-- Populate `RaidRolls_G.eventFunctions`.
 
 local cfg = RaidRolls_G.configuration
 
 -- ADDON_LOADED
-function this_module.OnLoad(self, event, addOnName)
+function RaidRolls_G.eventFunctions.OnLoad(self, event, addOnName)
     if addOnName == cfg.ADDON_NAME then
         RaidRolls_G:Initialize()
     end
 end
 
 -- GROUP_JOINED
-function this_module.OnGroupJoined(self, event)
+function RaidRolls_G.eventFunctions.OnGroupJoined(self, event)
     RaidRolls_G.eventFrames.RegisterChatEvents()
 end
 
 -- GROUP_LEFT
-function this_module.OnGroupLeft(self, event)
+function RaidRolls_G.eventFunctions.OnGroupLeft(self, event)
     RaidRolls_G.eventFrames.UnregisterChatEvents()
 end
 
 -- GROUP_ROSTER_UPDATE
-function this_module.OnGroupUpdate(self, event)
+function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
     RaidRolls_G.rollers:OnGroupUpdate()
     RaidRolls_G:Draw()
 end
 
 -- CHAT_MSG_EVENTS
 -- Look for "pass" in the group channels.
-function this_module.OnChatMsg(self, event, text, playerName)
+function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
     local name, server = strsplit("-", playerName)
 
     if text:lower() == "pass" then
@@ -40,7 +39,7 @@ end
 
 -- CHAT_MSG_SYSTEM
 -- Look for "/roll" in system messages.
-function this_module.OnSystemMsg(self, event, text)
+function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
     if string.find(text, "rolls") ~= nil then
         local name, roll, minRoll, maxRoll = text:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
 

@@ -17,8 +17,6 @@ RaidRolls_G.rollers = {}
 -- Container for plugin namespaces.
 RaidRolls_G.plugins = {}
 
-local this_module = RaidRolls_G
-
 local cfg = RaidRolls_G.configuration
 
 
@@ -34,7 +32,7 @@ function RaidRolls_OnAddonCompartmentClick()
 end
 
 -- Initialize self, plugins, saved variables
-function this_module.Initialize(self)
+function RaidRolls_G.Initialize(self)
     self.gui:Initialize()
     -- Plugins initialize.
     for _, plugin in pairs(self.plugins) do
@@ -59,7 +57,7 @@ function this_module.Initialize(self)
 end
 
 -- Main drawing function.
-function this_module.Draw(self)
+function RaidRolls_G.Draw(self)
     -- Start at 0 for header.
     local currentRow = 0
 

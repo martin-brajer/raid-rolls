@@ -1,15 +1,14 @@
 -- Array of player who /rolled.
-
-local this_module = RaidRolls_G.rollers
+-- Populate `RaidRolls_G.rollers`.
 
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
 -- Array of player rolls { playerRoll }
 -- playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }
-this_module.values = {}
+RaidRolls_G.rollers.values = {}
 -- Are rollers `self.values` to be sorted during the next `Draw`?
-this_module.isSorted = false
+RaidRolls_G.rollers.isSorted = false
 
 
 -- Find what kind of group is the current player in.
@@ -83,7 +82,7 @@ local function MakeRollText(roll, repeated)
 end
 
 -- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
-function this_module.OnGroupUpdate(self)
+function RaidRolls_G.rollers.OnGroupUpdate(self)
     local groupType = GetGroupType()
 
     for _, playerRoll in ipairs(self.values) do
@@ -100,7 +99,7 @@ end
 
 -- Redraw `unitText` of the roller who changed group (or left). Maybe all after group type change.
 -- Redraw `RollText` of all rollers and reorder (new roller or new roll).
-function this_module.Draw(self)
+function RaidRolls_G.rollers.Draw(self)
     local currentRow = 0
     local orderChanged = false
 
@@ -138,7 +137,7 @@ function this_module.Draw(self)
     return currentRow
 end
 
-function this_module.Save(self, name, roll)
+function RaidRolls_G.rollers.Save(self, name, roll)
     local playerFound = false
     for _, playerRoll in ipairs(self.values) do
         if name == playerRoll.name then
@@ -170,13 +169,13 @@ function this_module.Save(self, name, roll)
     self.isSorted = false
 end
 
-function this_module.Fill(self)
+function RaidRolls_G.rollers.Fill(self)
     self:Save("player1", 20)
     self:Save("player2", 0)
     self:Save("player3", 4)
     self:Save("player3", 99) -- repeated
 end
 
-function this_module.Clear(self)
+function RaidRolls_G.rollers.Clear(self)
     self.values = {}
 end

@@ -1,21 +1,20 @@
 -- Configuration.
-
-local this_module = RaidRolls_G.configuration
+-- Populate `RaidRolls_G.configuration`.
 
 local GroupType = RaidRolls_G.GroupType
 
 --
-this_module.ADDON_NAME = "RaidRolls"
+RaidRolls_G.configuration.ADDON_NAME = "RaidRolls"
 
 --
-this_module.size = {
+RaidRolls_G.configuration.size = {
     EMPTY_HEIGHT = 30, -- Header and border: 30 = (5 + 15 + 10)
     ROW_HEIGHT = 20,
     FRAME_WIDTH = 220, -- Default value.
 }
 
 -- All colors used as `ColorMixin`.
-this_module.colors = {}
+RaidRolls_G.configuration.colors = {}
 local hexColors = {
     -- Group type
     [GroupType.NOGROUP] = "FFFFFF00", -- System message color
@@ -32,11 +31,11 @@ local hexColors = {
     SYSTEMMSG = "FFFFFF00", -- System message color
 }
 for k, v in pairs(hexColors) do
-    this_module.colors[k] = CreateColorFromHexString(v)
+    RaidRolls_G.configuration.colors[k] = CreateColorFromHexString(v)
 end
 
 -- Texts
-this_module.texts = {
+RaidRolls_G.configuration.texts = {
     -- General.
 
     LIST_CMDS = "Cmds: show, hide, toggle, help, reset, resize, test.",
@@ -72,7 +71,7 @@ this_module.texts = {
 }
 
 -- Pairs of name and roll.
-this_module.testFill = {
+RaidRolls_G.configuration.testFill = {
     { "player1", 20 },
     { "player2", 0 },
     { "player3", 4 },
