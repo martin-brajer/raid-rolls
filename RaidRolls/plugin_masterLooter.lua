@@ -1,18 +1,20 @@
 -- Adds a warning showing if masterlooter should be on and isn't.
 -- This plugin is used by adding it in the required toc file.
+-- Populate `masterLooter` and insert it to `RaidRolls_G.plugins`.
 
--- Initialize `plugin_masterLooter.lua` namespace.
-RaidRolls_G.plugins.masterLooter = {}
-
-local this_module = RaidRolls_G.plugins.masterLooter
+-- `masterLooter` plugin namespace.
+local masterLooter = {
+    NAME = 'masterLooter',
+}
+table.insert(RaidRolls_G.plugins, masterLooter)
 
 local cfg = RaidRolls_G.configuration
 
 -- Should be the warning shown in the next draw?
-this_module.showWarning = false
+masterLooter.showWarning = false
 
 --
-function this_module.UpdateShowWarning(self)
+function masterLooter.UpdateShowWarning(self)
     local lootMethod = GetLootMethod()
     self.showWarning = (
         UnitIsGroupLeader("player")
@@ -22,7 +24,7 @@ end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
-    this_module:UpdateShowWarning()
+    masterLooter:UpdateShowWarning()
     RaidRolls_G:Draw()
 end
 
@@ -33,7 +35,7 @@ masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 
 --
-function this_module.Initialize(self, mainFrame, relativePoint)
+function masterLooter.Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
@@ -47,7 +49,7 @@ end
 
 -- Accept the last used row to be used as parent. Use the row directly (less coupling)?
 -- Return how many additional rows (for addon window size) do this needs.
-function this_module.Draw(self, relativePoint)
+function masterLooter.Draw(self, relativePoint)
     if self.showWarning then
         self.lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
         self.lootWarning:Show()
@@ -59,7 +61,7 @@ function this_module.Draw(self, relativePoint)
 end
 
 -- Testing
-function this_module.Test(self, args)
+function masterLooter.Test(self, args)
     self.showWarning = not self.showWarning
     RaidRolls_G:Draw()
 end

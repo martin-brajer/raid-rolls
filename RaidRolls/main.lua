@@ -35,7 +35,7 @@ end
 function RaidRolls_G.Initialize(self)
     self.gui:Initialize()
     -- Plugins initialize.
-    for _, plugin in pairs(self.plugins) do
+    for _, plugin in ipairs(self.plugins) do
         local relativePoint = RaidRolls_G.gui:GetRow(0).unit
         plugin:Initialize(self.gui.mainFrame, relativePoint)
     end
@@ -65,7 +65,7 @@ function RaidRolls_G.Draw(self)
     currentRow = currentRow + self.rollers:Draw()
 
     -- Plugins draw.
-    for _, plugin in pairs(self.plugins) do
+    for _, plugin in ipairs(self.plugins) do
         local relativePoint = RaidRolls_G.gui:GetRow(currentRow).unit
         currentRow = currentRow + plugin:Draw(relativePoint)
     end

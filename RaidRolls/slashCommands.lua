@@ -59,8 +59,8 @@ local function Test(msg)
     else
         local pluginFound = false
 
-        for name, plugin in pairs(RaidRolls_G.plugins) do
-            if tool == name then
+        for _, plugin in ipairs(RaidRolls_G.plugins) do
+            if tool == plugin.NAME then
                 plugin:Test(args)
                 pluginFound = true
                 break
