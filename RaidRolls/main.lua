@@ -38,7 +38,8 @@ function this_module.Initialize(self)
     self.gui:Initialize()
     -- Plugins initialize.
     for _, plugin in pairs(self.plugins) do
-        plugin:Initialize(self.gui.mainFrame)
+        local relativePoint = RaidRolls_G.gui:GetRow(0).unit
+        plugin:Initialize(self.gui.mainFrame, relativePoint)
     end
 
     -- Load saved variables.

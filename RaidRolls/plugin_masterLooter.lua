@@ -33,10 +33,10 @@ masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 
 --
-function this_module.Initialize(self, mainFrame)
+function this_module.Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
-    lootWarning:SetPoint("TOPLEFT", RaidRolls_G.gui:GetRow(0).unit, "BOTTOMLEFT")
+    lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
     lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
     self.lootWarning = lootWarning
