@@ -3,7 +3,6 @@
 
 local this_module = RaidRolls_G.eventFrames
 
-
 -- CREATE EVENT FRAMES
 
 -- The first time saved variables are accessible (they are not while built-in onLoad is run).

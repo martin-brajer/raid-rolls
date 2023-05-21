@@ -57,12 +57,6 @@ function this_module.Initialize(self)
     self:Draw()
 end
 
--- Erace previous rolls.
-function this_module.Reset(self)
-    self.rollers:Clear()
-    self:Draw()
-end
-
 -- Main drawing function.
 function this_module.Draw(self)
     -- Start at 0 for header.
