@@ -33,11 +33,10 @@ end
 
 -- Initialize self, plugins, saved variables
 function RaidRolls_G.Initialize(self)
-    self.gui:Initialize()
+    local relativePoint = self.gui:Initialize()
     -- Plugins initialize.
     for _, plugin in ipairs(self.plugins) do
-        local relativePoint = RaidRolls_G.gui:GetRow(0).unit
-        plugin:Initialize(self.gui.mainFrame, relativePoint)
+        relativePoint = plugin:Initialize(self.gui.mainFrame, relativePoint)
     end
 
     -- Load saved variables.
@@ -62,12 +61,13 @@ function RaidRolls_G.Draw(self)
     local currentRow = 0
 
     -- Fetch data, fill, sort, write.
-    currentRow = currentRow + self.rollers:Draw()
+    local addRows, relativePoint = self.rollers:Draw()
+    currentRow = currentRow + addRows
 
     -- Plugins draw.
     for _, plugin in ipairs(self.plugins) do
-        local relativePoint = RaidRolls_G.gui:GetRow(currentRow).unit
-        currentRow = currentRow + plugin:Draw(relativePoint)
+        addRows, relativePoint = plugin:Draw(relativePoint)
+        currentRow = currentRow + addRows
     end
 
     self.gui:SetHeight(cfg.size.EMPTY_HEIGHT + cfg.size.ROW_HEIGHT * currentRow)

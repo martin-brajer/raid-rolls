@@ -15,7 +15,6 @@ local function hexColorToRGBA(hexString)
     return t[2], t[3], t[4], t[1]
 end
 
--- Needs `RaidRollsShown` (saved variable) initialized.
 function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
     -- frame = CreateFrame(frameType [, name, parent, template, id])
@@ -66,6 +65,8 @@ function RaidRolls_G.gui.Initialize(self)
     rollHeader:SetTextColor(hexColorToRGBA(cfg.colors.HEADER))
     rollHeader:SetText(cfg.texts.ROLL_HEADER)
     self.rollHeader = rollHeader
+
+    return unitHeader -- relativePoint
 end
 
 -- Handle FontStrings needed for listing rolling players.

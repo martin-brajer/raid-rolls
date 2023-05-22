@@ -45,18 +45,19 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
 
     -- Is the warning shown on load?
     self:UpdateShowWarning()
+
+    return lootWarning -- relativePoint
 end
 
--- Accept the last used row to be used as parent. Use the row directly (less coupling)?
--- Return how many additional rows (for addon window size) do this needs.
+-- Return `addRows, relativePoint`.
 function masterLooter.Draw(self, relativePoint)
     if self.showWarning then
         self.lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
         self.lootWarning:Show()
-        return 1
+        return 1, self.lootWarning
     else
         self.lootWarning:Hide()
-        return 0
+        return 0, relativePoint
     end
 end
 

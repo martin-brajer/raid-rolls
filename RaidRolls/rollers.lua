@@ -137,7 +137,7 @@ function RaidRolls_G.rollers.Draw(self)
     RaidRolls_G.gui:HideTailRows(currentRow + 1)
 
     -- Here `current_row` points to the line following the last one record.
-    return currentRow
+    return currentRow, RaidRolls_G.gui:GetRow(currentRow).unit
 end
 
 function RaidRolls_G.rollers.Save(self, name, roll)
