@@ -6,5 +6,10 @@
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.lua
-cli.lua
+configuration.lua
+gui.lua
+slashCommands.lua
+eventFunctions.lua
 eventFrames.lua
+rollers.lua
+plugin_masterLooter.lua
