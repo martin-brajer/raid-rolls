@@ -57,25 +57,28 @@ end
 
 --
 local function MakeClassText(class, classFilename)
-    local classColour = RAID_CLASS_COLORS[classFilename]
-    if classColour == nil then
+    local classColour
+    local classColourMixin = RAID_CLASS_COLORS[classFilename]
+    if classColourMixin == nil then
         classColour = cfg.colors.UNKNOWN
+    else
+        classColour = classColourMixin.colorStr
     end
-    return WrapTextInColor(class, classColour)
+    return WrapTextInColorCode(class, classColour)
 end
 
 --
 local function MakeUnitText(name, classText, subgroup, groupTypeUnit)
-    local subgroupText = WrapTextInColor(subgroup, cfg.colors[groupTypeUnit])
+    local subgroupText = WrapTextInColorCode(subgroup, cfg.colors[groupTypeUnit])
     return name .. " (" .. classText .. ")[" .. subgroupText .. "]"
 end
 
 --
 local function MakeRollText(roll, repeated)
     if roll == 0 then
-        return WrapTextInColor(cfg.texts.PASS, cfg.colors.PASS)
+        return WrapTextInColorCode(cfg.texts.PASS, cfg.colors.PASS)
     elseif repeated then
-        return WrapTextInColor(roll, cfg.colors.MULTIROLL)
+        return WrapTextInColorCode(roll, cfg.colors.MULTIROLL)
     else
         return tostring(roll)
     end

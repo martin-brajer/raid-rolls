@@ -24,5 +24,6 @@
         "strsplit",
         "tinsert",
         "WrapTextInColor",
+        "WrapTextInColorCode"
     ],
 }

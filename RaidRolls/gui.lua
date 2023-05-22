@@ -6,6 +6,14 @@ local cfg = RaidRolls_G.configuration
 -- Collection of { unit, roll } to be used to show data rows.
 RaidRolls_G.gui.rowPool = {}
 
+-- From "AARRGGBB" to { r, g, b, a } for values between 0 and 1.
+local function hexColorToRGBA(hexString)
+    local t = {}
+    for c in hexString:gmatch ".." do
+        table.insert(t, tonumber(c, 16) / 255)
+    end
+    return t[2], t[3], t[4], t[1]
+end
 
 -- Needs `RaidRollsShown` (saved variable) initialized.
 function RaidRolls_G.gui.Initialize(self)
@@ -38,7 +46,7 @@ function RaidRolls_G.gui.Initialize(self)
         edgeSize = 16,
         insets = { left = 4, right = 3, top = 4, bottom = 3 },
     })
-    mainFrame:SetBackdropColor(cfg.colors.BACKGROUND:GetRGBA())
+    mainFrame:SetBackdropColor(hexColorToRGBA(cfg.colors.BACKGROUND))
     self.mainFrame = mainFrame
     -- UNIT
     local unitHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
@@ -47,7 +55,7 @@ function RaidRolls_G.gui.Initialize(self)
     unitHeader:SetJustifyH("LEFT")
     unitHeader:SetJustifyV("TOP")
     unitHeader:SetText(cfg.texts.UNIT_HEADER)
-    unitHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
+    unitHeader:SetTextColor(hexColorToRGBA(cfg.colors.HEADER))
     self.unitHeader = unitHeader
     -- ROLL
     local rollHeader = mainFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Small")
@@ -55,7 +63,7 @@ function RaidRolls_G.gui.Initialize(self)
     rollHeader:SetHeight(cfg.size.ROW_HEIGHT)
     rollHeader:SetJustifyH("LEFT")
     rollHeader:SetJustifyV("TOP")
-    rollHeader:SetTextColor(cfg.colors.HEADER:GetRGBA())
+    rollHeader:SetTextColor(hexColorToRGBA(cfg.colors.HEADER))
     rollHeader:SetText(cfg.texts.ROLL_HEADER)
     self.rollHeader = rollHeader
 end

@@ -39,7 +39,7 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
-    lootWarning:SetText(WrapTextInColor(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
+    lootWarning:SetText(WrapTextInColorCode(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
     self.lootWarning = lootWarning
 

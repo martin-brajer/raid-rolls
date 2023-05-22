@@ -6,7 +6,7 @@ local cfg = RaidRolls_G.configuration
 --
 local function printError(msg)
     local text = ("%s: %s"):format(cfg.ADDON_NAME, msg)
-    print(WrapTextInColor(text, cfg.colors.SYSTEMMSG))
+    print(WrapTextInColorCode(text, cfg.colors.SYSTEMMSG))
 end
 
 -- Print ingame help.

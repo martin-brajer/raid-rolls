@@ -13,30 +13,32 @@ RaidRolls_G.configuration.size = {
     FRAME_WIDTH = 220, -- Default value.
 }
 
--- All colors used as `ColorMixin`.
-RaidRolls_G.configuration.colors = {}
-local hexColors = {
-    -- Group type
-    [GroupType.NOGROUP] = "FFFFFF00", -- System message color
+local systemMessageColor = "FFFFFF00"
+-- All colors used as `AARRGGBB` string.
+RaidRolls_G.configuration.colors = {
+    -- GROUP TYPE
+
+    [GroupType.NOGROUP] = systemMessageColor,
     [GroupType.PARTY] = "FFAAA7FF",
     [GroupType.RAID] = "FFFF7D00",
+
     -- GUI
-    BACKGROUND = "B2333333", -- { 0.2, 0.2, 0.2, 0.7 } red, green, blue [, alpha]
-    HEADER = "FFFFFF00",     -- { 1.0, 1.0, 0.0, 1.0 } red, green, blue [, alpha]
+
+    BACKGROUND = "B2333333",     -- RGBA = { 0.2, 0.2, 0.2, 0.7 }
+    HEADER = systemMessageColor, -- RGBA = { 1.0, 1.0, 0.0, 1.0 }
     MASTERLOOTER = "FFFF0000",
     MULTIROLL = "FFFF0000",
     PASS = "FF00CCFF",
-    -- Misc.
-    UNKNOWN = "FFFFFF00",   -- System message color
-    SYSTEMMSG = "FFFFFF00", -- System message color
+
+    -- MISC.
+
+    UNKNOWN = systemMessageColor,
+    SYSTEMMSG = systemMessageColor,
 }
-for k, v in pairs(hexColors) do
-    RaidRolls_G.configuration.colors[k] = CreateColorFromHexString(v)
-end
 
 -- Texts
 RaidRolls_G.configuration.texts = {
-    -- General.
+    -- GENERAL.
 
     LIST_CMDS = "Cmds: show, hide, toggle, help, reset, resize, test.",
     UNIT_HEADER = "Player (class)[subgroup]",
@@ -44,20 +46,20 @@ RaidRolls_G.configuration.texts = {
     PASS = "pass",
     SET_MASTER_LOOTER = "Set MASTER LOOTER!!!",
 
-    -- Labels belonging to `GroupType`s.
+    -- LABELS BELONGING TO `GROUPTYPE`S.
 
     NOGROUP_LABEL = "S",
     PARTY_LABEL = "P",
     -- RAID_LABEL = <subgroup number>,
 
-    -- Errors. Used by `printError()`.
+    -- ERRORS. USED BY `PRINTERROR()`.
 
     RESIZE_SIZE_ERROR = "cannot resize below 100%.",
     RESIZE_PARAMETER_ERROR = "resize accepts either no argument or a number above 100.",
     TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo' or a plugin name.",
     SLASH_PARAMETER_ERROR = "unknown command. Run '/rr' for available commands.",
 
-    -- Help lines.
+    -- HELP LINES.
 
     HELP_LINES = {
         "Slash Commands '/raidrolls' (or '/rr'):",
