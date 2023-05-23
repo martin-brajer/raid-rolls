@@ -4,10 +4,10 @@
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
--- Array of player rolls `{ roller }` created by `RaidRolls_G.roller:New()`.
--- `roller = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
+-- Array of player rolls.
+---@type Roller[]
 RaidRolls_G.rollerCollection.values = {}
--- Are rollers `self.values` to be sorted during the next `Draw`?
+-- Are `self.values` rollers to be sorted during the next `Draw`?
 RaidRolls_G.rollerCollection.isSorted = false
 
 
@@ -24,7 +24,7 @@ end
 
 -- Name to data.
 -- If player not found, return default values. E.g. when the player has already left the group.
--- Parameter `groupType` is addon user group status.
+---@param groupType GroupTypeEnum addon user group status
 local function GetPlayerInfo(name, groupType)
     -- defaults
     local class, classFilename = "unknown", "UNKNOWN"
@@ -91,11 +91,8 @@ function RaidRolls_G.rollerCollection.OnGroupUpdate(self)
 
     for _, roller in ipairs(self.values) do
         local _, _, subgroup, groupTypeUnit = GetPlayerInfo(roller.name, groupType)
-        -- Raid subgroup number or group type changed.
-        if roller.subgroup ~= subgroup then
-            roller.subgroup = subgroup
-            roller.groupTypeUnit = groupTypeUnit
-            roller.unitChanged = true
+        if roller.subgroup ~= subgroup then -- Raid subgroup number or group type changed.
+            roller:UpdateGroup(subgroup, groupTypeUnit)
         end
     end
 end
@@ -141,30 +138,17 @@ end
 function RaidRolls_G.rollerCollection.Save(self, name, roll)
     local playerFound = false
     for _, roller in ipairs(self.values) do
-        if name == roller.name then
+        if name == roller.name then -- Update exiting player.
             playerFound = true
-
-            -- Update exiting player.
-            roller.repeated = true
-            roller.roll = roll
-            roller.rollChanged = true
+            roller:UpdateRoll(roll)
             break
         end
     end
-    if not playerFound then
-        -- Add new roller.
+    if not playerFound then -- Add new roller.
         local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
         local classText = MakeClassText(class, classFilename)
-        table.insert(self.values, {
-            name = name,
-            classText = classText,
-            subgroup = subgroup,
-            groupTypeUnit = groupTypeUnit,
-            unitChanged = true,
-            roll = roll,
-            repeated = false,
-            rollChanged = true,
-        })
+        local roller = RaidRolls_G.roller:New(name, classText, subgroup, groupTypeUnit, roll)
+        table.insert(self.values, roller)
     end
 
     self.isSorted = false

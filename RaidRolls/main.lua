@@ -21,6 +21,7 @@ RaidRolls_G.plugins = {}
 local cfg = RaidRolls_G.configuration
 
 
+---@enum GroupTypeEnum addon user group status
 RaidRolls_G.GroupType = {
     NOGROUP = "NOGROUP",
     PARTY = "PARTY",

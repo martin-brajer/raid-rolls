@@ -11,5 +11,6 @@ gui.lua
 slashCommands.lua
 eventFunctions.lua
 eventFrames.lua
+roller.lua
 rollerCollection.lua
 plugin_masterLooter.lua
