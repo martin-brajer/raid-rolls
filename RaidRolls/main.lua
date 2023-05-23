@@ -4,7 +4,6 @@
 -- Global locals (this addon's global namespace).
 RaidRolls_G = {}
 -- `eventFunctions.lua` namespace.
--- Do not use `self` (`self ~= RaidRolls_G.eventFunctions`)
 RaidRolls_G.eventFunctions = {}
 -- `eventFrames.lua` namespace.
 RaidRolls_G.eventFrames = {}
@@ -12,9 +11,10 @@ RaidRolls_G.eventFrames = {}
 RaidRolls_G.configuration = {}
 -- `gui.lua` namespace.
 RaidRolls_G.gui = {}
--- Collection of players who /rolled.
 -- `rollerCollection.lua` namespace.
 RaidRolls_G.rollerCollection = {}
+-- `roller.lua` namespace. Start by calling `New()`.
+RaidRolls_G.roller = {}
 -- Container for plugin namespaces.
 RaidRolls_G.plugins = {}
 

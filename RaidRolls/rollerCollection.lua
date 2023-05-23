@@ -1,10 +1,11 @@
+-- Collection of players who /rolled.
 -- Populate `RaidRolls_G.rollerCollection`.
 
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
--- Array of player rolls `{ playerRoll }`, where
--- `playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
+-- Array of player rolls `{ roller }` created by `RaidRolls_G.roller:New()`.
+-- `roller = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
 RaidRolls_G.rollerCollection.values = {}
 -- Are rollers `self.values` to be sorted during the next `Draw`?
 RaidRolls_G.rollerCollection.isSorted = false
@@ -88,13 +89,13 @@ end
 function RaidRolls_G.rollerCollection.OnGroupUpdate(self)
     local groupType = GetGroupType()
 
-    for _, playerRoll in ipairs(self.values) do
-        local _, _, subgroup, groupTypeUnit = GetPlayerInfo(playerRoll.name, groupType)
+    for _, roller in ipairs(self.values) do
+        local _, _, subgroup, groupTypeUnit = GetPlayerInfo(roller.name, groupType)
         -- Raid subgroup number or group type changed.
-        if playerRoll.subgroup ~= subgroup then
-            playerRoll.subgroup = subgroup
-            playerRoll.groupTypeUnit = groupTypeUnit
-            playerRoll.unitChanged = true
+        if roller.subgroup ~= subgroup then
+            roller.subgroup = subgroup
+            roller.groupTypeUnit = groupTypeUnit
+            roller.unitChanged = true
         end
     end
 end
@@ -114,17 +115,17 @@ function RaidRolls_G.rollerCollection.Draw(self)
         self.isSorted = true
     end
 
-    for index, playerRoll in ipairs(self.values) do
+    for index, roller in ipairs(self.values) do
         local unitText = nil
-        if orderChanged or playerRoll.unitChanged then
-            unitText = MakeUnitText(playerRoll.name, playerRoll.classText, playerRoll.subgroup, playerRoll.groupTypeUnit)
-            playerRoll.unitChanged = false
+        if orderChanged or roller.unitChanged then
+            unitText = MakeUnitText(roller.name, roller.classText, roller.subgroup, roller.groupTypeUnit)
+            roller.unitChanged = false
         end
 
         local rollText = nil
-        if orderChanged or playerRoll.rollChanged then
-            rollText = MakeRollText(playerRoll.roll, playerRoll.repeated)
-            playerRoll.rollChanged = false
+        if orderChanged or roller.rollChanged then
+            rollText = MakeRollText(roller.roll, roller.repeated)
+            roller.rollChanged = false
         end
 
         RaidRolls_G.gui:WriteRow(index, unitText, rollText)
@@ -139,19 +140,19 @@ end
 
 function RaidRolls_G.rollerCollection.Save(self, name, roll)
     local playerFound = false
-    for _, playerRoll in ipairs(self.values) do
-        if name == playerRoll.name then
+    for _, roller in ipairs(self.values) do
+        if name == roller.name then
             playerFound = true
 
             -- Update exiting player.
-            playerRoll.repeated = true
-            playerRoll.roll = roll
-            playerRoll.rollChanged = true
+            roller.repeated = true
+            roller.roll = roll
+            roller.rollChanged = true
             break
         end
     end
     if not playerFound then
-        -- Add new playerRoll.
+        -- Add new roller.
         local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
         local classText = MakeClassText(class, classFilename)
         table.insert(self.values, {

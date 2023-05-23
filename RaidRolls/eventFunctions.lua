@@ -1,4 +1,5 @@
 -- Functions called on events defined in `RaidRolls_G.eventFrames`.
+-- Do not use `self` (`self ~= RaidRolls_G.eventFunctions`)
 -- Populate `RaidRolls_G.eventFunctions`.
 
 local cfg = RaidRolls_G.configuration
