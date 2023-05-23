@@ -1,14 +1,13 @@
--- Array of player who /rolled.
--- Populate `RaidRolls_G.rollers`.
+-- Populate `RaidRolls_G.rollerCollection`.
 
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
 -- Array of player rolls `{ playerRoll }`, where
 -- `playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
-RaidRolls_G.rollers.values = {}
+RaidRolls_G.rollerCollection.values = {}
 -- Are rollers `self.values` to be sorted during the next `Draw`?
-RaidRolls_G.rollers.isSorted = false
+RaidRolls_G.rollerCollection.isSorted = false
 
 
 -- Find what kind of group is the current player in.
@@ -86,7 +85,7 @@ local function MakeRollText(roll, repeated)
 end
 
 -- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
-function RaidRolls_G.rollers.OnGroupUpdate(self)
+function RaidRolls_G.rollerCollection.OnGroupUpdate(self)
     local groupType = GetGroupType()
 
     for _, playerRoll in ipairs(self.values) do
@@ -102,7 +101,7 @@ end
 
 -- Redraw `unitText` of the roller who changed group (or left). Maybe all after group type change.
 -- Redraw `RollText` of all rollers and reorder (new roller or new roll).
-function RaidRolls_G.rollers.Draw(self)
+function RaidRolls_G.rollerCollection.Draw(self)
     local currentRow = 0
     local orderChanged = false
 
@@ -138,7 +137,7 @@ function RaidRolls_G.rollers.Draw(self)
     return currentRow, RaidRolls_G.gui:GetRow(currentRow).unit
 end
 
-function RaidRolls_G.rollers.Save(self, name, roll)
+function RaidRolls_G.rollerCollection.Save(self, name, roll)
     local playerFound = false
     for _, playerRoll in ipairs(self.values) do
         if name == playerRoll.name then
@@ -170,13 +169,13 @@ function RaidRolls_G.rollers.Save(self, name, roll)
     self.isSorted = false
 end
 
-function RaidRolls_G.rollers.Fill(self)
+function RaidRolls_G.rollerCollection.Fill(self)
     self:Save("player1", 20)
     self:Save("player2", 0)
     self:Save("player3", 4)
     self:Save("player3", 99) -- repeated
 end
 
-function RaidRolls_G.rollers.Clear(self)
+function RaidRolls_G.rollerCollection.Clear(self)
     self.values = {}
 end

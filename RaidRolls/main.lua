@@ -12,8 +12,9 @@ RaidRolls_G.eventFrames = {}
 RaidRolls_G.configuration = {}
 -- `gui.lua` namespace.
 RaidRolls_G.gui = {}
--- `rollers.lua` namespace.
-RaidRolls_G.rollers = {}
+-- Collection of players who /rolled.
+-- `rollerCollection.lua` namespace.
+RaidRolls_G.rollerCollection = {}
 -- Container for plugin namespaces.
 RaidRolls_G.plugins = {}
 
@@ -61,7 +62,7 @@ function RaidRolls_G.Draw(self)
     local currentRow = 0
 
     -- Fetch data, fill, sort, write.
-    local addRows, relativePoint = self.rollers:Draw()
+    local addRows, relativePoint = self.rollerCollection:Draw()
     currentRow = currentRow + addRows
 
     -- Plugins draw.

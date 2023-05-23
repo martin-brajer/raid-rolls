@@ -22,7 +22,7 @@ end
 
 -- GROUP_ROSTER_UPDATE
 function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
-    RaidRolls_G.rollers:OnGroupUpdate()
+    RaidRolls_G.rollerCollection:OnGroupUpdate()
     RaidRolls_G:Draw()
 end
 
@@ -32,7 +32,7 @@ function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
     local name, server = strsplit("-", playerName)
 
     if text:lower() == "pass" then
-        RaidRolls_G.rollers:Save(name, 0)
+        RaidRolls_G.rollerCollection:Save(name, 0)
         RaidRolls_G:Draw()
     end
 end
@@ -46,7 +46,7 @@ function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
         minRoll = tonumber(minRoll)
         maxRoll = tonumber(maxRoll)
         if (minRoll == 1 and maxRoll == 100) then
-            RaidRolls_G.rollers:Save(name, tonumber(roll))
+            RaidRolls_G.rollerCollection:Save(name, tonumber(roll))
             RaidRolls_G:Draw()
         end
     end

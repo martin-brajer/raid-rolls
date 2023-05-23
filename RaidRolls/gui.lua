@@ -29,7 +29,7 @@ function RaidRolls_G.gui.Initialize(self)
         if event == "LeftButton" then
             self_mainFrame:StartMoving();
         elseif event == "RightButton" then
-            RaidRolls_G.rollers:Clear()
+            RaidRolls_G.rollerCollection:Clear()
             RaidRolls_G:Draw()
         end
     end)

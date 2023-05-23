@@ -46,9 +46,9 @@ local function Test(msg)
     end
     local tool, args = strsplit(" ", msg, 2)
 
-    -- Fill `rollers` by artificial values.
+    -- Fill `rollerCollection` by artificial values.
     if tool == "fill" then
-        RaidRolls_G.rollers:Fill()
+        RaidRolls_G.rollerCollection:Fill()
         RaidRolls_G:Draw()
 
         -- No need to be part of a group for this to work.
@@ -91,7 +91,7 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     elseif command == "help" then
         Help()
     elseif command == "reset" then
-        RaidRolls_G.rollers:Clear()
+        RaidRolls_G.rollerCollection:Clear()
         RaidRolls_G:Draw()
     elseif command == "resize" then
         Resize(args)
