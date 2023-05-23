@@ -56,35 +56,6 @@ local function GetPlayerInfo(name, groupType)
     return class, classFilename, subgroup, groupTypeUnit
 end
 
---
-local function MakeClassText(class, classFilename)
-    local classColour
-    local classColourMixin = RAID_CLASS_COLORS[classFilename]
-    if classColourMixin == nil then
-        classColour = cfg.colors.UNKNOWN
-    else
-        classColour = classColourMixin.colorStr
-    end
-    return WrapTextInColorCode(class, classColour)
-end
-
---
-local function MakeUnitText(name, classText, subgroup, groupTypeUnit)
-    local subgroupText = WrapTextInColorCode(subgroup, cfg.colors[groupTypeUnit])
-    return ("%s (%s)[%s]"):format(name, classText, subgroupText)
-end
-
---
-local function MakeRollText(roll, repeated)
-    if roll == 0 then
-        return WrapTextInColorCode(cfg.texts.PASS, cfg.colors.PASS)
-    elseif repeated then
-        return WrapTextInColorCode(roll, cfg.colors.MULTIROLL)
-    else
-        return tostring(roll)
-    end
-end
-
 -- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
 function RaidRolls_G.rollerCollection.OnGroupUpdate(self)
     local groupType = GetGroupType()
@@ -113,18 +84,19 @@ function RaidRolls_G.rollerCollection.Draw(self)
     end
 
     for index, roller in ipairs(self.values) do
+        -- unit
         local unitText = nil
         if orderChanged or roller.unitChanged then
-            unitText = MakeUnitText(roller.name, roller.classText, roller.subgroup, roller.groupTypeUnit)
+            unitText = roller:MakeUnitText()
             roller.unitChanged = false
         end
-
+        -- roll
         local rollText = nil
         if orderChanged or roller.rollChanged then
-            rollText = MakeRollText(roller.roll, roller.repeated)
+            rollText = roller:MakeRollText()
             roller.rollChanged = false
         end
-
+        -- write
         RaidRolls_G.gui:WriteRow(index, unitText, rollText)
         currentRow = index
     end
@@ -135,6 +107,7 @@ function RaidRolls_G.rollerCollection.Draw(self)
     return currentRow, RaidRolls_G.gui:GetRow(currentRow).unit
 end
 
+--
 function RaidRolls_G.rollerCollection.Save(self, name, roll)
     local playerFound = false
     for _, roller in ipairs(self.values) do
@@ -146,14 +119,14 @@ function RaidRolls_G.rollerCollection.Save(self, name, roll)
     end
     if not playerFound then -- Add new roller.
         local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
-        local classText = MakeClassText(class, classFilename)
-        local roller = RaidRolls_G.roller:New(name, classText, subgroup, groupTypeUnit, roll)
+        local roller = RaidRolls_G.roller.New(name, roll, class, classFilename, subgroup, groupTypeUnit)
         table.insert(self.values, roller)
     end
 
     self.isSorted = false
 end
 
+--
 function RaidRolls_G.rollerCollection.Fill(self)
     self:Save("player1", 20)
     self:Save("player2", 0)
@@ -161,6 +134,7 @@ function RaidRolls_G.rollerCollection.Fill(self)
     self:Save("player3", 99) -- repeated
 end
 
+--
 function RaidRolls_G.rollerCollection.Clear(self)
     self.values = {}
 end

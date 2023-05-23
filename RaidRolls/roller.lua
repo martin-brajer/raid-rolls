@@ -16,16 +16,76 @@ local cfg = RaidRolls_G.configuration
 ---@field rollChanged boolean has the roll changed since the last draw?
 ---@field UpdateRoll function
 ---@field UpdateGroup function
+---@field MakeUnitText function
+---@field MakeRollText function
 
----Create new "instance" of the Roller.
----@param self table
----@param name string
----@param classText string
+
+-- Methods of the roller "instance".
+local methods = {}
+
+---Update roll and set connected flags.
+---@param self Roller
+---@param roll number
+function methods.UpdateRoll(self, roll)
+    self.repeated = true
+    self.roll = roll
+    self.rollChanged = true
+end
+
+---Update raid subgroup or group state.
+---@param self Roller
 ---@param subgroup string
 ---@param groupTypeUnit string
+function methods.UpdateGroup(self, subgroup, groupTypeUnit)
+    self.subgroup = subgroup
+    self.groupTypeUnit = groupTypeUnit
+    self.unitChanged = true
+end
+
+---@param self Roller
+---@return string
+function methods.MakeUnitText(self)
+    local subgroupText = WrapTextInColorCode(self.subgroup, cfg.colors[self.groupTypeUnit])
+    return ("%s (%s)[%s]"):format(self.name, self.classText, subgroupText)
+end
+
+---@param self Roller
+---@return string
+function methods.MakeRollText(self)
+    if self.roll == 0 then
+        return WrapTextInColorCode(cfg.texts.PASS, cfg.colors.PASS)
+    elseif self.repeated then
+        return WrapTextInColorCode(self.roll, cfg.colors.MULTIROLL)
+    else
+        return tostring(self.roll)
+    end
+end
+
+---@param class string
+---@param classFilename string
+---@return string
+local function MakeClassText(class, classFilename)
+    local classColour
+    local classColourMixin = RAID_CLASS_COLORS[classFilename]
+    if classColourMixin == nil then
+        classColour = cfg.colors.UNKNOWN
+    else
+        classColour = classColourMixin.colorStr
+    end
+    return WrapTextInColorCode(class, classColour)
+end
+
+---Create new "instance" of the Roller.
+---@param name string
 ---@param roll number
+---@param class string
+---@param classFilename string
+---@param subgroup string
+---@param groupTypeUnit string
 ---@return Roller
-function RaidRolls_G.roller.New(self, name, classText, subgroup, groupTypeUnit, roll)
+function RaidRolls_G.roller.New(name, roll, class, classFilename, subgroup, groupTypeUnit)
+    local classText = MakeClassText(class, classFilename)
+    -- Add fields.
     local roller = {
         name = name,
         classText = classText,
@@ -36,26 +96,10 @@ function RaidRolls_G.roller.New(self, name, classText, subgroup, groupTypeUnit, 
         repeated = false,
         rollChanged = true,
     }
-    roller.UpdateRoll = self.UpdateRoll
-    roller.UpdateGroup = self.UpdateGroup
+    -- Add methods.
+    for funcName, func in pairs(methods) do
+        roller[funcName] = func
+    end
+
     return roller
-end
-
----Update roll and set connected flags.
----@param self Roller
----@param roll number
-function RaidRolls_G.roller.UpdateRoll(self, roll)
-    self.repeated = true
-    self.roll = roll
-    self.rollChanged = true
-end
-
----Update raid subgroup or group state.
----@param self Roller
----@param subgroup string
----@param groupTypeUnit string
-function RaidRolls_G.roller.UpdateGroup(self, subgroup, groupTypeUnit)
-    self.subgroup = subgroup
-    self.groupTypeUnit = groupTypeUnit
-    self.unitChanged = true
 end
