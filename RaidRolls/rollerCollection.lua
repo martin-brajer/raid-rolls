@@ -128,10 +128,9 @@ end
 
 --
 function RaidRolls_G.rollerCollection.Fill(self)
-    self:Save("player1", 20)
-    self:Save("player2", 0)
-    self:Save("player3", 4)
-    self:Save("player3", 99) -- repeated
+    for _, val in pairs(cfg.testFill) do
+        self:Save(unpack(val))
+    end
 end
 
 --
