@@ -24,6 +24,7 @@
         "strsplit",
         "tinsert",
         "WrapTextInColor",
-        "WrapTextInColorCode"
+        "WrapTextInColorCode",
+        "MAX_RAID_MEMBERS"
     ],
 }

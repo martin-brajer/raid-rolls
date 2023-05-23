@@ -4,8 +4,8 @@
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 
--- Array of player rolls { playerRoll }
--- playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }
+-- Array of player rolls `{ playerRoll }`, where
+-- `playerRoll = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
 RaidRolls_G.rollers.values = {}
 -- Are rollers `self.values` to be sorted during the next `Draw`?
 RaidRolls_G.rollers.isSorted = false
@@ -31,12 +31,12 @@ local function GetPlayerInfo(name, groupType)
     local subgroup, groupTypeUnit = cfg.texts.NOGROUP_LABEL, GroupType.NOGROUP
 
     if groupType == GroupType.RAID then
-        local _name, _subgroup, _class, _classFilename -- Candidates.
-        for i = 1, GetNumGroupMembers() do
-            _name, _, _subgroup, _, _class, _classFilename = GetRaidRosterInfo(i)
-            if _name == name then
-                class, classFilename = _class, _classFilename
-                subgroup = tostring(_subgroup)
+        for i = 1, MAX_RAID_MEMBERS do
+            -- Raid member (RM) info.
+            local nameRM, _, subgroupRM, _, classRM, classFilenameRM = GetRaidRosterInfo(i)
+            if nameRM == name then
+                class, classFilename = classRM, classFilenameRM
+                subgroup = tostring(subgroupRM)
                 groupTypeUnit = groupType
                 break -- If not break, name stays and others get default values.
             end
@@ -47,7 +47,8 @@ local function GetPlayerInfo(name, groupType)
             subgroup = cfg.texts.PARTY_LABEL
             groupTypeUnit = groupType
         end
-    elseif name == UnitName("player") then -- Also groupType == "NOGROUP".
+    elseif name == UnitName("player") then -- This means testing
+        -- Also `groupType == GroupType.NOGROUP`.
         class, classFilename = UnitClass(name)
     end
 
@@ -70,7 +71,7 @@ end
 --
 local function MakeUnitText(name, classText, subgroup, groupTypeUnit)
     local subgroupText = WrapTextInColorCode(subgroup, cfg.colors[groupTypeUnit])
-    return name .. " (" .. classText .. ")[" .. subgroupText .. "]"
+    return ("%s (%s)[%s]"):format(name, classText, subgroupText)
 end
 
 --
@@ -93,7 +94,6 @@ function RaidRolls_G.rollers.OnGroupUpdate(self)
         -- Raid subgroup number or group type changed.
         if playerRoll.subgroup ~= subgroup then
             playerRoll.subgroup = subgroup
-            -- if `groupTypeUnit` changes, `subgroup` must change as well (no need to separate check).
             playerRoll.groupTypeUnit = groupTypeUnit
             playerRoll.unitChanged = true
         end
@@ -129,14 +129,12 @@ function RaidRolls_G.rollers.Draw(self)
         end
 
         RaidRolls_G.gui:WriteRow(index, unitText, rollText)
-
         currentRow = index
     end
 
-    -- Hide the rest of the rows.
+    -- Hide unused rows.
     RaidRolls_G.gui:HideTailRows(currentRow + 1)
 
-    -- Here `current_row` points to the line following the last one record.
     return currentRow, RaidRolls_G.gui:GetRow(currentRow).unit
 end
 
