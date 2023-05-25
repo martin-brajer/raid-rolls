@@ -11,7 +11,8 @@ RaidRolls_G.rollerCollection.values = {}
 RaidRolls_G.rollerCollection.isSorted = false
 
 
--- Find what kind of group is the current player in.
+---Find what kind of group is the current player in.
+---@return GroupTypeEnum
 local function GetGroupType()
     if IsInRaid() then
         return GroupType.RAID
@@ -22,38 +23,49 @@ local function GetGroupType()
     end
 end
 
--- Name to data.
+---Info about an individual player.
+---@class PlayerInfo
+---@field class string localized
+---@field classFilename string token
+---@field subgroup string
+---@field groupTypeUnit GroupTypeEnum
+
 -- If player not found, return default values. E.g. when the player has already left the group.
 ---@param groupType GroupTypeEnum addon user group status
+---@return PlayerInfo
 local function GetPlayerInfo(name, groupType)
     -- defaults
-    local class, classFilename = "unknown", "UNKNOWN"
-    local subgroup, groupTypeUnit = cfg.texts.NOGROUP_LABEL, GroupType.NOGROUP
+    ---@class PlayerInfo
+    local playerInfo = {
+        class = "unknown",
+        classFilename = "UNKNOWN",
+        subgroup = cfg.texts.NOGROUP_LABEL,
+        groupTypeUnit = GroupType.NOGROUP,
+    }
 
     if groupType == GroupType.RAID then
         for i = 1, MAX_RAID_MEMBERS do
             -- Raid member (RM) info.
             local nameRM, _, subgroupRM, _, classRM, classFilenameRM = GetRaidRosterInfo(i)
             if nameRM == name then
-                class, classFilename = classRM, classFilenameRM
-                subgroup = tostring(subgroupRM)
-                groupTypeUnit = groupType
+                playerInfo.class, playerInfo.classFilename = classRM, classFilenameRM
+                playerInfo.subgroup = tostring(subgroupRM)
+                playerInfo.groupTypeUnit = groupType
                 break -- If not break, name stays and others get default values.
             end
         end
     elseif groupType == GroupType.PARTY then
         if UnitInParty(name) then
-            class, classFilename = UnitClass(name)
-            subgroup = cfg.texts.PARTY_LABEL
-            groupTypeUnit = groupType
+            playerInfo.class, playerInfo.classFilename = UnitClass(name)
+            playerInfo.subgroup = cfg.texts.PARTY_LABEL
+            playerInfo.groupTypeUnit = groupType
         end
     elseif name == UnitName("player") then -- This means testing
         -- Also `groupType == GroupType.NOGROUP`.
-        class, classFilename = UnitClass(name)
+        playerInfo.class, playerInfo.classFilename = UnitClass(name)
     end
 
-    -- `class` is localized, `classFilename` is a token.
-    return class, classFilename, subgroup, groupTypeUnit
+    return playerInfo
 end
 
 -- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
@@ -61,9 +73,9 @@ function RaidRolls_G.rollerCollection.UpdateGroup(self)
     local groupType = GetGroupType()
 
     for _, roller in ipairs(self.values) do
-        local _, _, subgroup, groupTypeUnit = GetPlayerInfo(roller.name, groupType)
-        if roller.subgroup ~= subgroup then -- Raid subgroup number or group type changed.
-            roller:UpdateGroup(subgroup, groupTypeUnit)
+        local playerInfo = GetPlayerInfo(roller.name, groupType)
+        if roller.subgroup ~= playerInfo.subgroup then -- Raid subgroup number or group type changed.
+            roller:UpdateGroup(playerInfo.subgroup, playerInfo.groupTypeUnit)
         end
     end
 end
@@ -120,8 +132,8 @@ function RaidRolls_G.rollerCollection.Save(self, name, roll)
 
     -- Add new roller.
     if not playerFound then
-        local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
-        local roller = RaidRolls_G.roller.New(name, roll, class, classFilename, subgroup, groupTypeUnit)
+        local playerInfo = GetPlayerInfo(name, GetGroupType())
+        local roller = RaidRolls_G.roller.New(name, roll, playerInfo)
         table.insert(self.values, roller)
     end
 

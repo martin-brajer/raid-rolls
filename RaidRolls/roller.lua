@@ -4,7 +4,7 @@
 
 local cfg = RaidRolls_G.configuration
 
----Info about an individual roller. Create by `RaidRolls_G.roller:New()`.
+---Represents an individual roller. Create by `RaidRolls_G.roller:New()`.
 ---@class Roller
 ---@field name string full name (will include server)
 ---@field classText string
@@ -69,19 +69,16 @@ end
 ---Create new "instance" of the Roller.
 ---@param name string
 ---@param roll number
----@param class string
----@param classFilename string
----@param subgroup string
----@param groupTypeUnit string
+---@param playerInfo PlayerInfo
 ---@return Roller
-function RaidRolls_G.roller.New(name, roll, class, classFilename, subgroup, groupTypeUnit)
-    local classText = MakeClassText(class, classFilename)
+function RaidRolls_G.roller.New(name, roll, playerInfo)
+    local classText = MakeClassText(playerInfo.class, playerInfo.classFilename)
     -- Add fields.
     local roller = {
         name = name,
         classText = classText,
-        subgroup = subgroup,
-        groupTypeUnit = groupTypeUnit,
+        subgroup = playerInfo.subgroup,
+        groupTypeUnit = playerInfo.groupTypeUnit,
         unitChanged = true,
         roll = roll,
         repeated = false,
