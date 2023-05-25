@@ -23,7 +23,7 @@ end
 
 -- GROUP_ROSTER_UPDATE
 function RaidRolls_G.eventFunctions.OnGroupUpdate(self, event)
-    RaidRolls_G.rollerCollection:OnGroupUpdate()
+    RaidRolls_G.rollerCollection:UpdateGroup()
     RaidRolls_G:Draw()
 end
 

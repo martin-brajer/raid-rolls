@@ -51,11 +51,11 @@ local function Test(msg)
         RaidRolls_G.rollerCollection:Fill()
         RaidRolls_G:Draw()
 
-        -- No need to be part of a group for this to work.
+    -- No need to be part of a group for this to work.
     elseif tool == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
 
-        -- is plugin test being called?
+    -- is plugin test being called?
     else
         local pluginFound = false
 

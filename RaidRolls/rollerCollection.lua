@@ -57,7 +57,7 @@ local function GetPlayerInfo(name, groupType)
 end
 
 -- On GROUP_ROSTER_UPDATE through `RaidRolls_G.eventFunctions.OnGroupUpdate`.
-function RaidRolls_G.rollerCollection.OnGroupUpdate(self)
+function RaidRolls_G.rollerCollection.UpdateGroup(self)
     local groupType = GetGroupType()
 
     for _, roller in ipairs(self.values) do
@@ -117,7 +117,9 @@ function RaidRolls_G.rollerCollection.Save(self, name, roll)
             break
         end
     end
-    if not playerFound then -- Add new roller.
+
+    -- Add new roller.
+    if not playerFound then
         local class, classFilename, subgroup, groupTypeUnit = GetPlayerInfo(name, GetGroupType())
         local roller = RaidRolls_G.roller.New(name, roll, class, classFilename, subgroup, groupTypeUnit)
         table.insert(self.values, roller)

@@ -7,6 +7,10 @@
         "TOPRIGHT",
     ],
     "Lua.runtime.version": "Lua 5.1",
+    // https://github.com/CppCXY/EmmyLuaCodeStyle/blob/master/docs/format_config_EN.md
+    "Lua.format.defaultConfig": {
+        "never_indent_comment_on_if_branch": "true",
+    },
     "Lua.diagnostics.globals": [
         "GetAddOnMetadata",
         "SlashCmdList",

@@ -23,34 +23,27 @@ local cfg = RaidRolls_G.configuration
 -- Methods of the roller "instance".
 local methods = {}
 
----Update roll and set connected flags.
----@param self Roller
----@param roll number
+-- Update roll and set connected flags.
 function methods.UpdateRoll(self, roll)
     self.repeated = true
     self.roll = roll
     self.rollChanged = true
 end
 
----Update raid subgroup or group state.
----@param self Roller
----@param subgroup string
----@param groupTypeUnit string
+-- Update raid subgroup or group state.
 function methods.UpdateGroup(self, subgroup, groupTypeUnit)
     self.subgroup = subgroup
     self.groupTypeUnit = groupTypeUnit
     self.unitChanged = true
 end
 
----@param self Roller
----@return string
+--
 function methods.MakeUnitText(self)
     local subgroupText = WrapTextInColorCode(self.subgroup, cfg.colors[self.groupTypeUnit])
     return ("%s (%s)[%s]"):format(self.name, self.classText, subgroupText)
 end
 
----@param self Roller
----@return string
+--
 function methods.MakeRollText(self)
     if self.roll == 0 then
         return WrapTextInColorCode(cfg.texts.PASS, cfg.colors.PASS)
@@ -61,9 +54,7 @@ function methods.MakeRollText(self)
     end
 end
 
----@param class string
----@param classFilename string
----@return string
+--
 local function MakeClassText(class, classFilename)
     local classColour
     local classColourMixin = RAID_CLASS_COLORS[classFilename]
