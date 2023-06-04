@@ -29,6 +29,8 @@
         "tinsert",
         "WrapTextInColor",
         "WrapTextInColorCode",
-        "MAX_RAID_MEMBERS"
+        "MAX_RAID_MEMBERS",
+        "UIParent",
+        "RAID_CLASS_COLORS"
     ],
 }

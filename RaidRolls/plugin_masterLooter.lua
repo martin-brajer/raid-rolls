@@ -1,6 +1,6 @@
 -- Adds a warning showing if masterlooter should be on and isn't.
--- This plugin is used by adding it in the required toc file.
--- Populate `masterLooter` and insert it to `RaidRolls_G.plugins`.
+-- This plugin is used by adding it low in the required toc file.
+-- Populate `masterLooter` as numbered part of `RaidRolls_G.plugins`.
 
 -- `masterLooter` plugin namespace.
 local masterLooter = {
@@ -15,18 +15,25 @@ local SET_MASTER_LOOTER = "Master looter not set!"
 masterLooter.showWarning = false
 
 --
-function masterLooter.UpdateShowWarning(self)
+---@return boolean hasChanged has the warning state changed during this call?
+function masterLooter._updateShowWarning(self)
     local lootMethod = GetLootMethod()
-    self.showWarning = (
+    local newShowWarning = (
         UnitIsGroupLeader("player")
         and lootMethod ~= "master"
         and lootMethod ~= "personalloot")
+
+    local hasChanged = newShowWarning ~= self.showWarning
+    self.showWarning = newShowWarning
+    return hasChanged
 end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
-    masterLooter:UpdateShowWarning()
-    RaidRolls_G:Draw()
+    local hasChanged = masterLooter:_updateShowWarning()
+    if hasChanged then
+        RaidRolls_G:Draw()
+    end
 end
 
 -- Invoke update after Master Looter relevant events are raised.
@@ -45,7 +52,7 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
     self.lootWarning = lootWarning
 
     -- Is the warning shown on load?
-    self:UpdateShowWarning()
+    self:_updateShowWarning()
 
     return lootWarning -- relativePoint
 end
