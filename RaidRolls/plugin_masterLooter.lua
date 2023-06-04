@@ -16,7 +16,7 @@ masterLooter.showWarning = false
 
 --
 ---@return boolean hasChanged has the warning state changed during this call?
-function masterLooter._updateShowWarning(self)
+function masterLooter.UpdateShowWarning(self)
     local lootMethod = GetLootMethod()
     local newShowWarning = (
         UnitIsGroupLeader("player")
@@ -30,7 +30,7 @@ end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
-    local hasChanged = masterLooter:_updateShowWarning()
+    local hasChanged = masterLooter:UpdateShowWarning()
     if hasChanged then
         RaidRolls_G:Draw()
     end
@@ -52,7 +52,7 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
     self.lootWarning = lootWarning
 
     -- Is the warning shown on load?
-    self:_updateShowWarning()
+    self:UpdateShowWarning()
 
     return lootWarning -- relativePoint
 end

@@ -35,7 +35,7 @@ end
 ---@return PlayerInfo
 local function GetPlayerInfo(name, groupType)
     -- defaults
-    ---@class PlayerInfo
+    ---@type PlayerInfo
     local playerInfo = {
         class = "unknown",
         classFilename = "UNKNOWN",
@@ -140,7 +140,7 @@ function RaidRolls_G.rollerCollection.Save(self, name, roll)
     self.isSorted = false
 end
 
---
+-- Fill test values.
 function RaidRolls_G.rollerCollection.Fill(self)
     for _, val in pairs(cfg.testFill) do
         self:Save(unpack(val))

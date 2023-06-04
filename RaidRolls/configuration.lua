@@ -40,7 +40,7 @@ RaidRolls_G.configuration.colors = {
 RaidRolls_G.configuration.texts = {
     -- GENERAL.
 
-    LIST_CMDS = "Cmds: show, hide, toggle, help, reset, resize, test.",
+    LIST_CMDS = "Commands: show, hide, toggle, help, reset, resize, test.",
     UNIT_HEADER = "Player (class)[subgroup]",
     ROLL_HEADER = "Roll",
     PASS = "pass",
