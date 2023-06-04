@@ -15,4 +15,5 @@ eventFunctions.lua
 eventFrames.lua
 roller.lua
 rollerCollection.lua
+playerInfo.lua
 plugin_masterLooter.lua

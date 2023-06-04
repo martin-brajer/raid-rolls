@@ -15,6 +15,8 @@ RaidRolls_G.gui = {}
 RaidRolls_G.rollerCollection = {}
 -- `roller.lua` namespace. Start by calling `New()`.
 RaidRolls_G.roller = {}
+-- `playerInfo.lua` namespace.
+RaidRolls_G.playerInfo = {}
 -- Container for plugin namespaces.
 ---@type Plugin[]
 RaidRolls_G.plugins = {}
@@ -26,7 +28,6 @@ RaidRolls_G.plugins = {}
 ---@field Draw fun(self, relativePoint): integer, any Return `addRows, relativePoint` pair.
 ---@field Test fun(self, args: string[])
 
-
 local cfg = RaidRolls_G.configuration
 
 ---@enum GroupTypeEnum addon user group status
@@ -35,6 +36,18 @@ RaidRolls_G.GroupType = {
     PARTY = "PARTY",
     RAID = "RAID",
 }
+
+---Find what kind of group is the current player in.
+---@return GroupTypeEnum
+function RaidRolls_G.GetGroupType(self)
+    if IsInRaid() then
+        return self.GroupType.RAID
+    elseif IsInGroup() then -- Any group type but raid => party.
+        return self.GroupType.PARTY
+    else
+        return self.GroupType.NOGROUP
+    end
+end
 
 -- Include in the minimap compartement. Needs to be global.
 function RaidRolls_OnAddonCompartmentClick()
