@@ -120,23 +120,26 @@ function RaidRolls_G.rollerCollection.Draw(self)
 end
 
 --
-function RaidRolls_G.rollerCollection.Save(self, name, roll)
-    local playerFound = false
+---@return Roller? plugin Instance or nil if not found.
+function RaidRolls_G.rollerCollection.FindRoller(self, name)
     for _, roller in ipairs(self.values) do
-        if name == roller.name then -- Update exiting player.
-            playerFound = true
-            roller:UpdateRoll(roll)
-            break
+        if name == roller.name then
+            return roller
         end
     end
+    return nil
+end
 
-    -- Add new roller.
-    if not playerFound then
+-- Update `roller` (if exists) or create a new one.
+function RaidRolls_G.rollerCollection.Save(self, name, roll)
+    local roller = self:FindRoller(name)
+    if roller ~= nil then
+        roller:UpdateRoll(roll)
+    else
         local playerInfo = GetPlayerInfo(name, GetGroupType())
-        local roller = RaidRolls_G.roller.New(name, roll, playerInfo)
+        roller = RaidRolls_G.roller.New(name, roll, playerInfo)
         table.insert(self.values, roller)
     end
-
     self.isSorted = false
 end
 
