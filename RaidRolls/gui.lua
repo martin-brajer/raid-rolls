@@ -15,9 +15,10 @@ local function hexColorToRGBA(hexString)
     return t[2], t[3], t[4], t[1]
 end
 
+--
 function RaidRolls_G.gui.Initialize(self)
     -- MAIN_FRAME
-    -- frame = CreateFrame(frameType [, name, parent, template, id])
+    ---@class Frame : BackdropTemplate https://github.com/Ketho/vscode-wow-api/pull/29
     local mainFrame = CreateFrame("Frame", ("%s_MainFrame"):format(cfg.ADDON_NAME),
         UIParent, BackdropTemplateMixin and "BackdropTemplate")
     mainFrame:SetSize(cfg.size.FRAME_WIDTH, cfg.size.EMPTY_HEIGHT)
