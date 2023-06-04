@@ -44,7 +44,6 @@ RaidRolls_G.configuration.texts = {
     UNIT_HEADER = "Player (class)[subgroup]",
     ROLL_HEADER = "Roll",
     PASS = "pass",
-    SET_MASTER_LOOTER = "Set MASTER LOOTER!!!",
 
     -- LABELS BELONGING TO `GROUPTYPE`S.
 

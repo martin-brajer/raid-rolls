@@ -9,6 +9,7 @@ local masterLooter = {
 table.insert(RaidRolls_G.plugins, masterLooter)
 
 local cfg = RaidRolls_G.configuration
+local SET_MASTER_LOOTER = "Master looter not set!"
 
 -- Should be the warning shown in the next draw?
 masterLooter.showWarning = false
@@ -39,7 +40,7 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
-    lootWarning:SetText(WrapTextInColorCode(cfg.texts.SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
+    lootWarning:SetText(WrapTextInColorCode(SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
     lootWarning:Hide()
     self.lootWarning = lootWarning
 
