@@ -57,18 +57,10 @@ local function Test(msg)
 
     -- is plugin test being called?
     else
-        local pluginFound = false
-
-        for _, plugin in ipairs(RaidRolls_G.plugins) do
-            if tool == plugin.NAME then
-                plugin:Test(args)
-                pluginFound = true
-                break
-            end
-        end
-
-        -- None, just wrong cmd.
-        if not pluginFound then
+        local plugin = RaidRolls_G:FindPlugin(tool)
+        if plugin ~= nil then
+            plugin:Test(args)
+        else
             printError(cfg.texts.TEST_PARAMETER_ERROR)
         end
     end

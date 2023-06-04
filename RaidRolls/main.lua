@@ -16,10 +16,18 @@ RaidRolls_G.rollerCollection = {}
 -- `roller.lua` namespace. Start by calling `New()`.
 RaidRolls_G.roller = {}
 -- Container for plugin namespaces.
+---@type Plugin[]
 RaidRolls_G.plugins = {}
 
-local cfg = RaidRolls_G.configuration
+--- Mandatory plugin
+---@class Plugin
+---@field NAME string Plugin name. No spaces (will be used by slash commands).
+---@field Initialize fun(self, mainFrame: frame, relativePoint): any Return `relativePoint`.
+---@field Draw fun(self, relativePoint): integer, any Return `addRows, relativePoint` pair.
+---@field Test fun(self, args: string[])
 
+
+local cfg = RaidRolls_G.configuration
 
 ---@enum GroupTypeEnum addon user group status
 RaidRolls_G.GroupType = {
@@ -55,6 +63,17 @@ function RaidRolls_G.Initialize(self)
 
     -- Plugins might have sth to say.
     self:Draw()
+end
+
+--
+---@return Plugin? plugin Namespace or nil if not found.
+function RaidRolls_G.FindPlugin(self, name)
+    for _, plugin in ipairs(self.plugins) do
+        if name == plugin.NAME then
+            return plugin
+        end
+    end
+    return nil
 end
 
 -- Main drawing function.
