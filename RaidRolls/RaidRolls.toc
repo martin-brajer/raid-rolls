@@ -2,7 +2,7 @@
 ## Title: Raid Rolls
 ## Notes: Records /rolls in your group to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 4.0.0
+## Version: 4.1.0
 ## IconTexture: interface\AddOns\RaidRolls\icon
 ## SavedVariablesPerCharacter: RaidRollsShown
 ## AddonCompartmentFunc: RaidRolls_OnAddonCompartmentClick
