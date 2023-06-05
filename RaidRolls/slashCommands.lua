@@ -59,7 +59,7 @@ local function Test(msg)
     else
         local plugin = RaidRolls_G:FindPlugin(tool)
         if plugin ~= nil then
-            plugin:Test(args)
+            plugin:SlashCmd(args)
         else
             printError(cfg.texts.TEST_PARAMETER_ERROR)
         end

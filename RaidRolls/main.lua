@@ -21,12 +21,12 @@ RaidRolls_G.playerInfo = {}
 ---@type Plugin[]
 RaidRolls_G.plugins = {}
 
---- Mandatory plugin
----@class Plugin
+---
+---@class Plugin Mandatory plugin interface.
 ---@field NAME string Plugin name. No spaces (will be used by slash commands).
----@field Initialize fun(self, mainFrame: frame, relativePoint): any Return `relativePoint`.
----@field Draw fun(self, relativePoint): integer, any Return `addRows, relativePoint` pair.
----@field Test fun(self, args: string[])
+---@field Initialize fun(self: Plugin, mainFrame: frame, relativePoint): any Return `relativePoint`.
+---@field Draw fun(self: Plugin, relativePoint): integer, any Return `addRows, relativePoint` pair.
+---@field SlashCmd fun(self: Plugin, args: string)
 
 local cfg = RaidRolls_G.configuration
 

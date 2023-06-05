@@ -3,8 +3,10 @@
 -- Populate `masterLooter` as numbered part of `RaidRolls_G.plugins`.
 
 -- `masterLooter` plugin namespace.
+---@type Plugin
 local masterLooter = {
     NAME = 'masterLooter',
+    lootWarning = nil, -- Set in `Initialize`.
 }
 table.insert(RaidRolls_G.plugins, masterLooter)
 
@@ -70,7 +72,7 @@ function masterLooter.Draw(self, relativePoint)
 end
 
 -- Testing
-function masterLooter.Test(self, args)
+function masterLooter.SlashCmd(self, args)
     self.showWarning = not self.showWarning
     RaidRolls_G:Draw()
 end
