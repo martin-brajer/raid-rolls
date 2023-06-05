@@ -89,6 +89,19 @@ function RaidRolls_G.FindPlugin(self, name)
     return nil
 end
 
+--
+---@return string
+function RaidRolls_G.PluginsToString(self)
+    if #self.plugins == 0 then
+        return "No plugins"
+    end
+    local names = {}
+    for _, plugin in ipairs(self.plugins) do
+        names[#names + 1] = plugin.NAME
+    end
+    return "Plugins: " .. table.concat(names, ", ")
+end
+
 -- Main drawing function.
 function RaidRolls_G.Draw(self)
     -- Start at 0 for header.

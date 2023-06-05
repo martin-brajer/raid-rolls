@@ -61,6 +61,10 @@ local function Test(args)
     elseif subCommand == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
 
+    -- List loaded plugins.
+    elseif subCommand == "plugins" then
+        print(RaidRolls_G:PluginsToString())
+
     -- is plugin test being called?
     else
         local plugin = RaidRolls_G:FindPlugin(subCommand)
