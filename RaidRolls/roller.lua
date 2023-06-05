@@ -11,13 +11,13 @@ local cfg = RaidRolls_G.configuration
 ---@field subgroup string
 ---@field groupTypeUnit string
 ---@field unitChanged boolean has unit info changed since the last draw?
----@field roll number
+---@field roll integer
 ---@field repeated boolean has the player rolled multiple times?
 ---@field rollChanged boolean has the roll changed since the last draw?
----@field UpdateRoll function
----@field UpdateGroup function
----@field MakeUnitText function
----@field MakeRollText function
+---@field UpdateRoll fun(self: Roller, roll: integer)
+---@field UpdateGroup fun(self: Roller, subgroup: string, groupTypeUnit: GroupTypeEnum)
+---@field MakeUnitText fun(self: Roller) -> string
+---@field MakeRollText fun(self: Roller) -> string
 
 
 -- Methods of the roller "instance".
@@ -68,7 +68,7 @@ end
 
 ---Create new "instance" of the Roller.
 ---@param name string
----@param roll number
+---@param roll integer
 ---@param playerInfo PlayerInfo
 ---@return Roller
 function RaidRolls_G.roller.New(name, roll, playerInfo)
