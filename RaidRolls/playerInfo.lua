@@ -15,15 +15,10 @@ local GroupType = RaidRolls_G.GroupType
 -- If player not found, return default values. E.g. when the player has already left the group.
 ---@param groupType GroupTypeEnum addon user group status
 ---@return PlayerInfo
-function RaidRolls_G.playerInfo.Get(name, groupType)
+function RaidRolls_G.playerInfo.Get(self, name, groupType)
     -- defaults
-    ---@type PlayerInfo
-    local playerInfo = {
-        class = "unknown",
-        classFilename = "UNKNOWN",
-        subgroup = cfg.texts.NOGROUP_LABEL,
-        groupTypeUnit = GroupType.NOGROUP,
-    }
+    local playerInfo = self.New("unknown", "UNKNOWN",
+        cfg.texts.NOGROUP_LABEL, GroupType.NOGROUP)
 
     if groupType == GroupType.RAID then
         for i = 1, MAX_RAID_MEMBERS do
@@ -50,4 +45,15 @@ function RaidRolls_G.playerInfo.Get(name, groupType)
     end
 
     return playerInfo
+end
+
+--
+---@return PlayerInfo
+function RaidRolls_G.playerInfo.New(class, classFilename, subgroup, groupTypeUnit)
+    return {
+        class = class,
+        classFilename = classFilename,
+        subgroup = subgroup,
+        groupTypeUnit = groupTypeUnit,
+    }
 end

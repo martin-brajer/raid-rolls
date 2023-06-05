@@ -15,7 +15,7 @@ function RaidRolls_G.rollerCollection.UpdateGroup(self)
     local groupType = RaidRolls_G:GetGroupType()
 
     for _, roller in ipairs(self.values) do
-        local playerInfo = RaidRolls_G.playerInfo.Get(roller.name, groupType)
+        local playerInfo = RaidRolls_G.playerInfo:Get(roller.name, groupType)
         if roller.subgroup ~= playerInfo.subgroup then -- Raid subgroup number or group type changed.
             roller:UpdateGroup(playerInfo.subgroup, playerInfo.groupTypeUnit)
         end
@@ -79,7 +79,7 @@ function RaidRolls_G.rollerCollection.Save(self, name, roll)
         roller:UpdateRoll(roll)
     else
         local groupType = RaidRolls_G:GetGroupType()
-        local playerInfo = RaidRolls_G.playerInfo.Get(name, groupType)
+        local playerInfo = RaidRolls_G.playerInfo:Get(name, groupType)
         roller = RaidRolls_G.roller.New(name, roll, playerInfo)
         table.insert(self.values, roller)
     end
