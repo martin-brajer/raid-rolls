@@ -10,21 +10,27 @@ local function printError(msg)
 end
 
 -- Print ingame help.
-local function Help()
+local function Help(args)
     print(GetAddOnMetadata(cfg.ADDON_NAME, "Title") .. " v" .. GetAddOnMetadata(cfg.ADDON_NAME, "Version") .. ".");
     for _, line in ipairs(cfg.texts.HELP_LINES) do
         print(line)
     end
 end
 
+-- Clear UI.
+local function Clear(args)
+    RaidRolls_G.rollerCollection:Clear()
+    RaidRolls_G:Draw()
+end
+
 -- Main frame width change.
-local function Resize(percentageStr)
+local function Resize(args)
     local percentage
     -- Parameter check.
-    if percentageStr == nil then -- No parameter -> default.
+    if args == nil then -- No parameter -> default.
         percentage = 100
     else
-        percentage = tonumber(percentageStr)
+        percentage = tonumber(args)
         if percentage == nil then -- Not a number.
             printError(cfg.texts.RESIZE_PARAMETER_ERROR)
             return
@@ -38,28 +44,28 @@ local function Resize(percentageStr)
 end
 
 -- No need to be part of a group for this to work.
-local function Test(msg)
+local function Test(args)
     -- Parameter check.
-    if not msg then
+    if not args then
         printError(cfg.texts.TEST_PARAMETER_ERROR)
         return
     end
-    local tool, args = strsplit(" ", msg, 2)
+    local subCommand, subArgs = strsplit(" ", args, 2)
 
     -- Fill `rollerCollection` by artificial values.
-    if tool == "fill" then
+    if subCommand == "fill" then
         RaidRolls_G.rollerCollection:Fill()
         RaidRolls_G:Draw()
 
     -- No need to be part of a group for this to work.
-    elseif tool == "solo" then
+    elseif subCommand == "solo" then
         RaidRolls_G.eventFrames.RegisterSoloChatEvents()
 
     -- is plugin test being called?
     else
-        local plugin = RaidRolls_G:FindPlugin(tool)
+        local plugin = RaidRolls_G:FindPlugin(subCommand)
         if plugin ~= nil then
-            plugin:SlashCmd(args)
+            plugin:SlashCmd(subArgs)
         else
             printError(cfg.texts.TEST_PARAMETER_ERROR)
         end
@@ -83,8 +89,7 @@ SlashCmdList["RAIDROLLS"] = function(msg, editbox)
     elseif command == "help" then
         Help()
     elseif command == "reset" then
-        RaidRolls_G.rollerCollection:Clear()
-        RaidRolls_G:Draw()
+        Clear(args)
     elseif command == "resize" then
         Resize(args)
     elseif command == "test" then
