@@ -62,12 +62,12 @@ RaidRolls_G.configuration.texts = {
 
     HELP_LINES = {
         "Slash Commands '/raidrolls' (or '/rr'):",
-        "  none - Commands list.",
-        "  'show' / 'hide' / 'toggle' - UI visibility.",
-        "  'help' - Uroboros!",
-        "  'reset' - Erase all rolls (same as right-clicking the window).",
-        "  'resize <percentage>' - Change the width to <percentage> of default.",
-        "  'test <tool>' - Tool can either be 'fill', 'solo' or <plugin name>.",
+        "  /rr - Commands list.",
+        "  /rr (show | hide | toggle) - UI visibility.",
+        "  /rr help - Uroboros!",
+        "  /rr reset - Erase all rolls (same as right-clicking the window).",
+        "  /rr resize [<percentage>] - Change the width to <percentage> of default.",
+        "  /rr test (fill | solo | <plugin name>)",
     },
 }
 
