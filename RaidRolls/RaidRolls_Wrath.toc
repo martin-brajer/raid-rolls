@@ -1,6 +1,6 @@
 ## Interface: 30401
 ## Title: Raid Rolls
-## Notes: Records /rolls in your group to simplify items distribution.
+## Notes: Lightweight addon for recording /rolls to simplify items distribution.
 ## Author: Martin Brajer
 ## Version: 4.1.0
 ## SavedVariablesPerCharacter: RaidRollsShown
@@ -14,4 +14,4 @@ eventFrames.lua
 roller.lua
 rollerCollection.lua
 playerInfo.lua
-plugin_masterLooter.lua
+plugins\masterLooter.lua

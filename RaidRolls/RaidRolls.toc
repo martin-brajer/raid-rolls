@@ -1,6 +1,6 @@
 ## Interface: 100100
 ## Title: Raid Rolls
-## Notes: Records /rolls in your group to simplify items distribution.
+## Notes: Lightweight addon for recording /rolls to simplify items distribution.
 ## Author: Martin Brajer
 ## Version: 4.1.0
 ## IconTexture: interface\AddOns\RaidRolls\icon
@@ -16,3 +16,4 @@ eventFrames.lua
 roller.lua
 rollerCollection.lua
 playerInfo.lua
+plugins\masterLooter.lua
