@@ -67,7 +67,7 @@ RaidRolls_G.configuration.texts = {
         "  /rr help - Uroboros!",
         "  /rr reset - Erase all rolls (same as right-clicking the window).",
         "  /rr resize [<percentage>] - Change the width to <percentage> of default.",
-        "  /rr test (fill | solo | <plugin name>)",
+        "  /rr test (fill | solo | plugins | <plugin name> [args])",
     },
 }
 
