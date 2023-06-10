@@ -17,3 +17,4 @@ roller.lua
 rollerCollection.lua
 playerInfo.lua
 plugins\masterLooter.lua
+plugins\scrnFill.lua
