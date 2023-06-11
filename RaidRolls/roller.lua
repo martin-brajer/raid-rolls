@@ -1,5 +1,5 @@
 -- Store info about individual rollers.
--- `roller = { name, classText, subgroup, unitChanged, roll, repeated, rollChanged }`.
+-- `roller = { name, characterText, subgroup, unitChanged, roll, repeated, rollChanged }`.
 -- Populate `RaidRolls_G.rollerCollection`.
 
 local cfg = RaidRolls_G.configuration
@@ -7,7 +7,7 @@ local cfg = RaidRolls_G.configuration
 ---Represents an individual roller. Create by `RaidRolls_G.roller:New()`.
 ---@class Roller
 ---@field name string full name (will include server)
----@field classText string
+---@field characterText string name, brackets, class (colored) - the unchanging parts.
 ---@field subgroup string
 ---@field groupTypeUnit string
 ---@field unitChanged boolean has unit info changed since the last draw?
@@ -40,7 +40,7 @@ end
 --
 function methods.MakeUnitText(self)
     local subgroupText = WrapTextInColorCode(self.subgroup, cfg.colors[self.groupTypeUnit])
-    return ("%s (%s)[%s]"):format(self.name, self.classText, subgroupText)
+    return ("%s[%s]"):format(self.characterText, subgroupText)
 end
 
 --
@@ -55,7 +55,7 @@ function methods.MakeRollText(self)
 end
 
 --
-local function MakeClassText(class, classFilename)
+local function MakeCharacterText(name, class, classFilename)
     local classColour
     local classColourMixin = RAID_CLASS_COLORS[classFilename]
     if classColourMixin == nil then
@@ -63,7 +63,8 @@ local function MakeClassText(class, classFilename)
     else
         classColour = classColourMixin.colorStr
     end
-    return WrapTextInColorCode(class, classColour)
+    local classText = WrapTextInColorCode(class, classColour)
+    return ("%s (%s)"):format(name, classText)
 end
 
 ---Create new "instance" of the Roller.
@@ -72,11 +73,11 @@ end
 ---@param playerInfo PlayerInfo
 ---@return Roller
 function RaidRolls_G.roller.New(name, roll, playerInfo)
-    local classText = MakeClassText(playerInfo.class, playerInfo.classFilename)
+    local characterText = MakeCharacterText(name, playerInfo.class, playerInfo.classFilename)
     -- Add fields.
     local roller = {
         name = name,
-        classText = classText,
+        characterText = characterText,
         subgroup = playerInfo.subgroup,
         groupTypeUnit = playerInfo.groupTypeUnit,
         unitChanged = true,
