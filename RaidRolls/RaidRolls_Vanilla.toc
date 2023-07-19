@@ -2,7 +2,7 @@
 ## Title: Raid Rolls
 ## Notes: Lightweight addon for recording /rolls to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 4.1.0
+## Version: 4.1.1
 ## SavedVariablesPerCharacter: RaidRollsShown
 
 main.lua

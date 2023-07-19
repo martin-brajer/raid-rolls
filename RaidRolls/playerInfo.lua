@@ -23,7 +23,8 @@ function RaidRolls_G.playerInfo.Get(self, name, groupType)
     if groupType == GroupType.RAID then
         for i = 1, MAX_RAID_MEMBERS do
             -- Raid member (RM) info.
-            local nameRM, _, subgroupRM, _, classRM, classFilenameRM = GetRaidRosterInfo(i)
+            local playerNameRM, _, subgroupRM, _, classRM, classFilenameRM = GetRaidRosterInfo(i)
+            local nameRM, server = strsplit("-", playerNameRM)
             if nameRM == name then
                 playerInfo.class, playerInfo.classFilename = classRM, classFilenameRM
                 playerInfo.subgroup = tostring(subgroupRM)
