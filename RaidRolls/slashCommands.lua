@@ -11,7 +11,9 @@ end
 
 -- Print ingame help.
 local function Help(args)
-    print(GetAddOnMetadata(cfg.ADDON_NAME, "Title") .. " v" .. GetAddOnMetadata(cfg.ADDON_NAME, "Version") .. ".");
+    local title = C_AddOns.GetAddOnMetadata(cfg.ADDON_NAME, "title")
+    local version = C_AddOns.GetAddOnMetadata(cfg.ADDON_NAME, "version")
+    print(title .. " v" .. version .. ".");
     for _, line in ipairs(cfg.texts.HELP_LINES) do
         print(line)
     end
