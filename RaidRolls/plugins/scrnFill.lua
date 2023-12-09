@@ -14,11 +14,11 @@ local GroupType = RaidRolls_G.GroupType
 local playerInfoNew = RaidRolls_G.playerInfo.New
 
 ---Generic player roll data to be filled.
----@class RollData
----@field name string Batch name
----@field roll integer
----@field repeated boolean
----@field playerInfo PlayerInfo
+---@alias RollData any[]
+--- name string Batch name
+--- roll integer
+--- repeated boolean
+--- playerInfo PlayerInfo
 
 ---@type { [string]: RollData[] }
 local rollDataDatabase = {
@@ -37,14 +37,14 @@ local rollDataDatabase = {
     -- Default behaviour for scrn.
     small = {
         { "Liùsaidh", 49, false, playerInfoNew("Warlock", "WARLOCK", "1", GroupType.RAID) },
-        { "Thadeus",   34, true,  playerInfoNew("Druid", "DRUID", "S", GroupType.NOGROUP) },
-        { "Feishue",   0,  false, playerInfoNew("Warrior", "WARRIOR", "2", GroupType.RAID) },
+        { "Thadeus",  34, true,  playerInfoNew("Druid", "DRUID", "S", GroupType.NOGROUP) },
+        { "Feishue",  0,  false, playerInfoNew("Warrior", "WARRIOR", "2", GroupType.RAID) },
     },
     -- Simulating the real raid chaos. Can add master looter warning.
     raid = {
         { "Angwa",       99, true,  playerInfoNew("Hunter", "HUNTER", "3", GroupType.RAID) },
         { "Enaid",       95, false, playerInfoNew("Priest", "PRIEST", "5", GroupType.RAID) },
-        { "Monaëraëh", 88, false, playerInfoNew("Paladin", "PALADIN", "1", GroupType.RAID) },
+        { "Monaëraëh",   88, false, playerInfoNew("Paladin", "PALADIN", "1", GroupType.RAID) },
         { "Haliastur",   58, true,  playerInfoNew("Monk", "MONK", "7", GroupType.RAID) },
         { "Mandorallen", 42, false, playerInfoNew("Paladin", "PALADIN", "5", GroupType.RAID) },
         { "Thadeus",     34, false, playerInfoNew("Druid", "DRUID", "S", GroupType.NOGROUP) },

@@ -6,6 +6,7 @@
 ---@type Plugin
 local masterLooter = {
     NAME = 'masterLooter',
+    ---@type FontString
     lootWarning = nil, -- Set in `Initialize`.
 }
 table.insert(RaidRolls_G.plugins, masterLooter)
