@@ -55,7 +55,7 @@ RaidRolls_G.configuration.texts = {
 
     RESIZE_SIZE_ERROR = "cannot resize below 100%.",
     RESIZE_PARAMETER_ERROR = "resize accepts either no argument or a number above 100.",
-    TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo' or a plugin name.",
+    TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo', 'plugins' or a plugin name.",
     SLASH_PARAMETER_ERROR = "unknown command. Run '/rr' for available commands.",
 
     -- HELP LINES.
