@@ -1,8 +1,8 @@
-## Interface: 110000
+## Interface: 11508, 40402, 50503, 120000
 ## Title: Raid Rolls
 ## Notes: Lightweight addon for recording /rolls to simplify items distribution.
 ## Author: Martin Brajer
-## Version: 4.1.3
+## Version: 4.2.0
 ## IconTexture: interface\AddOns\RaidRolls\icon
 ## SavedVariablesPerCharacter: RaidRollsShown
 ## AddonCompartmentFunc: RaidRolls_OnAddonCompartmentClick
@@ -16,3 +16,4 @@ eventFrames.lua
 roller.lua
 rollerCollection.lua
 playerInfo.lua
+plugins\masterLooter.lua [AllowLoadGameType vanilla, tbc, wrath, cata]
