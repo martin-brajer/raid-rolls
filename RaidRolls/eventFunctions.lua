@@ -30,9 +30,10 @@ end
 -- CHAT_MSG_EVENTS
 -- Look for "pass" in the group channels.
 function RaidRolls_G.eventFunctions.OnChatMsg(self, event, text, playerName)
-    local name, server = strsplit("-", playerName)
+    if RaidRolls_G.IsSecret(text, playerName) then return end
 
     if text:lower() == "pass" then
+        local name, server = strsplit("-", playerName)
         RaidRolls_G.rollerCollection:Save(name, 0)
         RaidRolls_G:Draw()
     end
@@ -41,6 +42,8 @@ end
 -- CHAT_MSG_SYSTEM
 -- Look for "/roll" in system messages.
 function RaidRolls_G.eventFunctions.OnSystemMsg(self, event, text)
+    if RaidRolls_G.IsSecret(text) then return end
+
     if string.find(text, "rolls") ~= nil then
         local name, roll, minRoll, maxRoll = text:match("^(.+) rolls (%d+) %((%d+)%-(%d+)%)$")
 

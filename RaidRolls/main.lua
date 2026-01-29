@@ -54,6 +54,22 @@ function RaidRolls_OnAddonCompartmentClick()
     RaidRolls_G.gui:SetVisibility(not RaidRollsShown)
 end
 
+-- Is any of the arguments secret?
+-- Relevant since game version 12.0.0.
+---@return boolean
+function RaidRolls_G.IsSecret(...)
+    if issecretvalue == nil then
+        return false
+    end
+    for i = 1, select("#", ...) do
+        arg = select(i, ...)
+        if issecretvalue(arg) then
+            return true
+        end
+    end
+    return false
+end
+
 -- Initialize self, plugins, saved variables
 function RaidRolls_G.Initialize(self)
     local relativePoint = self.gui:Initialize()
