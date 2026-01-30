@@ -2,38 +2,24 @@
 -- This plugin is used by adding it low in the required toc file.
 -- Populate `masterLooter` as numbered part of `RaidRolls_G.plugins`.
 
--- `masterLooter` plugin namespace.
----@type Plugin
-local masterLooter = {
-    NAME = 'masterLooter',
-    ---@type FontString
-    lootWarning = nil, -- Set in `Initialize`.
-}
-table.insert(RaidRolls_G.plugins, masterLooter)
-
 local cfg = RaidRolls_G.configuration
 local SET_MASTER_LOOTER = "Master looter not set!"
 
 -- Should be the warning shown in the next draw?
-masterLooter.showWarning = false
+local showWarning = false
 
 --
 ---@return boolean hasChanged has the warning state changed during this call?
-function masterLooter.UpdateShowWarning(self)
-    local lootMethod = GetLootMethod()
-    local newShowWarning = (
-        UnitIsGroupLeader("player")
-        and lootMethod ~= "master"
-        and lootMethod ~= "personalloot")
+local function UpdateShowWarning()
 
-    local hasChanged = newShowWarning ~= self.showWarning
-    self.showWarning = newShowWarning
+    local hasChanged = newShowWarning ~= showWarning
+    showWarning = newShowWarning
     return hasChanged
 end
 
 -- PARTY_LOOT_METHOD_CHANGED PARTY_LEADER_CHANGED
 local function OnMasterLooterMayHaveChanged(self, event) -- `self` is not this module!
-    local hasChanged = masterLooter:UpdateShowWarning()
+    local hasChanged = UpdateShowWarning()
     if hasChanged then
         RaidRolls_G:Draw()
     end
@@ -46,7 +32,7 @@ masterLooter_EventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
 masterLooter_EventFrame:SetScript("OnEvent", OnMasterLooterMayHaveChanged)
 
 --
-function masterLooter.Initialize(self, mainFrame, relativePoint)
+local function Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
@@ -55,14 +41,15 @@ function masterLooter.Initialize(self, mainFrame, relativePoint)
     self.lootWarning = lootWarning
 
     -- Is the warning shown on load?
-    self:UpdateShowWarning()
+    -- Calling `OnMasterLooterMayHaveChanged` would trigger `Draw`!
+    UpdateShowWarning()
 
     return lootWarning -- relativePoint
 end
 
 -- Return `addRows, relativePoint`.
-function masterLooter.Draw(self, relativePoint)
-    if self.showWarning then
+local function Draw(self, relativePoint)
+    if showWarning then
         self.lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
         self.lootWarning:Show()
         return 1, self.lootWarning
@@ -73,7 +60,19 @@ function masterLooter.Draw(self, relativePoint)
 end
 
 -- Testing
-function masterLooter.SlashCmd(self, args)
-    self.showWarning = not self.showWarning
+local function SlashCmd(self, args)
+    showWarning = not showWarning
     RaidRolls_G:Draw()
 end
+
+-- `masterLooter` plugin namespace.
+---@type Plugin
+local masterLooter = {
+    NAME = 'masterLooter',
+    Initialize = Initialize,
+    Draw = Draw,
+    SlashCmd = SlashCmd,
+    ---@type FontString
+    lootWarning = nil, -- Set in `Initialize`.
+}
+table.insert(RaidRolls_G.plugins, masterLooter)

@@ -2,13 +2,6 @@
 -- This plugin is used by adding it low in the required toc file.
 -- Populate `scrnFill` as numbered part of `RaidRolls_G.plugins`.
 
--- `scrnFill` plugin namespace.
----@type Plugin
-local scrnFill = {
-    NAME = 'scrnFill',
-}
-table.insert(RaidRolls_G.plugins, scrnFill)
-
 local cfg = RaidRolls_G.configuration
 local GroupType = RaidRolls_G.GroupType
 local playerInfoNew = RaidRolls_G.playerInfo.New
@@ -56,12 +49,12 @@ local rollDataDatabase = {
 }
 
 --
-function scrnFill.Initialize(self, mainFrame, relativePoint)
+local function Initialize(self, mainFrame, relativePoint)
     return relativePoint
 end
 
 --
-function scrnFill.Draw(self, relativePoint)
+local function Draw(self, relativePoint)
     return 0, relativePoint
 end
 
@@ -79,8 +72,18 @@ local function FillRollers(rollDataBatch)
 end
 
 --
-function scrnFill.SlashCmd(self, args)
+local function SlashCmd(self, args)
     local rollDataBatch = rollDataDatabase[args] or rollDataDatabase.test -- default
     FillRollers(rollDataBatch)
     RaidRolls_G:Draw()
 end
+
+-- `scrnFill` plugin namespace.
+---@type Plugin
+local scrnFill = {
+    NAME = 'scrnFill',
+    Initialize = Initialize,
+    Draw = Draw,
+    SlashCmd = SlashCmd,
+}
+table.insert(RaidRolls_G.plugins, scrnFill)
