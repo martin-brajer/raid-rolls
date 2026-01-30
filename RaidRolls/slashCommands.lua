@@ -65,16 +65,20 @@ local function Test(args)
 
     -- List loaded plugins.
     elseif subCommand == "plugins" then
-        print(RaidRolls_G:PluginsToString())
+        if not subArgs then
+            print(RaidRolls_G:PluginsToString())
+        else
+            local plugin = RaidRolls_G:FindPlugin(subArgs)
+            if plugin ~= nil then
+                plugin:SlashCmd(subArgs)
+            else
+                printError(cfg.texts.TEST_PLUGIN_ERROR)
+            end
+        end
 
     -- is plugin test being called?
     else
-        local plugin = RaidRolls_G:FindPlugin(subCommand)
-        if plugin ~= nil then
-            plugin:SlashCmd(subArgs)
-        else
-            printError(cfg.texts.TEST_PARAMETER_ERROR)
-        end
+        printError(cfg.texts.TEST_PARAMETER_ERROR)
     end
 end
 

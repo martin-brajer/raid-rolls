@@ -58,6 +58,7 @@ function RaidRolls_G.eventFrames.UnregisterChatEvents()
         passing_EventFrame:UnregisterEvent(event)
     end
     rolling_EventFrame:UnregisterEvent("CHAT_MSG_SYSTEM")
+    passing_EventFrame:UnregisterEvent("CHAT_MSG_SAY")
 end
 
 -- Register solo channels for testing.

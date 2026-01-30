@@ -54,7 +54,8 @@ RaidRolls_G.configuration.texts = {
 
     RESIZE_SIZE_ERROR = "cannot resize below 100%.",
     RESIZE_PARAMETER_ERROR = "resize accepts either no argument or a number above 100.",
-    TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo', 'plugins' or a plugin name.",
+    TEST_PARAMETER_ERROR = "test accepts either 'fill', 'solo' or 'plugins [<plugin name> [args]]'.",
+    TEST_PLUGIN_ERROR = "unknown plugin name.",
     SLASH_PARAMETER_ERROR = "unknown command. Run '/rr' for available commands.",
 
     -- HELP LINES.
@@ -66,7 +67,7 @@ RaidRolls_G.configuration.texts = {
         "  /rr help - Uroboros!",
         "  /rr reset - Erase all rolls (same as right-clicking the window).",
         "  /rr resize [<percentage>] - Change the width to <percentage> of default.",
-        "  /rr test (fill | solo | plugins | <plugin name> [args])",
+        "  /rr test (fill | solo | plugins [<plugin name> [args]])",
     },
 }
 
