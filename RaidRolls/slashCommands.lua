@@ -68,9 +68,10 @@ local function Test(args)
         if not subArgs then
             print(RaidRolls_G:PluginsToString())
         else
-            local plugin = RaidRolls_G:FindPlugin(subArgs)
+            local pluginName, pluginArgs = strsplit(" ", subArgs, 2)
+            local plugin = RaidRolls_G:FindPlugin(pluginName)
             if plugin ~= nil then
-                plugin:SlashCmd(subArgs)
+                plugin:SlashCmd(pluginArgs)
             else
                 printError(cfg.texts.TEST_PLUGIN_ERROR)
             end
