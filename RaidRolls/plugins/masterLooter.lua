@@ -11,6 +11,8 @@ local showWarning = false
 --
 ---@return boolean hasChanged has the warning state changed during this call?
 local function UpdateShowWarning()
+    local lootMethod = C_PartyInfo.GetLootMethod()
+    local newShowWarning = UnitIsGroupLeader("player") and lootMethod ~= Enum.LootMethod.Masterlooter
 
     local hasChanged = newShowWarning ~= showWarning
     showWarning = newShowWarning
