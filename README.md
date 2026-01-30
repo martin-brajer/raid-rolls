@@ -36,11 +36,10 @@ Cmds start by `/raidrolls` or equivalently by `/rr`.
 - `/rr resize [<percentage>]` Change the width to `percentage` of default.
     - Minimal accepted value is 100 (default)
     - Omitting the parameter resets the width.
-- `/rr test (fill | solo | plugins [<plugin name> [args]])`
-  Fill in artificial rolls
-  | allow use out of a group (until `/reload`)
-  | list plugins
-  | run plugin's own testing.
+- `/rr test (fill | solo | plugins [<plugin name> [args]])`\
+  Fill in artificial rolls\
+  | allow use out of a group (until `/reload`)\
+  | list plugins or run plugin's own testing.
 
 ## Licence & compliance
 
