@@ -3,7 +3,8 @@
 -- Populate `masterLooter` as numbered part of `RaidRolls_G.plugins`.
 
 local cfg = RaidRolls_G.configuration
-local SET_MASTER_LOOTER = "Master looter not set!"
+local TEXT = "Master looter not set!"
+local COLOR = "FFFF0000"
 
 -- Should be the warning shown in the next draw?
 local showWarning = false
@@ -38,7 +39,7 @@ local function Initialize(self, mainFrame, relativePoint)
     local lootWarning = mainFrame:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     lootWarning:SetHeight(cfg.size.ROW_HEIGHT)
     lootWarning:SetPoint("TOPLEFT", relativePoint, "BOTTOMLEFT")
-    lootWarning:SetText(WrapTextInColorCode(SET_MASTER_LOOTER, cfg.colors.MASTERLOOTER))
+    lootWarning:SetText(WrapTextInColorCode(TEXT, COLOR))
     lootWarning:Hide()
     self.lootWarning = lootWarning
 

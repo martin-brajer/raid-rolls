@@ -26,7 +26,6 @@ RaidRolls_G.configuration.colors = {
 
     BACKGROUND = "B2333333",     -- RGBA = { 0.2, 0.2, 0.2, 0.7 }
     HEADER = systemMessageColor, -- RGBA = { 1.0, 1.0, 0.0, 1.0 }
-    MASTERLOOTER = "FFFF0000",
     MULTIROLL = "FFFF0000",
     PASS = "FF00CCFF",
 
